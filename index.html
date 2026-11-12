@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Catálogo de filtros HK by Universe Filter: busque por código, OEM o vehículo. Importador y distribuidor en Paraguay: Yhaguy Autopartes.">
+<meta name="theme-color" content="#23254E">
+<!-- App instalable -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Filtros HK">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!-- Vista previa al compartir el link (WhatsApp, Facebook). Reemplazar DOMINIO por la dirección real -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Catálogo HK Filtros · Yhaguy Autopartes">
+<meta property="og:description" content="Encuentre su filtro HK para cada vehículo. Importador y distribuidor en Paraguay.">
+<meta property="og:image" content="https://rodryr22.github.io/catalogo-hk/og-image.jpg">
+<meta property="og:url" content="https://rodryr22.github.io/catalogo-hk/">
+<title>Catálogo HK Filtros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: yellow HK band → sticky search/filter bar → responsive grid of filter cards; full sheet opens in an overlay. */
+:root{
+  --yellow:#D6DA3B; --navy:#23254E; --on-yellow:#23254E; --head:#FFFFFF; --head-2:#EEF1D6; --on-head:#23254E; --on-head-2:#4B4E7A;
+  --yh-blue:#0038A7; --yh-red:#FF0000; --wa:#1E9E52; --on-dark:#FFFFFF;
+  --bg:#F3F4F8; --card:#FFFFFF; --fg:#23254E; --muted:#5C5F86; --line:#DCDEEA; --soft:#ECEDF4;
+  --chip:#EEF0C2; --mark:#E2E57A; --none:#9EA3C2; --shadow:0 1px 2px rgba(31,35,82,.08),0 6px 18px rgba(31,35,82,.07);
+  --f-code:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Inter",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10132C; --card:#191D40; --fg:#EEF0FA; --muted:#A3A8CC; --line:#2D3263; --soft:#22274F;
+  --chip:#3B3E1C; --mark:#5E6120; --none:#6E73A0; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#10132C; --card:#191D40; --fg:#EEF0FA; --muted:#A3A8CC; --line:#2D3263; --soft:#22274F;
+  --chip:#3B3E1C; --mark:#5E6120; --none:#6E73A0; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35); color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--head)}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.band{position:relative;overflow:hidden;color:var(--on-head);border-bottom:5px solid var(--yellow);
+  background:linear-gradient(115deg,var(--head) 0%,var(--head) 45%,var(--head-2) 100%)}
+header.band::before{content:"";position:absolute;inset:0 0 0 auto;width:min(46%,600px);pointer-events:none;opacity:.6;
+  background:repeating-linear-gradient(90deg,rgba(35,37,78,.06) 0 2px,transparent 2px 16px);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 55%);mask-image:linear-gradient(90deg,transparent,#000 55%)}
+header.band .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:12px 32px;align-items:end;padding-block:14px 14px}
+@media (max-width:820px){header.band .wrap{grid-template-columns:1fr;padding-block:12px 12px}}
+.logos{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.homelink{display:block;border-radius:4px;transition:opacity .15s}
+.homelink:hover{opacity:.8}
+.homelink:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.hklogo{height:46px;width:auto;display:block}
+.sep{width:1px;align-self:stretch;background:rgba(35,37,78,.2)}
+.yhbox{display:flex;flex-direction:column;gap:4px}
+.yhlogo{height:38px;width:auto;display:block}
+.yhbox span{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--on-head-2)}
+@media (max-width:480px){.hklogo{height:38px}.yhlogo{height:30px}.logos{gap:12px}.yhbox span{font-size:9px;letter-spacing:.6px}}
+h1{font-family:var(--f-code);font-weight:800;font-size:clamp(26px,3.4vw,38px);line-height:1.02;margin:10px 0 0;letter-spacing:.2px;text-wrap:balance;color:var(--on-head)}
+h1 em{font-style:normal;text-decoration:underline;text-decoration-color:var(--yellow);text-decoration-thickness:.14em;text-underline-offset:.1em}
+.lede{margin:6px 0 0;font-size:13.5px;line-height:1.45;max-width:70ch;color:var(--on-head-2)}
+.lede b{font-weight:700;color:var(--on-head)}
+.side{display:flex;flex-direction:column;align-items:flex-end}
+@media (max-width:820px){.side{align-items:flex-start}}
+.counts{display:flex;gap:0;font-variant-numeric:tabular-nums}
+.counts div{display:flex;flex-direction:column;padding:0 16px;border-left:1px solid rgba(35,37,78,.18)}
+.counts div:first-child{padding-left:0;border-left:0}
+.counts strong{font-family:var(--f-code);font-size:30px;line-height:1;color:var(--on-head)}
+.counts span{font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;font-weight:600;color:var(--on-head-2);margin-top:3px}
+.wa{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:700;color:var(--on-dark);background:var(--wa);border-radius:5px;padding:6px 12px;text-decoration:none}
+.wa svg{width:15px;height:15px}
+.cartbtn{position:relative;display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:14px;font-weight:700;background:var(--card);color:var(--fg);border:2px solid var(--navy);border-radius:6px;padding:0 14px;min-height:48px;cursor:pointer;white-space:nowrap}
+.cartbtn svg{width:22px;height:22px}
+.cartn{min-width:22px;height:22px;border-radius:11px;background:var(--soft);color:var(--muted);font-size:12px;display:inline-grid;place-items:center;padding:0 6px;font-variant-numeric:tabular-nums}
+.cartbtn.has{background:var(--yellow);color:var(--navy)}
+.cartbtn.has .cartn{background:var(--navy);color:var(--yellow)}
+.cartbtn.pulse{animation:pulse .5s ease}
+@keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.cartbtn.pulse{animation:none}}
+@media (max-width:640px){.cartlbl{display:none}.cartbtn{padding:0 10px}.bar .searchrow{flex-wrap:nowrap}.bar .search{flex:1 1 auto}}
+.addcart{font:inherit;font-size:13px;font-weight:700;background:var(--yellow);color:var(--navy);border:1.5px solid var(--navy);border-radius:5px;padding:5px 12px;cursor:pointer}
+.addcart span{font-size:15px;margin-right:2px}
+.qty{display:inline-flex;align-items:center;border:1.5px solid var(--navy);border-radius:5px;overflow:hidden;background:var(--card)}
+.qty button{font:inherit;font-size:17px;font-weight:700;width:34px;height:31px;border:0;background:var(--yellow);color:var(--navy);cursor:pointer}
+.qin{width:58px;height:31px;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-size:15px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}
+.qin::-webkit-outer-spin-button,.qin::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.qin:focus{outline:2px solid var(--yellow);outline-offset:-2px}
+.cart .hd .code{font-size:28px}
+.citem{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--soft)}
+.citem .ph{width:64px;height:64px}
+.code.sm{font-size:18px;padding:2px 7px}
+.ceq{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.cqty{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.linkbtn{font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer;padding:2px 0}
+.cartform{display:grid;gap:4px}
+.cartform h3{margin-bottom:4px}
+.cartform label{font-size:12px;font-weight:700;color:var(--muted);margin-top:6px}
+.cartform label i,.req{font-style:normal;color:#C62828}
+.cartform input.bad{border-color:#C62828;box-shadow:0 0 0 2px rgba(198,40,40,.15)}
+.ferr{font-size:12px;color:#C62828;font-weight:600}
+.cartform input,.cartform textarea{font:inherit;font-size:15px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);width:100%}
+.cartactions{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.wabig{width:100%;justify-content:center;font-size:16px;padding:14px 16px;border-radius:8px}
+.wabig svg{width:22px;height:22px}
+.wabig.off{background:var(--soft);color:var(--muted);pointer-events:none}
+.actions{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+.actions .more{margin-top:0}
+.frow{display:flex;align-items:center;gap:10px;min-width:0}
+.flbl{flex:0 0 58px;font-size:10.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted)}
+.frow .chips{min-width:0}
+#marca{display:none}
+.chip:disabled{opacity:.4;cursor:default}
+.clearall{font:inherit;font-size:12.5px;font-weight:700;color:var(--fg);background:none;border:0;text-decoration:underline;text-decoration-color:var(--yellow);text-decoration-thickness:2px;text-underline-offset:3px;cursor:pointer;margin-left:6px;padding:0}
+@media (min-width:641px){.qmfab,.qm,.qmback{display:none!important}}
+.activebar{display:none;flex-wrap:wrap;gap:6px;align-items:center}
+.afilter{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13px;font-weight:700;background:var(--navy);color:var(--yellow);border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.ham{display:inline-flex;flex-direction:column;gap:3px}.ham i{display:block;width:14px;height:2px;background:var(--yellow);border-radius:1px}
+.atag{font:inherit;font-size:13px;font-weight:600;background:var(--chip);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.atag span{margin-left:4px;color:var(--muted)}
+@media (max-width:640px){
+  .frow{display:none}
+  .activebar{display:flex}
+  .bar .wrap{padding-block:10px;gap:8px}
+}
+.qmfab{position:fixed;z-index:15;left:calc(18px + env(safe-area-inset-left,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-shadow:0 6px 18px rgba(0,0,0,.28),0 2px 4px rgba(0,0,0,.18)}
+.qmfab span{display:block;width:24px;height:3px;border-radius:2px;background:var(--yellow);transition:transform .2s,opacity .2s}
+.qmfab[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.qmfab[aria-expanded="true"] span:nth-child(2){opacity:0}
+.qmfab[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+.qmfab:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.qmback{position:fixed;inset:0;z-index:13;background:rgba(10,12,35,.35)}
+.qm{position:fixed;z-index:14;left:calc(18px + env(safe-area-inset-left,0px));bottom:calc(90px + env(safe-area-inset-bottom,0px));width:min(340px,calc(100vw - 36px));max-height:calc(100vh - 140px);overflow:auto;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.3);padding:14px}
+.qmhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.qmhd b{font-family:var(--f-code);font-size:20px;letter-spacing:.3px}
+.qmx{font:inherit;font-size:24px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer;padding:2px 6px}
+.qmsec{padding:8px 0}
+.qmlbl{font-size:10.5px;letter-spacing:1.1px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.qmgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.qmgrid button{font:inherit;font-size:13px;font-weight:600;text-align:left;display:flex;justify-content:space-between;gap:6px;align-items:center;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;cursor:pointer}
+.qmgrid button small{font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+.qmgrid button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--yellow)}
+.qmgrid button[aria-pressed="true"] small{color:var(--yellow)}
+.qmall{margin-top:6px;width:100%;font:inherit;font-weight:700;background:var(--yellow);color:var(--navy);border:0;border-radius:6px;padding:10px;cursor:pointer}
+.wafab{position:fixed;z-index:15;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--on-dark);background:var(--wa);border-radius:999px;padding:8px;box-shadow:0 6px 18px rgba(0,0,0,.28),0 2px 4px rgba(0,0,0,.18)}
+.wafab-ic{width:44px;height:44px;display:grid;place-items:center}
+.wafab-ic svg{width:30px;height:30px}
+.wafab-tx{font-weight:700;font-size:14px;padding-right:10px;white-space:nowrap}
+.wafab:hover,.wafab:focus-visible{filter:brightness(1.07);outline:3px solid var(--yellow);outline-offset:2px}
+@media (max-width:640px){.wafab-tx{display:none}.wafab{padding:6px}}
+footer.yh{background:var(--yh-blue);color:var(--on-dark);border-top:6px solid var(--yh-red)}
+footer.yh .wrap{padding-block:26px calc(90px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1.7fr) repeat(3,minmax(0,1fr));gap:22px}
+@media (max-width:820px){footer.yh .wrap{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){footer.yh .wrap{grid-template-columns:1fr}}
+footer.yh .logo{display:inline-block}
+.yhcol{display:inline-flex;flex-direction:column;align-items:stretch;max-width:100%}
+.brands{margin-top:10px;width:0;min-width:100%;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.bcell{flex:0 0 calc((100% - 24px) / 4);height:26px;display:flex;align-items:center;justify-content:center}
+.bcell img{max-width:100%;max-height:100%;width:auto;height:auto;display:block;object-fit:contain}
+.bcell.onwhite img{background:#FFFFFF;padding:1px 2px;border-radius:2px;box-sizing:border-box}
+@media (max-width:640px){
+  footer.yh .yhcol{display:flex;width:100%;padding:0 6px}
+  footer.yh .yhcol .logo{display:block;width:100%}
+  footer.yh .yhcol .logo img{width:100%;height:auto}
+  .brands{margin-top:14px;gap:14px 10px}
+  .bcell{flex-basis:calc((100% - 30px) / 4);height:40px}
+}
+footer.yh .logo img{height:38px;width:auto;display:block;border-radius:2px}
+footer.yh h4{margin:0 0 6px;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;opacity:.8}
+footer.yh p{margin:0;font-size:14px;line-height:1.5}
+footer.yh a{color:var(--on-dark);font-weight:600}
+.social{display:flex;flex-direction:column;gap:8px}
+footer.yh a.soc,footer.yh a.soc:visited{display:flex;align-items:center;gap:10px;text-decoration:none;background:#FFFFFF;color:var(--yh-blue);border:0;border-radius:8px;padding:8px 12px;box-shadow:0 1px 0 rgba(0,0,0,.15);transition:transform .12s}
+footer.yh a.soc:hover,footer.yh a.soc:focus-visible{transform:translateY(-1px);outline:3px solid var(--yellow);outline-offset:2px}
+footer.yh a.soc b{color:var(--yh-blue)}
+footer.yh a.soc small{color:#3D4A7A;opacity:1}
+.soc svg{width:26px;height:26px;flex:0 0 auto;padding:2px;box-sizing:content-box}
+footer.yh a.maplink,footer.yh a.maplink:visited{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#FFFFFF;color:var(--yh-blue);text-decoration:none;font-size:13px;font-weight:700;padding:6px 12px;border-radius:6px}
+footer.yh a.maplink svg{width:15px;height:15px;color:var(--yh-red)}
+.soc.ig svg{color:#C13584}.soc.fb svg{color:#1877F2}.soc.mp svg{color:var(--yh-red)}
+.soc span{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.soc b{font-size:14px}.soc small{font-size:12px;font-weight:500;opacity:.85;overflow-wrap:anywhere}
+footer.yh .tag{margin-top:10px;font-size:14px;font-weight:600}
+footer.yh .num{font-family:var(--f-mono);font-size:15px;font-weight:600;user-select:all}
+footer.yh .wa{margin-top:8px}
+h1 .hk{background:var(--navy);color:var(--yellow);padding:0 .18em;border-radius:3px;margin-right:.12em}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar .wrap{padding-block:12px;display:flex;flex-direction:column;gap:10px}
+.searchrow{display:flex;gap:10px;flex-wrap:wrap}
+.search{flex:1 1 320px;position:relative;min-width:0}
+.search input{width:100%;font:inherit;font-size:16px;padding:12px 40px 12px 42px;border:2px solid var(--navy);border-radius:6px;background:var(--card);color:var(--fg)}
+:root[data-theme="dark"] .search input{border-color:var(--yellow)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .search input{border-color:var(--yellow)}}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+.search button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
+select{font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);flex:0 1 220px;min-width:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:6px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--yellow)}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}}
+.chip small{font-weight:500;opacity:.7;margin-left:4px;font-variant-numeric:tabular-nums}
+.status{margin-left:auto;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+main .wrap{padding-block:18px 40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0}
+.top{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 12px 10px;align-items:start}
+.ph{width:92px;height:92px;border-radius:6px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:contain}
+.ph.none{background:var(--soft);color:var(--muted);font-family:var(--f-code);font-weight:800;font-size:26px;text-align:center;line-height:1}
+.ph.none small{display:block;font-family:var(--f-body);font-size:9px;font-weight:500;margin-top:4px}
+.code{display:inline-block;background:var(--yellow);color:var(--on-yellow);border:1.5px solid var(--navy);font-family:var(--f-code);font-weight:800;font-size:26px;line-height:1;padding:4px 9px 3px;border-radius:4px;letter-spacing:.4px}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}
+.match{display:inline-block;margin-top:6px;font-size:11.5px;background:var(--mark);color:var(--fg);padding:2px 7px;border-radius:3px;font-weight:600}
+.eqs{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.eq{padding:7px 10px;min-width:0}
+.eq + .eq{border-left:1px solid var(--line)}
+.eq span{display:block;font-size:10px;letter-spacing:1px;font-weight:700;color:var(--muted)}
+.eq b{display:block;font-family:var(--f-mono);font-size:12.5px;font-weight:600;overflow-wrap:anywhere}
+.eq b.na{color:var(--none);font-weight:400}
+.body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;flex:1}
+.lbl{font-size:10px;letter-spacing:1px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+.oems{font-family:var(--f-mono);font-size:12px;display:flex;flex-wrap:wrap;gap:4px 10px}
+.oems .p{font-weight:600}
+.apps{font-size:12.5px;display:flex;flex-direction:column;gap:2px}
+.apps b{font-size:11.5px;letter-spacing:.3px}
+.more{margin-top:auto;align-self:flex-start;font:inherit;font-size:13px;font-weight:600;color:var(--fg);background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:6px 12px;cursor:pointer}
+.loadmore{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:22px 0 0;font:inherit;font-family:var(--f-code);font-size:22px;font-weight:800;letter-spacing:.4px;background:var(--yellow);color:var(--navy);border:2px solid var(--navy);padding:16px 24px;border-radius:8px;cursor:pointer;box-shadow:0 4px 0 var(--navy);transition:transform .1s,box-shadow .1s}
+.loadmore::after{content:"↓";font-size:22px}
+.loadmore:hover{filter:brightness(1.04)}
+.loadmore:active{transform:translateY(3px);box-shadow:0 1px 0 var(--navy)}
+.empty{text-align:center;color:var(--muted);padding:50px 10px}
+.empty b{display:block;font-size:17px;color:var(--fg);margin-bottom:6px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.ov[hidden],[hidden]{display:none!important}
+.ov{position:fixed;inset:0;background:rgba(10,12,35,.55);z-index:20;display:flex;justify-content:flex-end}
+.sheet{background:var(--card);color:var(--fg);width:min(620px,100%);height:100%;overflow:auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.sheet .hd{background:var(--yellow);color:var(--navy);padding:16px 18px;display:flex;gap:14px;align-items:center;position:sticky;top:0}
+.sheet .hd .ph{width:76px;height:76px;flex:0 0 auto}
+.sheet .hd .code{font-size:32px;background:var(--card);color:var(--fg)}
+.sheet .hd .t{font-size:13px;margin-top:6px;font-weight:600}
+.sheet .x{margin-left:auto;align-self:flex-start;font:inherit;font-size:26px;line-height:1;background:none;border:0;color:var(--on-yellow);cursor:pointer;padding:4px 8px}
+.sec{padding:14px 18px;border-bottom:1px solid var(--line)}
+.sec h3{font-family:var(--f-code);font-size:19px;margin:0 0 8px;letter-spacing:.3px}
+.row{display:grid;grid-template-columns:120px 1fr;gap:4px 12px;padding:4px 0;font-size:13px}
+.row .k{font-weight:700;font-size:12px}
+.row .v{min-width:0;overflow-wrap:anywhere}
+.row .v.mono{font-family:var(--f-mono);font-size:12.5px}
+.sec h3 small{font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--muted);margin-left:6px;white-space:nowrap}
+.sec h3{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 0}
+.brand{padding:6px 0 10px}
+.brand + .brand{border-top:1px dashed var(--line)}
+.bh{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.bh b{font-family:var(--f-code);font-size:17px;letter-spacing:.6px}
+.bh span{font-size:11px;font-weight:700;color:var(--muted);background:var(--soft);border-radius:999px;padding:1px 8px;font-variant-numeric:tabular-nums}
+.ml{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:4px 14px}
+.m{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;padding:4px 0;border-bottom:1px solid var(--soft);min-width:0}
+.mn{font-weight:600;font-size:13.5px}
+.mx{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);overflow-wrap:anywhere}
+.my{margin-left:auto;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;background:var(--chip);color:var(--fg);padding:1px 7px;border-radius:3px;white-space:nowrap}
+.full summary{cursor:pointer;list-style:none}
+.full summary::-webkit-details-marker{display:none}
+.full summary h3{display:inline-flex;align-items:baseline;gap:4px;margin-bottom:2px}
+.full summary h3::before{content:"▸";font-size:15px;margin-right:6px;transition:transform .15s}
+.full[open] summary h3::before{transform:rotate(90deg)}
+.row .k small{font-weight:500;color:var(--muted)}
+.info{font:italic 700 12px/1 Georgia,serif;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--muted);background:none;color:var(--muted);cursor:help;margin-left:6px;padding:0;display:inline-grid;place-items:center;vertical-align:middle}
+.info[aria-expanded="true"]{background:var(--navy);border-color:var(--navy);color:var(--yellow)}
+.eqhelp{margin:4px 0 10px;font-size:12.5px;line-height:1.5;background:var(--soft);border-left:3px solid var(--yellow);padding:8px 10px;border-radius:4px}
+.also{font-family:var(--f-body);font-size:12px;color:var(--muted);margin-top:2px}
+.copy{font:inherit;font-size:13px;font-weight:700;background:var(--navy);color:var(--yellow);border:0;border-radius:5px;padding:7px 12px;cursor:pointer;margin-top:8px}
+.note{color:var(--muted);font-size:12px;padding:14px 18px}
+@media (max-width:520px){.row{grid-template-columns:1fr}.counts strong{font-size:28px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:transform .12s ease}.card:hover{transform:translateY(-1px)}}
+
+/* Instalar como app (solo en el sitio propio, no dentro de claude.ai) */
+.instbar{display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;padding:9px max(16px,env(safe-area-inset-left,0px));font-size:13.5px;line-height:1.3}
+.instbar[hidden]{display:none}
+.instbar .ic{flex:none;width:34px;height:34px;border-radius:8px;background:#fff url(icons/icon-192.png) center/cover}
+.instbar .tx{flex:1;min-width:0}.instbar .tx b{display:block;font-size:14px}
+.instbar .go{flex:none;font:inherit;font-weight:800;background:var(--yellow);color:var(--navy);border:0;border-radius:6px;padding:9px 14px;cursor:pointer}
+.instbar .no{flex:none;font-size:22px;line-height:1;background:none;border:0;color:#fff;opacity:.75;cursor:pointer;padding:4px 2px}
+.qminst{margin-top:6px;width:100%;font:inherit;font-weight:700;background:var(--navy);color:#fff;border:0;border-radius:6px;padding:10px;cursor:pointer}
+.qminst[hidden]{display:none}
+.iosov{position:fixed;inset:0;z-index:80;background:rgba(16,19,44,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+.iosov[hidden]{display:none}
+.iosbox{background:var(--card);color:var(--fg);border-radius:14px;max-width:420px;width:100%;padding:18px 18px 16px;box-shadow:var(--shadow)}
+.iosbox h3{margin:0 0 10px;font-size:17px}.iosbox ol{margin:0 0 14px;padding-left:20px;line-height:1.6;font-size:15px}
+.iosbox .shr{display:inline-block;vertical-align:-3px;width:18px;height:18px}
+.iosbox button{width:100%;font:inherit;font-weight:800;background:var(--yellow);color:var(--navy);border:0;border-radius:8px;padding:11px;cursor:pointer}
+</style>
+</head>
+<body>
+
+
+<div class="instbar" id="instbar" hidden><span class="ic" aria-hidden="true"></span><span class="tx"><b>Instale el catálogo en su celular</b>Queda como una app, con el ícono de HK</span><button type="button" class="go" id="instgo">Instalar</button><button type="button" class="no" id="instno" aria-label="Ahora no">×</button></div>
+<header class="band"><div class="wrap">
+  <div class="hero">
+    <div class="logos">
+      <a class="homelink" id="home" href="#" aria-label="Volver al inicio del catálogo" title="Volver al inicio"><img class="hklogo" src="img/hk-logo.png" alt="HK by Universe Filter"></a>
+      <span class="sep" aria-hidden="true"></span>
+      <div class="yhbox"><img class="yhlogo" src="img/yhaguy-logo.png" alt="Yhaguy Autopartes"><span>Importador y distribuidor en Paraguay</span></div>
+    </div>
+    <h1>Encuentre su filtro <em>HK</em> para cada vehículo</h1>
+    <p class="lede">Más de 380 filtros <b>HK</b> para el mercado paraguayo, con su equivalente <b>VIC · SAKURA · MANN</b>, números <b>OEM</b> y aplicaciones por vehículo. Busque por código, número OEM, equivalente o por el modelo de su vehículo.</p>
+  </div>
+  <div class="side">
+    <div class="counts" aria-label="Resumen">
+      <div><strong id="nTotal">384</strong><span>códigos HK</span></div>
+      <div><strong>11</strong><span>marcas</span></div>
+      <div><strong>5</strong><span>familias</span></div>
+    </div>
+  </div>
+</div></header>
+
+<div class="bar"><div class="wrap">
+  <div class="searchrow">
+    <label class="search" for="q">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="Ej.: UJ-1671B, 90915-10001, C-110, W 68/3, Hilux…" aria-label="Buscar filtro">
+      <button id="clear" type="button" aria-label="Borrar búsqueda" hidden>×</button>
+    </label>
+    <button type="button" class="cartbtn" id="cartbtn" aria-label="Ver presupuesto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 1.9-1.4L21 8H6.2"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg><span class="cartlbl">Presupuesto</span><span class="cartn" id="cartn">0</span></button>
+    <select id="marca" aria-label="Marca">
+      <option value="">Todas las marcas</option>
+    </select>
+  </div>
+  <div class="frow"><span class="flbl">Marca</span><div class="chips" id="cats" role="group" aria-label="Marca"></div></div>
+  <div class="frow"><span class="flbl">Familia</span><div class="chips" id="fams" role="group" aria-label="Familia"></div></div>
+  <div class="activebar" id="activebar" aria-live="polite"></div>
+</div></div>
+
+<main><div class="wrap">
+  <div class="chips" style="margin-bottom:12px"><span class="status" id="status" aria-live="polite"></span></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden><b>No encontramos ese código</b>Revisá que el número esté completo o probá con otra OEM o equivalente. Podés escribirlo con o sin guiones y espacios.</div>
+  <button class="loadmore" id="more" type="button" hidden>Mostrar más filtros</button>
+</div></main>
+
+<footer class="yh"><div class="wrap">
+  <div><div class="yhcol"><span class="logo"><img src="img/yhaguy-logo.png" alt="Yhaguy Autopartes"></span>
+    <div class="brands" aria-label="Marcas que representamos">
+      <span class="bcell"><img src="img/giti.png" alt="Giti"></span>
+      <span class="bcell onwhite"><img src="img/gt-radial.svg" alt="GT Radial"></span>
+      <span class="bcell"><img src="img/gt-oil.png" alt="GT Oil"></span>
+      <span class="bcell"><img src="img/mighty.png" alt="Mighty Auto Parts"></span>
+      <span class="bcell"><img src="img/tecfil-white.png" alt="Tecfil Filtros"></span>
+      <a class="bcell homelink2" href="#" title="Volver al inicio" aria-label="Volver al inicio del catálogo"><img src="img/hk-white.png" alt="HK by Universe Filter"></a>
+      <span class="bcell"><img src="img/excell-white.png" alt="Baterías Excell"></span>
+    </div></div></div>
+  <div><h4>Ventas por WhatsApp</h4><p class="num">+595 994 895 000</p>
+    <a class="wa" href="https://wa.me/595994895000?text=Hola%20Yhaguy%2C%20quiero%20consultar%20por%20filtros%20HK." target="_blank" rel="noopener">${WA_ICON}Escríbanos</a></div>
+  <div><h4>Dirección</h4><p>Mcal. Estigarribia c/ Dr. Emilio Cubas</p><p>San Lorenzo, Paraguay</p><a class="maplink" href="https://maps.app.goo.gl/kNoBeHxu2xDRY4E1A" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>Ver en Google Maps</a>
+    <h4 style="margin-top:14px">Horario</h4><p>Lunes a viernes: 07:30 a 17:30</p><p>Sábados: 07:30 a 12:00</p></div>
+  <div><h4>Síganos</h4><div class="social">
+    <a class="soc ig" href="https://www.instagram.com/yhaguyautopartes/" target="_blank" rel="noopener" aria-label="Instagram de Yhaguy Autopartes"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/></svg><span><b>Instagram</b><small>@yhaguyautopartes</small></span></a>
+    <a class="soc fb" href="https://www.facebook.com/yhaguyrepresentaciones" target="_blank" rel="noopener" aria-label="Facebook de Yhaguy Autopartes"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.3h2.5l.4-2.9h-2.9V9c0-.8.3-1.4 1.5-1.4h1.5V5.1c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.1H8.1v2.9h2.5V21h2.9z"/></svg><span><b>Facebook</b><small>Yhaguy Autopartes</small></span></a>
+    <a class="soc mp" href="https://maps.app.goo.gl/kNoBeHxu2xDRY4E1A" target="_blank" rel="noopener" aria-label="Ubicación en Google Maps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg><span><b>Cómo llegar</b><small>Google Maps</small></span></a>
+  </div></div>
+</div></footer>
+
+<button class="qmfab" id="qmfab" type="button" aria-label="Ir a una marca o familia" aria-expanded="false" aria-controls="qm"><span></span><span></span><span></span></button>
+<div class="qmback" id="qmback" hidden></div>
+<nav class="qm" id="qm" aria-label="Accesos rápidos" hidden>
+  <div class="qmhd"><b>Ir a…</b><button type="button" class="qmx" id="qmx" aria-label="Cerrar">×</button></div>
+  <div class="qmsec"><div class="qmlbl">Marca de vehículo</div><div class="qmgrid" id="qmCats"></div></div>
+  <div class="qmsec"><div class="qmlbl">Familia de filtro</div><div class="qmgrid" id="qmFams"></div></div>
+  <button type="button" class="qmall" id="qmAll">Ver todos los filtros</button>
+  <button type="button" class="qminst" id="qmInst" hidden>📲 Instalar en el celular</button>
+</nav>
+
+<a class="wafab" id="wafab" href="https://wa.me/595994895000?text=Hola%20Yhaguy%2C%20quiero%20consultar%20por%20filtros%20HK." target="_blank" rel="noopener" aria-label="Escribir a Yhaguy por WhatsApp"><span class="wafab-ic"></span><span class="wafab-tx">¿Consultas? Escríbanos</span></a>
+
+<div class="ov" id="cartov" hidden><aside class="sheet cart" id="cart" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+  <div class="hd"><div style="min-width:0"><span class="code" id="cartTitle">Presupuesto</span><div class="t" id="cartsum">Sin filtros agregados</div></div><button class="x" type="button" id="cartclose" aria-label="Cerrar">×</button></div>
+  <div class="sec" id="cartlist"></div>
+  <div class="sec cartform" id="cartform">
+    <h3>Datos del solicitante</h3>
+    <label for="cf-nombre">Solicitante <i>*</i></label><input id="cf-nombre" type="text" autocomplete="name" required aria-required="true"><span class="ferr" id="err-nombre" hidden>Ingrese el nombre de quien solicita.</span>
+    <label for="cf-empresa">Razón social / empresa <i>*</i></label><input id="cf-empresa" type="text" autocomplete="organization" required aria-required="true"><span class="ferr" id="err-empresa" hidden>Ingrese la razón social o el nombre de la empresa.</span>
+    <label for="cf-ruc">RUC <i>*</i></label><input id="cf-ruc" type="text" inputmode="numeric" placeholder="Ej.: 80012345-6" required aria-required="true"><span class="ferr" id="err-ruc" hidden>Ingrese un RUC válido, por ejemplo 80012345-6.</span>
+    <label for="cf-ciudad">Ciudad <i>*</i></label><input id="cf-ciudad" type="text" autocomplete="address-level2" required aria-required="true"><span class="ferr" id="err-ciudad" hidden>Ingrese la ciudad.</span>
+    <label for="cf-nota">Comentarios</label><textarea id="cf-nota" rows="2" placeholder="Ej.: es para una Hilux 2015, necesito para el viernes"></textarea>
+    <p class="meta" style="margin:4px 0 0"><i class="req">*</i> Datos obligatorios</p>
+  </div>
+  <div class="sec cartactions">
+    <a class="wa wabig" id="cartsend" href="#" target="_blank" rel="noopener"></a>
+    <button type="button" class="linkbtn" id="cartclear">Vaciar presupuesto</button>
+    <p class="meta">Se abre WhatsApp con la lista armada para enviar a Yhaguy. Los precios y la disponibilidad se los confirma un vendedor.</p>
+  </div>
+</aside></div>
+
+<div class="ov" id="ov" hidden><aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></aside></div>
+
+<div class="iosov" id="iosov" hidden><div class="iosbox" role="dialog" aria-modal="true" aria-labelledby="iosT"><h3 id="iosT">Instalar en iPhone</h3><ol>
+<li>Toque el botón <b>Compartir</b> <svg class="shr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg> abajo en Safari.</li>
+<li>Elija <b>Agregar a pantalla de inicio</b>.</li><li>Toque <b>Agregar</b>. Listo: el ícono de HK queda en su celular.</li></ol>
+<button type="button" id="iosok">Entendido</button></div></div>
+<script src="data.js"></script>
+<script>
+(function(){
+  const D = window.HK_DATA || [], IMG = window.HK_IMG || {};
+  const FAMS = ['Aceite','Combustible','Aire','Cabina','Transmisión'];
+  const CATS = [['TOYOTA','Toyota'],['NISSAN','Nissan'],['KIA - HYUNDAI','Kia · Hyundai'],['MITSUBISHI','Mitsubishi'],['MAZDA','Mazda'],['FIAT','Fiat'],['ISUZU','Isuzu'],['DAIHATSU','Daihatsu'],['SUZUKI','Suzuki'],['HINO','Hino'],['OTRAS MARCAS','Otras marcas']];
+  const PAGE = 48;
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const norm = s => String(s).toUpperCase().replace(/[^0-9A-Z]/g,'');
+  const low = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+
+  // cross references: keep the 5 most relevant filter brands for the market
+  const AFT_PRI = ['Tecfil','FRAM','WIX','Mahle','Bosch','Purolator','ACDelco','Motorcraft','Filtron','Hengst','Donaldson','Fleetguard','Baldwin','Purflux','Japanparts'];
+  const aftRank = b => { const i = AFT_PRI.findIndex(x => x.toLowerCase() === b.toLowerCase()); return i < 0 ? 99 : i; };
+  D.forEach(it => { it.aft = it.aft.filter(a => aftRank(a[0]) < 99).sort((a, b) => aftRank(a[0]) - aftRank(b[0])).slice(0, 5); });
+
+  // search index
+  D.forEach(it => {
+    it.nums = [];
+    it.nums.push(['HK', it.hk]);
+    it.vic.forEach(v => it.nums.push(['VIC', v]));
+    it.sak.forEach(v => it.nums.push(['SAKURA', v]));
+    it.mann.forEach(v => it.nums.push(['MANN', v]));
+    it.eqx.vic.forEach(v => it.nums.push(['VIC', v]));
+    it.eqx.sak.forEach(v => it.nums.push(['SAKURA', v]));
+    it.eqx.mann.forEach(v => it.nums.push(['MANN', v]));
+    it.aft.forEach(([b, ns]) => ns.forEach(n => it.nums.push([b, n])));
+    it.oem.forEach(([b, ns]) => ns.forEach(n => it.nums.push(['OEM ' + b, n])));
+    it.nnums = it.nums.map(([k, v]) => [k, v, norm(v)]);
+    it.text = low(it.apps.map(([b, ms]) => b + ' ' + ms.join(' ')).join(' ') + ' ' + it.tipo + ' ' + it.mont);
+    it.ftext = low((it.full || []).map(([b, ms]) => b + ' ' + ms.join(' ')).join(' '));
+  });
+
+  let state = { q: '', fam: '', cat: '', shown: PAGE };
+  try { const s = JSON.parse(localStorage.getItem('hk-filtros') || '{}'); if (s.fam) state.fam = s.fam; if (s.cat) state.cat = s.cat; } catch (e) {}
+
+  const sel = $('#marca');
+  CATS.forEach(([v, l]) => { const o = document.createElement('option'); o.value = v; o.textContent = l + ' (' + D.filter(d => d.cat.includes(v)).length + ')'; sel.appendChild(o); });
+  sel.value = state.cat;
+
+  const famBox = $('#fams');
+  function drawFams(){
+    const inCat = state.cat ? D.filter(d => d.cat.includes(state.cat)) : D;
+    const inFam = state.fam ? D.filter(d => d.fam === state.fam) : D;
+    famBox.innerHTML = [['', 'Todas', inCat.length]].concat(FAMS.map(f => [f, f, inCat.filter(d => d.fam === f).length]))
+      .map(([v, l, n]) => `<button type="button" class="chip" data-f="${v}" aria-pressed="${state.fam === v}"${n ? '' : ' disabled'}>${l}<small>${n}</small></button>`).join('');
+    $('#cats').innerHTML = [['', 'Todas', inFam.length]].concat(CATS.map(([v, l]) => [v, l, inFam.filter(d => d.cat.includes(v)).length]))
+      .map(([v, l, n]) => `<button type="button" class="chip" data-c="${v}" aria-pressed="${state.cat === v}"${n ? '' : ' disabled'}>${l}<small>${n}</small></button>`).join('');
+  }
+  drawFams();
+
+  function match(it, q){
+    if (!q) return { score: 1 };
+    const nq = norm(q), lq = low(q).trim();
+    if (nq.length >= 2) {
+      for (const [k, v, n] of it.nnums) {
+        if (n === nq) return { score: k === 'HK' ? 100 : 90, how: k + ' ' + v };
+      }
+      if (nq.length >= 3) for (const [k, v, n] of it.nnums) {
+        if (n.startsWith(nq)) return { score: k === 'HK' ? 70 : 60, how: k + ' ' + v };
+      }
+      if (nq.length >= 4) for (const [k, v, n] of it.nnums) {
+        if (n.includes(nq)) return { score: 40, how: k + ' ' + v };
+      }
+    }
+    if (lq.length >= 2) {
+      const words = lq.split(/\s+/).filter(Boolean);
+      if (words.every(w => it.text.includes(w))) return { score: 20, how: 'aplicación' };
+      if (words.every(w => it.ftext.includes(w))) return { score: 10, how: 'aplicación (lista completa)' };
+    }
+    return null;
+  }
+
+  const WA_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8.9-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.5.5 0 0 0 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>';
+  function waLink(it){
+    const eq = [['VIC', it.vic], ['SAKURA', it.sak], ['MANN', it.mann]].filter(x => x[1].length).map(([k, v]) => k + ' ' + v.join('/')).join(', ');
+    const msg = `Hola Yhaguy, quiero consultar por el filtro HK ${it.hk}${eq ? ' (' + eq + ')' : ''}.`;
+    return `<a class="wa" href="https://wa.me/595994895000?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${WA_ICON}Pedir por WhatsApp</a>`;
+  }
+  document.querySelector('footer.yh').innerHTML = document.querySelector('footer.yh').innerHTML.replace('${WA_ICON}', WA_ICON);
+  document.querySelector('#wafab .wafab-ic').innerHTML = WA_ICON;
+  const cartCtl = hk => (window.__cartCtl ? window.__cartCtl(hk) : '');
+  function oemShort(it){
+    const pri = it.pri.length ? it.pri : [];
+    const out = pri.slice();
+    for (const [b, ns] of it.oem) { if (b === 'Otras marcas') continue; for (const n of ns) { if (out.length >= 4) break; if (!out.includes(n)) out.push(n); } }
+    return out.slice(0, 4);
+  }
+  function photo(it, cls){
+    return IMG[it.hk] ? `<div class="ph ${cls||''}"><img src="${IMG[it.hk]}" alt="Filtro ${esc(it.hk)}" loading="lazy"></div>`
+                      : `<div class="ph none ${cls||''}">HK<small>Sin foto</small></div>`;
+  }
+  function eqCell(k, arr){ return `<div class="eq"><span>${k}</span><b class="${arr.length ? '' : 'na'}">${arr.length ? arr.map(esc).join(' / ') : '—'}</b></div>`; }
+  function card(it, how){
+    const pri = new Set(it.pri);
+    const apps = it.apps.slice(0, 3).map(([b, ms]) => `<div><b>${esc(b)}:</b> ${esc(ms.slice(0, 3).join(', '))}${ms.length > 3 ? '…' : ''}</div>`).join('');
+    const extra = it.apps.length > 3 ? `<div style="color:var(--muted)">+ ${it.apps.slice(3).map(a => a[0]).slice(0,6).join(', ')}</div>` : '';
+    return `<article class="card">
+      <div class="top">${photo(it)}<div style="min-width:0"><span class="code">${esc(it.hk)}</span>
+        <div class="meta">${esc(it.tipo)} · ${esc(it.mont)}</div>${how ? `<span class="match">Coincide con ${esc(how)}</span>` : ''}</div></div>
+      <div class="eqs">${eqCell('VIC', it.vic)}${eqCell('SAKURA', it.sak)}${eqCell('MANN', it.mann)}</div>
+      <div class="body">
+        <div><div class="lbl">OEM principales</div><div class="oems">${oemShort(it).map(n => `<span class="${pri.has(n) ? 'p' : ''}">${esc(n)}</span>`).join('') || '<span style="color:var(--muted)">Sin OEM cargada</span>'}</div></div>
+        <div><div class="lbl">Aplicaciones</div><div class="apps">${apps || '<span style="color:var(--muted)">Sin aplicación cargada</span>'}${extra}</div></div>
+        <div class="actions"><button type="button" class="more" data-hk="${esc(it.hk)}">Ver ficha completa</button><span class="cartslot" data-hk="${esc(it.hk)}">${cartCtl(it.hk)}</span></div>
+      </div></article>`;
+  }
+
+  let results = [];
+  function run(){
+    const q = state.q.trim();
+    results = [];
+    for (const it of D) {
+      if (state.fam && it.fam !== state.fam) continue;
+      if (state.cat && !it.cat.includes(state.cat)) continue;
+      const m = match(it, q);
+      if (m) results.push([it, m]);
+    }
+    if (q) results.sort((a, b) => b[1].score - a[1].score);
+    draw();
+  }
+  function draw(){
+    const shown = results.slice(0, state.shown);
+    $('#grid').innerHTML = shown.map(([it, m]) => card(it, state.q.trim() && m.how && m.score < 100 ? m.how : '')).join('');
+    $('#empty').hidden = results.length > 0;
+    $('#more').hidden = results.length <= state.shown;
+    $('#more').textContent = `Mostrar más filtros (${results.length - state.shown} restantes)`;
+    const parts = [];
+    if (state.fam) parts.push(state.fam);
+    if (state.cat) parts.push(CATS.find(c => c[0] === state.cat)[1]);
+    $('#status').innerHTML = `${results.length} ${results.length === 1 ? 'filtro' : 'filtros'}${parts.length ? ' · ' + parts.join(' · ') : ''}${(state.cat || state.fam || state.q) ? ' <button type="button" class="clearall" id="clearall">Limpiar filtros</button>' : ''}`;
+    $('#clear').hidden = !state.q;
+    drawActive();
+  }
+  function drawActive(){
+    const tags = [];
+    if (state.cat) tags.push(`<button type="button" class="atag" data-x="cat" aria-label="Quitar marca">${CATS.find(c => c[0] === state.cat)[1]} <span aria-hidden="true">✕</span></button>`);
+    if (state.fam) tags.push(`<button type="button" class="atag" data-x="fam" aria-label="Quitar familia">${state.fam} <span aria-hidden="true">✕</span></button>`);
+    $('#activebar').innerHTML = `<button type="button" class="afilter" id="afilter"><span class="ham" aria-hidden="true"><i></i><i></i><i></i></span>${tags.length ? 'Cambiar' : 'Filtrar por marca o familia'}</button>${tags.join('')}`;
+  }
+  function save(){ try { localStorage.setItem('hk-filtros', JSON.stringify({ fam: state.fam, cat: state.cat })); } catch (e) {} }
+
+  let t;
+  $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; state.shown = PAGE; run(); }, 120); });
+  $('#clear').addEventListener('click', () => { $('#q').value = ''; state.q = ''; state.shown = PAGE; run(); $('#q').focus(); });
+  sel.addEventListener('change', () => { state.cat = sel.value; state.shown = PAGE; save(); run(); });
+  $('#status').addEventListener('click', e => { if (!e.target.closest('#clearall')) return; state.cat = ''; state.fam = ''; state.q = ''; $('#q').value = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run(); });
+  $('#cats').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; state.cat = state.cat === b.dataset.c ? '' : b.dataset.c; sel.value = state.cat; state.shown = PAGE; save(); drawFams(); run(); });
+  famBox.addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; state.fam = b.dataset.f; state.shown = PAGE; save(); drawFams(); run(); });
+  $('#more').addEventListener('click', () => { state.shown += PAGE; draw(); });
+
+  // full sheet
+  const ov = $('#ov'), sheet = $('#sheet'); let lastFocus = null;
+  function openSheet(hk){
+    const it = D.find(d => d.hk === hk); if (!it) return;
+    lastFocus = document.activeElement;
+    const eqRow = (k, a, x) => `<div class="row"><div class="k">${k}</div><div class="v mono">${a.length ? '<b>' + a.map(esc).join(' / ') + '</b>' : '<span style="color:var(--none)">—</span>'}${x.length ? `<div class="also">Alternativa: ${x.map(esc).join(', ')}</div>` : ''}</div></div>`;
+    const aft = it.aft.length ? `<div class="sec"><h3>Otras referencias cruzadas <small>${it.aft.reduce((n, a) => n + a[1].length, 0)}</small></h3>${it.aft.map(([b, ns]) => `<div class="row"><div class="k">${esc(b)}</div><div class="v mono">${ns.map(esc).join(', ')}</div></div>`).join('')}</div>` : '';
+    const nOem = it.oem.reduce((n, a) => n + a[1].length, 0);
+    const nApp = it.apps.reduce((n, a) => n + a[1].length, 0);
+    const full = it.full || [], nFull = full.reduce((n, a) => n + a[1].length, 0);
+    const fullSec = nFull ? `<details class="sec full"${state.q && low(state.q).trim().length > 1 && !it.text.includes(low(state.q).trim()) && it.ftext.includes(low(state.q).trim()) ? ' open' : ''}><summary><h3>Todas las aplicaciones <small>${nFull} modelos · ${full.length} marcas</small></h3></summary>
+        ${full.map(([b, ms]) => brandBlock(b, ms)).join('')}</details>` : '';
+    const pri = new Set(it.pri);
+    sheet.innerHTML = `<div class="hd">${photo(it)}<div style="min-width:0"><span class="code" id="sheetTitle">${esc(it.hk)}</span><div class="t">${esc(it.tipo)} · ${esc(it.mont)}</div></div>
+        <button class="x" type="button" id="close" aria-label="Cerrar">×</button></div>
+      <div class="sec"><h3>Equivalencias <span class="info" tabindex="0" role="img" aria-label="Negrita: equivalencia principal, verificada en el catálogo oficial. Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante." title="Negrita: equivalencia principal, verificada en el catálogo oficial.&#10;Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante.">i</span></h3>${eqRow('VIC', it.vic, it.eqx.vic)}${eqRow('SAKURA', it.sak, it.eqx.sak)}${eqRow('MANN', it.mann, it.eqx.mann)}
+
+        <span class="cartslot" data-hk="${esc(it.hk)}">${cartCtl(it.hk)}</span> ${waLink(it)} <button class="copy" type="button" id="copy">Copiar código y equivalencias</button> <span id="copied" class="meta" aria-live="polite"></span></div>${aft}
+      <div class="sec"><h3>Números OEM <small>${nOem}</small></h3>${it.oem.map(([b, ns]) => `<div class="row"><div class="k">${esc(b)}</div><div class="v mono">${ns.map(n => pri.has(n) ? `<b>${esc(n)}</b>` : esc(n)).join(', ')}</div></div>`).join('') || '<p class="meta">Sin OEM cargada.</p>'}
+        ${it.pri.length ? '<p class="meta">En negrita: OEM principales.</p>' : ''}</div>
+      <div class="sec"><h3>Aplicaciones principales <small>${nApp} modelos · ${it.apps.length} marcas</small></h3>${it.apps.map(([b, ms]) => brandBlock(b, ms)).join('') || '<p class="meta">Sin aplicación cargada.</p>'}</div>
+      ${fullSec}
+      <p class="note">Aparece en los catálogos: ${it.cat.length ? it.cat.map(c => (CATS.find(x => x[0] === c) || [c, c])[1]).join(', ') : 'ninguno por marca'}. Equivalencias VIC, Sakura y MANN verificadas en sus catálogos oficiales (noviembre 2026). Otras marcas de filtros y OEM adicionales según los catálogos Unifil y JS Filters.</p>`;
+    ov.hidden = false; document.body.style.overflow = 'hidden';
+    $('#close').focus();
+    $('#close').addEventListener('click', closeSheet);
+    $('#copy').addEventListener('click', () => {
+      const txt = `HK: ${it.hk}\nVIC: ${it.vic.join(' / ') || '—'}\nSAKURA: ${it.sak.join(' / ') || '—'}\nMANN: ${it.mann.join(' / ') || '—'}`;
+      const done = ok => { $('#copied').textContent = ok ? 'Copiado' : 'Seleccioná el texto y copialo'; };
+      try { navigator.clipboard.writeText(txt).then(() => done(true), () => done(false)); } catch (e) { done(false); }
+    });
+  }
+  function modelHTML(m){
+    let name = m.trim(), yrs = '', spec = [];
+    const y = name.match(/\(?((?:19|20)\d{2})\s*[–-]\s*((?:19|20)\d{2})?\)?\s*$/);
+    if (y) { yrs = y[1] + '–' + (y[2] || ''); name = name.slice(0, y.index).trim(); }
+    name = name.replace(/\(([^()]*)\)/g, (_, g) => { g = g.split(',').map(x => x.trim().replace(/^_+|_+$/g, '')).filter(Boolean).join(', '); if (g) spec.push(g); return ''; });
+    name = name.replace(/\s+(\d\.\d(?:\/\d\.\d)*)\b/g, (_, g) => { spec.unshift(g + ' L'); return ''; }).replace(/\s+/g, ' ').trim();
+    return `<li class="m"><span class="mn">${esc(name || m)}</span>${spec.length ? `<span class="mx">${esc(spec.join(' · '))}</span>` : ''}${yrs ? `<span class="my">${esc(yrs)}</span>` : ''}</li>`;
+  }
+  function brandBlock(b, ms){
+    return `<div class="brand"><div class="bh"><b>${esc(b)}</b><span>${ms.length}</span></div><ul class="ml">${ms.map(modelHTML).join('')}</ul></div>`;
+  }
+  function closeSheet(){ ov.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+  $('#grid').addEventListener('click', e => { const b = e.target.closest('.more'); if (b) openSheet(b.dataset.hk); });
+  ov.addEventListener('click', e => { if (e.target === ov) closeSheet(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !ov.hidden) closeSheet(); });
+
+  // quick menu (left floating button)
+  const qm = $('#qm'), qmb = $('#qmback'), qf = $('#qmfab');
+  function drawQM(){
+    $('#qmCats').innerHTML = CATS.map(([v, l]) => `<button type="button" data-c="${v}" aria-pressed="${state.cat === v}">${l}<small>${D.filter(d => d.cat.includes(v)).length}</small></button>`).join('');
+    $('#qmFams').innerHTML = FAMS.map(f => `<button type="button" data-f="${f}" aria-pressed="${state.fam === f}">${f}<small>${D.filter(d => d.fam === f).length}</small></button>`).join('');
+  }
+  function toggleQM(open){ drawQM(); qm.hidden = !open; qmb.hidden = !open; qf.setAttribute('aria-expanded', open); if (open) qm.querySelector('button').focus(); }
+  function applyQM(){ state.shown = PAGE; sel.value = state.cat; save(); drawFams(); run(); toggleQM(false); document.querySelector('main').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  qf.addEventListener('click', () => toggleQM(qm.hidden));
+  $('#activebar').addEventListener('click', e => {
+    if (e.target.closest('#afilter')) { toggleQM(true); return; }
+    const t = e.target.closest('.atag'); if (!t) return;
+    state[t.dataset.x] = ''; state.shown = PAGE; sel.value = state.cat; save(); drawFams(); run();
+  });
+  qmb.addEventListener('click', () => toggleQM(false));
+  $('#qmx').addEventListener('click', () => toggleQM(false));
+  $('#qmCats').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.cat = state.cat === b.dataset.c ? '' : b.dataset.c; applyQM(); });
+  $('#qmFams').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.fam = state.fam === b.dataset.f ? '' : b.dataset.f; applyQM(); });
+  $('#qmAll').addEventListener('click', () => { state.cat = ''; state.fam = ''; state.q = ''; $('#q').value = ''; applyQM(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !qm.hidden) { toggleQM(false); qf.focus(); } });
+
+  // ---- presupuesto (carrito) ----
+  let cart = [];
+  try { cart = JSON.parse(localStorage.getItem('hk-presupuesto') || '[]').filter(x => D.some(d => d.hk === x.hk)); } catch (e) { cart = []; }
+  const byHk = hk => D.find(d => d.hk === hk);
+  function cartSave(){ try { localStorage.setItem('hk-presupuesto', JSON.stringify(cart)); } catch (e) {} }
+  function qtyOf(hk){ const c = cart.find(x => x.hk === hk); return c ? c.q : 0; }
+  window.__cartCtl = function(hk){
+    const q = qtyOf(hk);
+    return q ? `<span class="qty" role="group" aria-label="Cantidad de ${esc(hk)}"><button type="button" data-cart="dec" data-hk="${esc(hk)}" aria-label="Restar">−</button><input class="qin" type="number" inputmode="numeric" min="0" max="9999" step="1" value="${q}" data-hk="${esc(hk)}" aria-label="Cantidad de ${esc(hk)}"><button type="button" data-cart="inc" data-hk="${esc(hk)}" aria-label="Sumar">+</button></span>`
+             : `<button type="button" class="addcart" data-cart="add" data-hk="${esc(hk)}"><span aria-hidden="true">+</span> Agregar al presupuesto</button>`;
+  };
+  function setQty(hk, q){
+    const i = cart.findIndex(x => x.hk === hk);
+    if (q <= 0) { if (i >= 0) cart.splice(i, 1); }
+    else if (i >= 0) cart[i].q = Math.min(q, 9999); else cart.push({ hk, q: Math.min(q, 9999) });
+    cartSave(); refreshCart();
+  }
+  function refreshCart(){
+    document.querySelectorAll('.cartslot').forEach(el => { el.innerHTML = __cartCtl(el.dataset.hk); });
+    const n = cart.length, u = cart.reduce((a, x) => a + x.q, 0);
+    $('#cartn').textContent = n; $('#cartbtn').classList.toggle('has', n > 0);
+    $('#cartsum').textContent = n ? `${n} ${n === 1 ? 'código' : 'códigos'} · ${u} ${u === 1 ? 'unidad' : 'unidades'}` : 'Sin filtros agregados';
+    $('#cartlist').innerHTML = n ? cart.map(({ hk, q }) => { const it = byHk(hk); const eq = [['VIC', it.vic], ['SAKURA', it.sak], ['MANN', it.mann]].filter(x => x[1].length).map(([k, v]) => k + ' ' + v.join('/')).join(' · ');
+        return `<div class="citem">${photo(it)}<div class="cinfo"><span class="code sm">${esc(hk)}</span><div class="meta">${esc(it.tipo)}</div>${eq ? `<div class="ceq">${esc(eq)}</div>` : ''}</div><div class="cqty"><span class="qty"><button type="button" data-cart="dec" data-hk="${esc(hk)}" aria-label="Restar">−</button><input class="qin" type="number" inputmode="numeric" min="0" max="9999" step="1" value="${q}" data-hk="${esc(hk)}" aria-label="Cantidad de ${esc(hk)}"><button type="button" data-cart="inc" data-hk="${esc(hk)}" aria-label="Sumar">+</button></span><button type="button" class="linkbtn" data-cart="del" data-hk="${esc(hk)}">Quitar</button></div></div>`; }).join('')
+      : '<p class="meta" style="margin:0">Todavía no agregó filtros. Use el botón <b>+ Agregar al presupuesto</b> en cada filtro.</p>';
+    $('#cartform').hidden = !n; $('#cartclear').hidden = !n;
+    updateSend();
+  }
+  const fields = ['nombre', 'empresa', 'ruc', 'ciudad', 'nota'];
+  const REQ = ['nombre', 'empresa', 'ruc', 'ciudad'];
+  const rucOk = v => /^\d{3,9}(-\d)?$/.test(v.replace(/[\s.]/g, ''));
+  function validate(show){
+    let first = null;
+    REQ.forEach(k => { const el = $('#cf-' + k), v = el.value.trim(); const ok = k === 'ruc' ? rucOk(v) : v.length > 1;
+      if (show) { $('#err-' + k).hidden = ok; el.classList.toggle('bad', !ok); el.setAttribute('aria-invalid', String(!ok)); }
+      if (!ok && !first) first = el; });
+    return first;
+  }
+  try { const f = JSON.parse(localStorage.getItem('hk-presupuesto-datos') || '{}'); fields.forEach(k => { if (f[k]) $('#cf-' + k).value = f[k]; }); } catch (e) {}
+  function updateSend(){
+    const a = $('#cartsend'); const n = cart.length;
+    const lines = cart.map(({ hk, q }, i) => { const it = byHk(hk); const eq = [['VIC', it.vic], ['SAKURA', it.sak], ['MANN', it.mann]].filter(x => x[1].length).map(([k, v]) => k + ' ' + v[0]).join(' / ');
+      return `${i + 1}. ${hk} x ${q} ${q === 1 ? 'unidad' : 'unidades'}`; });
+    const f = {}; fields.forEach(k => f[k] = $('#cf-' + k).value.trim());
+    try { localStorage.setItem('hk-presupuesto-datos', JSON.stringify(f)); } catch (e) {}
+    const u = cart.reduce((s, x) => s + x.q, 0);
+    const msg = ['Hola Yhaguy, quisiera un presupuesto de filtros HK:', '', ...lines, '', `Total: ${u} ${u === 1 ? 'unidad' : 'unidades'} en ${n} ${n === 1 ? 'código' : 'códigos'}.`,
+      ...[f.nombre && `Solicitante: ${f.nombre}`, f.empresa && `Razón social: ${f.empresa}`, f.ruc && `RUC: ${f.ruc}`, f.ciudad && `Ciudad: ${f.ciudad}`, f.nota && `Comentarios: ${f.nota}`].filter(Boolean)].join('\n');
+    a.href = `https://wa.me/595994895000?text=${encodeURIComponent(msg)}`;
+    a.innerHTML = WA_ICON + (n ? `Enviar presupuesto por WhatsApp (${n})` : 'Agregue filtros para enviar');
+    a.classList.toggle('off', !n); a.setAttribute('aria-disabled', String(!n));
+  }
+  fields.forEach(k => $('#cf-' + k).addEventListener('input', updateSend));
+  document.addEventListener('focusin', e => { if (e.target.classList && e.target.classList.contains('qin')) e.target.select(); });
+  document.addEventListener('change', e => {
+    const inp = e.target.closest && e.target.closest('.qin'); if (!inp) return;
+    const v = parseInt(String(inp.value).replace(/\D/g, ''), 10);
+    setQty(inp.dataset.hk, isNaN(v) ? 0 : v);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('qin')) e.target.blur(); });
+  $('#cartsend').addEventListener('click', e => {
+    if (!cart.length) { e.preventDefault(); return; }
+    const bad = validate(true);
+    if (bad) { e.preventDefault(); bad.focus(); bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+  });
+  REQ.forEach(k => $('#cf-' + k).addEventListener('input', () => { if ($('#cf-' + k).classList.contains('bad')) validate(true); }));
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-cart]'); if (!b) return;
+    const hk = b.dataset.hk, q = qtyOf(hk), act = b.dataset.cart;
+    if (act === 'add') setQty(hk, 1); else if (act === 'inc') setQty(hk, q + 1); else if (act === 'dec') setQty(hk, q - 1); else if (act === 'del') setQty(hk, 0);
+    if (act === 'add') { const c = $('#cartbtn'); c.classList.remove('pulse'); void c.offsetWidth; c.classList.add('pulse'); }
+  });
+  const cov = $('#cartov'); let cartFocus = null;
+  function openCart(){ cartFocus = document.activeElement; refreshCart(); cov.hidden = false; document.body.style.overflow = 'hidden'; $('#cartclose').focus(); }
+  function closeCart(){ cov.hidden = true; document.body.style.overflow = ''; if (cartFocus) cartFocus.focus(); }
+  $('#cartbtn').addEventListener('click', openCart);
+  $('#cartclose').addEventListener('click', closeCart);
+  cov.addEventListener('click', e => { if (e.target === cov) closeCart(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !cov.hidden) closeCart(); });
+  $('#cartclear').addEventListener('click', () => { cart = []; cartSave(); refreshCart(); });
+  refreshCart();
+
+  document.querySelector('footer.yh').addEventListener('click', e => { if (e.target.closest('.homelink2')) { e.preventDefault(); $('#home').click(); } });
+  $('#home').addEventListener('click', e => {
+    e.preventDefault();
+    if (!ov.hidden) closeSheet();
+    if (!qm.hidden) toggleQM(false);
+    state.q = ''; state.cat = ''; state.fam = ''; state.shown = PAGE;
+    $('#q').value = ''; sel.value = ''; save(); drawFams(); run();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* --- Instalar como app: solo en el sitio propio (https, no embebido) --- */
+  (function(){
+    const own = window.top === window && (location.protocol === 'https:' || location.hostname === 'localhost') && !/claude\.ai|claudeusercontent/.test(location.hostname);
+    if (!own) return;
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+    const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    if (standalone) return;
+    const bar = $('#instbar'), qi = $('#qmInst'), iosov = $('#iosov');
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    let dismissed = false; try { dismissed = localStorage.getItem('hk-inst-no') === '1'; } catch (e) {}
+    let deferred = null;
+    const show = () => { qi.hidden = false; if (!dismissed) bar.hidden = false; };
+    window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; show(); });
+    if (ios) show();
+    const install = async () => {
+      if (deferred) { deferred.prompt(); const r = await deferred.userChoice.catch(() => null); deferred = null; if (r && r.outcome === 'accepted') { bar.hidden = true; qi.hidden = true; } }
+      else if (ios) iosov.hidden = false;
+    };
+    $('#instgo').addEventListener('click', install);
+    qi.addEventListener('click', () => { if (!qm.hidden) toggleQM(false); install(); });
+    $('#instno').addEventListener('click', () => { bar.hidden = true; try { localStorage.setItem('hk-inst-no', '1'); } catch (e) {} });
+    $('#iosok').addEventListener('click', () => { iosov.hidden = true; });
+    iosov.addEventListener('click', e => { if (e.target === iosov) iosov.hidden = true; });
+    window.addEventListener('appinstalled', () => { bar.hidden = true; qi.hidden = true; });
+  })();
+
+  $('#nTotal').textContent = D.length;
+  run();
+})();
+</script>
+
+</body>
+</html>
