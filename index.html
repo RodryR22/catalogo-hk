@@ -531,6 +531,24 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   } catch (e) { const v = (new URLSearchParams(location.search).get('v') || '').toLowerCase(); if (VEND[v]) SELLER = v; }
   const WAN = SELLER ? VEND[SELLER].w : WA_GENERAL;
   const HOLA = SELLER ? 'Hola ' + VEND[SELLER].n.split(' ')[0] : 'Hola Yhaguy';
+  /* --- Estadísticas (Google Analytics G-7R2QTM3R9G). Solo en el sitio publicado; nunca se envían datos del formulario --- */
+  const GA_ID = 'G-7R2QTM3R9G';
+  const GA_ON = window.top === window && location.protocol === 'https:' && !/claude|localhost|127\.0\.0\.1/.test(location.hostname);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ window.dataLayer.push(arguments); }
+  if (GA_ON) {
+    const g = document.createElement('script'); g.async = true; g.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID; document.head.appendChild(g);
+    gtag('js', new Date());
+    gtag('set', 'user_properties', { vendedor: SELLER || 'general', modo: (matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? 'app' : 'navegador' });
+    gtag('config', GA_ID, { page_location: location.origin + location.pathname, allow_google_signals: false, allow_ad_personalization_signals: false });
+  }
+  function track(name, params){ try { if (GA_ON) gtag('event', name, Object.assign({ vendedor: SELLER || 'general' }, params || {})); } catch (e) {} }
+  window.__track = track;
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href*="wa.me"]'); if (!a || a.id === 'cartsend') return;
+    const origen = a.closest('#sheet') ? 'ficha' : a.closest('#empty') ? 'no_encontrado' : a.classList.contains('vask') ? 'vehiculo' : a.id === 'wafab' ? 'boton_flotante' : a.closest('footer') ? 'pie' : 'otro';
+    track('whatsapp', { origen });
+  }, true);
   const fmtTel = w => '0' + w.slice(3).replace(/(\d{3})(\d{3})(\d+)/, '$1 $2 $3');
   if (SELLER) {
     // la app instalada abre con el mismo vendedor
@@ -677,6 +695,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   const isFav = hk => FAV.includes(hk);
   function favBtn(hk){ const on = isFav(hk); return `<button type="button" class="fav" data-fav="${esc(hk)}" aria-pressed="${on}" aria-label="${on ? 'Quitar de favoritos' : 'Agregar a favoritos'}" title="${on ? 'Quitar de favoritos' : 'Agregar a favoritos'}">${STAR}</button>`; }
   function toggleFav(hk){
+    if (!isFav(hk)) track('favorito', { codigo: hk });
     FAV = isFav(hk) ? FAV.filter(h => h !== hk) : [hk, ...FAV]; lsSet('hk-favoritos', FAV);
     document.querySelectorAll(`[data-fav="${CSS.escape(hk)}"]`).forEach(b => { const on = isFav(hk); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', on ? 'Quitar de favoritos' : 'Agregar a favoritos'); b.title = b.getAttribute('aria-label'); });
     if (state.favs) run(); else drawMine();
@@ -772,7 +791,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   function save(){ try { localStorage.setItem('hk-filtros', JSON.stringify({ fam: state.fam, cat: state.cat })); } catch (e) {} }
 
   let t;
-  $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; state.shown = PAGE; run(); }, 120); });
+  let tq = 0;
+  $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; state.shown = PAGE; run(); }, 120);
+    clearTimeout(tq); tq = setTimeout(() => { const q = e.target.value.trim(); if (q.length < 2) return; track('search', { search_term: q.slice(0, 90), resultados: results.length }); if (!results.length) track('busqueda_sin_resultado', { search_term: q.slice(0, 90) }); }, 1500); });
   $('#clear').addEventListener('click', () => { $('#q').value = ''; state.q = ''; state.shown = PAGE; run(); $('#q').focus(); });
   sel.addEventListener('change', () => { state.cat = sel.value; state.shown = PAGE; save(); run(); });
   $('#status').addEventListener('click', e => { if (!e.target.closest('#clearall')) return; state.cat = ''; state.fam = ''; state.q = ''; state.veh = null; state.ver = ''; state.favs = false; $('#q').value = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run(); });
@@ -784,7 +805,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   const ov = $('#ov'), sheet = $('#sheet'); let lastFocus = null;
   function openSheet(hk){
     const it = D.find(d => d.hk === hk); if (!it) return;
-    addSeen(hk);
+    addSeen(hk); track('ver_filtro', { codigo: hk, familia: it.fam });
     lastFocus = document.activeElement;
     const eqRow = (k, a, x) => `<div class="row"><div class="k">${k}</div><div class="v mono">${a.length ? '<b>' + a.map(esc).join(' / ') + '</b>' : '<span style="color:var(--none)">—</span>'}${x.length ? `<div class="also">Alternativa: ${x.map(esc).join(', ')}</div>` : ''}</div></div>`;
     const aft = it.aft.length ? `<div class="sec"><h3>Otras referencias cruzadas <small>${it.aft.reduce((n, a) => n + a[1].length, 0)}</small></h3>${it.aft.map(([b, ns]) => `<div class="row"><div class="k">${esc(b)}</div><div class="v mono">${ns.map(esc).join(', ')}</div></div>`).join('')}</div>` : '';
@@ -919,13 +940,15 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   $('#cartsend').addEventListener('click', e => {
     if (!cart.length) { e.preventDefault(); return; }
     const bad = validate(true);
-    if (bad) { e.preventDefault(); bad.focus(); bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    if (bad) { e.preventDefault(); bad.focus(); bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    track('enviar_presupuesto', { codigos: cart.length, unidades: cart.reduce((a, x) => a + x.q, 0), lista: cart.map(x => x.hk).join(' ').slice(0, 100) });
   });
   REQ.forEach(k => $('#cf-' + k).addEventListener('input', () => { if ($('#cf-' + k).classList.contains('bad')) validate(true); }));
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-cart]'); if (!b) return;
     const hk = b.dataset.hk, q = qtyOf(hk), act = b.dataset.cart;
     if (act === 'add') setQty(hk, 1); else if (act === 'inc') setQty(hk, q + 1); else if (act === 'dec') setQty(hk, q - 1); else if (act === 'del') setQty(hk, 0);
+    if (act === 'add') track('agregar_presupuesto', { codigo: hk });
     if (act === 'add') { const c = $('#cartbtn'); c.classList.remove('pulse'); void c.offsetWidth; c.classList.add('pulse'); }
   });
   const cov = $('#cartov'); let cartFocus = null;
@@ -971,7 +994,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     $('#instno').addEventListener('click', () => { bar.hidden = true; try { localStorage.setItem('hk-inst-no', '1'); } catch (e) {} });
     $('#iosok').addEventListener('click', () => { iosov.hidden = true; });
     iosov.addEventListener('click', e => { if (e.target === iosov) iosov.hidden = true; });
-    window.addEventListener('appinstalled', () => { bar.hidden = true; qi.hidden = true; });
+    window.addEventListener('appinstalled', () => { bar.hidden = true; qi.hidden = true; track('app_instalada'); });
   })();
 
   /* --- Zoom de foto: pantalla completa, pellizcar / doble toque / rueda; carga la foto HD al abrir --- */
@@ -1002,6 +1025,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     function reset(){ sc = 1; tx = 0; ty = 0; apply(); }
     function rel(e){ const s = stage.getBoundingClientRect(); return { x: e.clientX - s.left, y: e.clientY - s.top }; }
     function open(hk){
+      track('zoom_foto', { codigo: hk });
       if (!IMG[hk]) return;
       opener = document.activeElement; base = null; sc = 1; tx = ty = 0;
       img.removeAttribute('style'); img.src = IMG[hk]; img.alt = 'Filtro ' + hk; $('#zcode').textContent = hk;
@@ -1197,10 +1221,10 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   }
   $('#vehpanel').addEventListener('click', e => {
     const v = e.target.closest('[data-ver]');
-    if (v) { state.ver = v.dataset.ver; state.shown = PAGE; run(); return; }
+    if (v) { state.ver = v.dataset.ver; if (state.ver) track('vehiculo_motor', { vehiculo: state.veh.label, motor: state.ver }); state.shown = PAGE; run(); return; }
     if (e.target.closest('#vclr')) { state.veh = null; state.ver = ''; state.favs = false; state.shown = PAGE; run(); return; }
     const kb = e.target.closest('#vkit');
-    if (kb) { if (window.__cartAddMany) window.__cartAddMany(kb.dataset.hks.split(',')); kb.textContent = '✓ Kit agregado al presupuesto'; kb.disabled = true; setTimeout(() => drawVeh(), 2200); return; }
+    if (kb) { track('kit_agregado', { vehiculo: state.veh.label, motor: state.ver, cantidad: kb.dataset.hks.split(',').length }); if (window.__cartAddMany) window.__cartAddMany(kb.dataset.hks.split(',')); kb.textContent = '✓ Kit agregado al presupuesto'; kb.disabled = true; setTimeout(() => drawVeh(), 2200); return; }
   });
 
   const vp = $('#vp'), vpb = $('#vpbody'); let vpOpener = null, vpBrand = '';
@@ -1243,6 +1267,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     const m = e.target.closest('[data-k]'); if (!m) return;
     const ent = VEH.get(vpBrand).get(m.dataset.k);
     state.veh = { b: vpBrand, k: m.dataset.k, label: brandName(vpBrand) + ' ' + ent.label }; state.ver = '';
+    track('vehiculo', { marca: brandName(vpBrand), modelo: ent.label, vehiculo: state.veh.label });
     state.q = ''; $('#q').value = ''; state.cat = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run();
     vpClose(); const p = $('#vehpanel'), bar = document.querySelector('.bar'); if (p) window.scrollTo({ top: p.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 10, behavior: 'smooth' });
   });
