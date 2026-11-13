@@ -314,6 +314,49 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .zv .zspin{position:absolute;top:12px;left:12px;z-index:2;width:24px;height:24px;border-radius:50%;
   border:3px solid #DCDEEA;border-top-color:var(--navy);animation:zspin .8s linear infinite}
 @keyframes zspin{to{transform:rotate(360deg)}}
+
+/* Buscar por vehículo */
+.vehbtn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:14px;font-weight:800;background:var(--navy);color:var(--yellow);border:0;border-radius:6px;padding:0 16px;min-height:48px;cursor:pointer;white-space:nowrap}
+.vehbtn svg,.afilter.veh svg{width:20px;height:20px;flex:none}
+.afilter.veh{background:var(--yellow);color:var(--navy)}
+@media (max-width:640px){.vehbtn{display:none}}
+@media (min-width:641px){.afilter.veh{display:none}}
+.vp{position:fixed;inset:0;z-index:950;background:rgba(16,19,44,.62);display:grid;place-items:center;padding:16px}
+.vpbox{background:var(--card);color:var(--fg);border-radius:14px;width:min(100%,760px);max-height:min(88vh,820px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.vphd{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 16px;border-bottom:1px solid var(--line)}
+.vphd h2{margin:0;font-size:17px;flex:1;min-width:0}
+.vphd .steps{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
+.vpback{font:inherit;font-weight:700;font-size:13px;background:var(--soft);color:var(--fg);border:0;border-radius:999px;padding:8px 12px;cursor:pointer}
+.vpx{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--navy);color:#fff;font-size:26px;line-height:1;cursor:pointer}
+.vpbody{overflow:auto;padding:14px 16px 18px;overscroll-behavior:contain}
+.vpfind{display:flex;align-items:center;gap:8px;border:2px solid var(--navy);border-radius:8px;padding:0 12px;margin-bottom:12px;background:var(--card)}
+.vpfind input{flex:1;font:inherit;font-size:16px;border:0;background:none;color:var(--fg);min-height:44px;outline:none}
+.vpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.vpb{font:inherit;text-align:left;background:var(--card);color:var(--fg);border:1.5px solid var(--line);border-radius:10px;padding:12px 12px;cursor:pointer;font-size:15.5px;font-weight:700;line-height:1.2}
+.vpb small{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-top:3px}
+.vpb:hover,.vpb:focus-visible{border-color:var(--navy);outline:none;background:var(--chip)}
+.vpsec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:4px 0 8px}
+.vpsec+.vpgrid{margin-bottom:16px}
+.vpnone{color:var(--muted);padding:20px 4px;text-align:center}
+.vehpanel{background:var(--card);border:2px solid var(--navy);border-left-width:8px;border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.vehpanel[hidden]{display:none}
+.vehpanel .vt{font-size:13px;color:var(--muted);font-weight:600}
+.vehpanel .vn{font-size:22px;font-weight:800;line-height:1.15;margin:2px 0 8px}
+.vehpanel .vfams{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.vehpanel .vfams span{font-size:12.5px;font-weight:700;background:var(--chip);border-radius:999px;padding:4px 10px}
+.vehpanel .vlbl{font-size:12px;font-weight:700;color:var(--muted);margin:2px 0 6px}
+.vehpanel .vmot{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.vehpanel .vacts{display:flex;flex-wrap:wrap;gap:8px}
+.vkit{font:inherit;font-weight:800;font-size:14px;background:var(--yellow);color:var(--navy);border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
+.vchg{font:inherit;font-weight:700;font-size:14px;background:var(--card);color:var(--fg);border:2px solid var(--navy);border-radius:8px;padding:8px 14px;cursor:pointer}
+.vclr{font:inherit;font-weight:700;font-size:14px;background:none;color:var(--muted);border:0;text-decoration:underline;cursor:pointer;padding:8px 6px}
+.vhelp{margin:0 0 10px;font-size:13.5px;color:var(--fg)}
+.famhd{grid-column:1/-1;margin:10px 0 0;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;border-bottom:3px solid var(--yellow);padding-bottom:6px}
+.famhd small{font-size:12px;font-weight:700;background:var(--navy);color:var(--yellow);border-radius:999px;padding:2px 8px}
+.vfor{background:var(--chip);border-radius:6px;padding:8px 10px;font-size:12.5px;line-height:1.45}
+.vfor .lbl{margin-bottom:3px}
+.vfor div+div{margin-top:2px}
+.fixnote{display:block;font-size:12.5px;color:var(--fg);background:var(--mark);border-radius:4px;padding:4px 8px;margin-top:6px}
 </style>
 </head>
 <body>
@@ -347,6 +390,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       <button id="clear" type="button" aria-label="Borrar búsqueda" hidden>×</button>
     </label>
     <button type="button" class="cartbtn" id="cartbtn" aria-label="Ver presupuesto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 1.9-1.4L21 8H6.2"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg><span class="cartlbl">Presupuesto</span><span class="cartn" id="cartn">0</span></button>
+    <button type="button" class="vehbtn vehopen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v3H3z"/><circle cx="7.5" cy="13" r="1"/><circle cx="16.5" cy="13" r="1"/></svg>Buscar por vehículo</button>
     <select id="marca" aria-label="Marca">
       <option value="">Todas las marcas</option>
     </select>
@@ -357,6 +401,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 </div></div>
 
 <main><div class="wrap">
+  <section class="vehpanel" id="vehpanel" hidden aria-live="polite"></section>
   <div class="chips" style="margin-bottom:12px"><span class="status" id="status" aria-live="polite"></span></div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" hidden><b>No encontramos ese código</b>Revisá que el número esté completo o probá con otra OEM o equivalente. Podés escribirlo con o sin guiones y espacios.</div>
@@ -422,6 +467,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 <li>Toque el botón <b>Compartir</b> <svg class="shr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg> abajo en Safari.</li>
 <li>Elija <b>Agregar a pantalla de inicio</b>.</li><li>Toque <b>Agregar</b>. Listo: el ícono de HK queda en su celular.</li></ol>
 <button type="button" id="iosok">Entendido</button></div></div>
+<div class="vp" id="vp" hidden><div class="vpbox" role="dialog" aria-modal="true" aria-labelledby="vpT">
+<div class="vphd"><button type="button" class="vpback" id="vpback" hidden>‹ Marcas</button><h2 id="vpT"></h2><button type="button" class="vpx" id="vpx" aria-label="Cerrar">×</button></div>
+<div class="vpbody" id="vpbody"></div></div></div>
 <div class="zv" id="zv" hidden><div class="zbox" role="dialog" aria-modal="true" aria-labelledby="zcode">
 <div class="zhd"><div><span class="code sm" id="zcode"></span><span class="zt">Foto ampliada</span></div><button type="button" class="zx" id="zx" aria-label="Cerrar foto">×</button></div>
 <div class="zstage" id="zstage"><img id="zimg" alt=""><div class="zspin" id="zspin" hidden></div><div class="zhint" id="zhint">Toque dos veces o use dos dedos para ampliar</div></div>
@@ -460,7 +508,37 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     it.ftext = low((it.full || []).map(([b, ms]) => b + ' ' + ms.join(' ')).join(' '));
   });
 
-  let state = { q: '', fam: '', cat: '', shown: PAGE };
+  /* --- búsqueda tolerante: palabras de relleno, errores de tipeo, O/0 --- */
+  const STOP = new Set(['filtro','filtros','de','del','para','el','la','los','las','y','con','un','una','en','por','motor','auto','camioneta','vehiculo']);
+  const SYN = { gasolina: 'nafta', naftero: 'nafta', gasoil: 'diesel', gasoleo: 'diesel', aceites: 'aceite', cabine: 'cabina', polen: 'cabina', habitaculo: 'cabina', acondicionado: 'cabina', caja: 'transmision', automatica: 'transmision', combustibles: 'combustible' };
+  const VOC = new Map();
+  D.forEach(it => { it.text += ' ' + low(it.fam); (it.text + ' ' + it.ftext).split(/[^0-9a-z]+/).forEach(w => { if (w.length >= 3) VOC.set(w, (VOC.get(w) || 0) + 1); }); });
+  const VOCW = [...VOC.keys()];
+  function lev(a, b, max){
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i]; let best = i;
+      for (let j = 1; j <= b.length; j++) { cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); if (cur[j] < best) best = cur[j]; }
+      if (best > max) return max + 1; prev = cur;
+    }
+    return prev[b.length];
+  }
+  function fixWord(w){
+    if (SYN[w]) return SYN[w];
+    if (w.length < 4 || /\d/.test(w) || VOCW.some(v => v.includes(w))) return w;
+    const max = w.length >= 7 ? 2 : 1; let best = null, bd = max + 1, bf = 0;
+    for (const v of VOCW) { const d = lev(w, v.slice(0, Math.max(w.length, Math.min(v.length, w.length + 1))), max); if (d < bd || (d === bd && VOC.get(v) > bf)) { bd = d; best = v; bf = VOC.get(v); } }
+    return bd <= max ? best.slice(0, Math.max(w.length, best.length)) : w;
+  }
+  function textQuery(q){
+    const raw = low(q).split(/[^0-9a-z.]+/).filter(Boolean);
+    const words = raw.filter(w => !STOP.has(w));
+    const fixed = words.map(fixWord);
+    return { words: fixed, changed: fixed.some((w, i) => w !== words[i] && !SYN[words[i]]) ? fixed.join(' ') : '' };
+  }
+
+  let state = { q: '', fam: '', cat: '', shown: PAGE, veh: null, mot: '' };
   try { const s = JSON.parse(localStorage.getItem('hk-filtros') || '{}'); if (s.fam) state.fam = s.fam; if (s.cat) state.cat = s.cat; } catch (e) {}
 
   const sel = $('#marca');
@@ -480,10 +558,10 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 
   function match(it, q){
     if (!q) return { score: 1 };
-    const nq = norm(q), lq = low(q).trim();
+    const nq = norm(q), lq = low(q).trim(), nq0 = nq.replace(/O/g, '0');
     if (nq.length >= 2) {
       for (const [k, v, n] of it.nnums) {
-        if (n === nq) return { score: k === 'HK' ? 100 : 90, how: k + ' ' + v };
+        if (n === nq || n.replace(/O/g, '0') === nq0) return { score: k === 'HK' ? 100 : 90, how: k + ' ' + v };
       }
       if (nq.length >= 3) for (const [k, v, n] of it.nnums) {
         if (n.startsWith(nq)) return { score: k === 'HK' ? 70 : 60, how: k + ' ' + v };
@@ -493,9 +571,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       }
     }
     if (lq.length >= 2) {
-      const words = lq.split(/\s+/).filter(Boolean);
-      if (words.every(w => it.text.includes(w))) return { score: 20, how: 'aplicación' };
-      if (words.every(w => it.ftext.includes(w))) return { score: 10, how: 'aplicación (lista completa)' };
+      const words = TQ.words;
+      if (words.length && words.every(w => it.text.includes(w))) return { score: 20, how: 'aplicación' };
+      if (words.length && words.every(w => it.text.includes(w) || it.ftext.includes(w))) return { score: 10, how: 'aplicación (lista completa)' };
     }
     return null;
   }
@@ -531,34 +609,47 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       <div class="eqs">${eqCell('VIC', it.vic)}${eqCell('SAKURA', it.sak)}${eqCell('MANN', it.mann)}</div>
       <div class="body">
         <div><div class="lbl">OEM principales</div><div class="oems">${oemShort(it).map(n => `<span class="${pri.has(n) ? 'p' : ''}">${esc(n)}</span>`).join('') || '<span style="color:var(--muted)">Sin OEM cargada</span>'}</div></div>
-        <div><div class="lbl">Aplicaciones</div><div class="apps">${apps || '<span style="color:var(--muted)">Sin aplicación cargada</span>'}${extra}</div></div>
+        ${state.veh && it.vlines ? `<div class="vfor"><div class="lbl">Para su ${esc(state.veh.label)}</div>${it.vlines.map(l => `<div>${esc(l)}</div>`).join('')}</div>`
+          : `<div><div class="lbl">Aplicaciones</div><div class="apps">${apps || '<span style="color:var(--muted)">Sin aplicación cargada</span>'}${extra}</div></div>`}
         <div class="actions"><button type="button" class="more" data-hk="${esc(it.hk)}">Ver ficha completa</button><span class="cartslot" data-hk="${esc(it.hk)}">${cartCtl(it.hk)}</span></div>
       </div></article>`;
   }
 
-  let results = [];
+  let results = [], TQ = { words: [], changed: '' };
   function run(){
     const q = state.q.trim();
+    TQ = textQuery(q);
     results = [];
+    const vset = state.veh ? vehItems() : null;
     for (const it of D) {
       if (state.fam && it.fam !== state.fam) continue;
-      if (state.cat && !it.cat.includes(state.cat)) continue;
+      if (vset) { if (!vset.has(it.hk)) continue; }
+      else if (state.cat && !it.cat.includes(state.cat)) continue;
       const m = match(it, q);
       if (m) results.push([it, m]);
     }
     if (q) results.sort((a, b) => b[1].score - a[1].score);
+    else if (vset) results.sort((a, b) => FAMS.indexOf(a[0].fam) - FAMS.indexOf(b[0].fam));
+    drawVeh();
     draw();
   }
   function draw(){
     const shown = results.slice(0, state.shown);
-    $('#grid').innerHTML = shown.map(([it, m]) => card(it, state.q.trim() && m.how && m.score < 100 ? m.how : '')).join('');
+    let lastFam = '';
+    $('#grid').innerHTML = shown.map(([it, m]) => {
+      let h = '';
+      if (state.veh && !state.q.trim() && it.fam !== lastFam) { lastFam = it.fam; const n = results.filter(r => r[0].fam === it.fam).length; h = `<h3 class="famhd">Filtros de ${it.fam.toLowerCase()} <small>${n}</small></h3>`; }
+      return h + card(it, state.q.trim() && m.how && m.score < 100 ? m.how : '');
+    }).join('');
+    const fix = TQ.changed && results.length ? `<span class="fixnote">Mostrando resultados para «${esc(TQ.changed)}»</span>` : '';
     $('#empty').hidden = results.length > 0;
     $('#more').hidden = results.length <= state.shown;
     $('#more').textContent = `Mostrar más filtros (${results.length - state.shown} restantes)`;
     const parts = [];
     if (state.fam) parts.push(state.fam);
     if (state.cat) parts.push(CATS.find(c => c[0] === state.cat)[1]);
-    $('#status').innerHTML = `${results.length} ${results.length === 1 ? 'filtro' : 'filtros'}${parts.length ? ' · ' + parts.join(' · ') : ''}${(state.cat || state.fam || state.q) ? ' <button type="button" class="clearall" id="clearall">Limpiar filtros</button>' : ''}`;
+    if (state.veh) parts.unshift(state.veh.label);
+    $('#status').innerHTML = `${results.length} ${results.length === 1 ? 'filtro' : 'filtros'}${parts.length ? ' · ' + parts.map(esc).join(' · ') : ''}${(state.cat || state.fam || state.q || state.veh) ? ' <button type="button" class="clearall" id="clearall">Limpiar filtros</button>' : ''}${fix}`;
     $('#clear').hidden = !state.q;
     drawActive();
   }
@@ -566,7 +657,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     const tags = [];
     if (state.cat) tags.push(`<button type="button" class="atag" data-x="cat" aria-label="Quitar marca">${CATS.find(c => c[0] === state.cat)[1]} <span aria-hidden="true">✕</span></button>`);
     if (state.fam) tags.push(`<button type="button" class="atag" data-x="fam" aria-label="Quitar familia">${state.fam} <span aria-hidden="true">✕</span></button>`);
-    $('#activebar').innerHTML = `<button type="button" class="afilter" id="afilter"><span class="ham" aria-hidden="true"><i></i><i></i><i></i></span>${tags.length ? 'Cambiar' : 'Filtrar por marca o familia'}</button>${tags.join('')}`;
+    $('#activebar').innerHTML = `<button type="button" class="afilter veh vehopen" aria-label="Buscar por vehículo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v3H3z"/><circle cx="7.5" cy="13" r="1"/><circle cx="16.5" cy="13" r="1"/></svg>Por vehículo</button><button type="button" class="afilter" id="afilter"><span class="ham" aria-hidden="true"><i></i><i></i><i></i></span>${tags.length ? 'Cambiar' : 'Marca o familia'}</button>${tags.join('')}`;
   }
   function save(){ try { localStorage.setItem('hk-filtros', JSON.stringify({ fam: state.fam, cat: state.cat })); } catch (e) {} }
 
@@ -574,7 +665,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; state.shown = PAGE; run(); }, 120); });
   $('#clear').addEventListener('click', () => { $('#q').value = ''; state.q = ''; state.shown = PAGE; run(); $('#q').focus(); });
   sel.addEventListener('change', () => { state.cat = sel.value; state.shown = PAGE; save(); run(); });
-  $('#status').addEventListener('click', e => { if (!e.target.closest('#clearall')) return; state.cat = ''; state.fam = ''; state.q = ''; $('#q').value = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run(); });
+  $('#status').addEventListener('click', e => { if (!e.target.closest('#clearall')) return; state.cat = ''; state.fam = ''; state.q = ''; state.veh = null; state.mot = ''; $('#q').value = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run(); });
   $('#cats').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; state.cat = state.cat === b.dataset.c ? '' : b.dataset.c; sel.value = state.cat; state.shown = PAGE; save(); drawFams(); run(); });
   famBox.addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; state.fam = b.dataset.f; state.shown = PAGE; save(); drawFams(); run(); });
   $('#more').addEventListener('click', () => { state.shown += PAGE; draw(); });
@@ -665,6 +756,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     else if (i >= 0) cart[i].q = Math.min(q, 9999); else cart.push({ hk, q: Math.min(q, 9999) });
     cartSave(); refreshCart();
   }
+  window.__cartAddMany = list => { list.forEach(hk => { if (!qtyOf(hk)) { const i = cart.findIndex(x => x.hk === hk); if (i < 0) cart.push({ hk, q: 1 }); } }); cartSave(); refreshCart(); };
   function refreshCart(){
     document.querySelectorAll('.cartslot').forEach(el => { el.innerHTML = __cartCtl(el.dataset.hk); });
     const n = cart.length, u = cart.reduce((a, x) => a + x.q, 0);
@@ -735,7 +827,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     e.preventDefault();
     if (!ov.hidden) closeSheet();
     if (!qm.hidden) toggleQM(false);
-    state.q = ''; state.cat = ''; state.fam = ''; state.shown = PAGE;
+    state.q = ''; state.cat = ''; state.fam = ''; state.veh = null; state.mot = ''; state.shown = PAGE;
     $('#q').value = ''; sel.value = ''; save(); drawFams(); run();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -849,6 +941,112 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     }
     stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
   })();
+
+  /* --- Buscar por vehículo: Marca → Modelo → (Motor) --- */
+  const MULTI = new Set(['land','grand','santa','town','lite','super','great','new','master','pick','model','town-ace','cr','hr','i','sport']);
+  const cap = w => /[a-z]/.test(w) && w === w.toUpperCase() && w.length > 3 ? w[0] + w.slice(1).toLowerCase() : w[0].toUpperCase() + w.slice(1);
+  function modelKeys(line){
+    const head = line.split('(')[0].replace(/\s+\d+\.\d.*$/, '').trim();
+    const out = [];
+    head.split(/\s*\/\s*/).forEach(p => {
+      p = p.replace(/[,;:]+$/, '').trim(); if (!p || !/^[A-Za-z0-9]/.test(p) || /^\d+([.,]\d+)?$/.test(p) || /^\d+\.\d/.test(p)) return;
+      const t = p.split(/\s+/); let k = t[0];
+      if (t[1] && (MULTI.has(t[0].toLowerCase()) || /^\d$/.test(t[1]) || /^\d+$/.test(t[0]) || (t[0].length <= 2 && !/^\d{2}$/.test(t[1])))) k += ' ' + t[1];
+      const kl = low(k).replace(/[\s-]/g, '');
+      if (k.length < 2 || BAD.has(kl) || /^(i{1,3}|iv|v|vi{1,3}|ix|x)$/.test(kl) || /^\d+$/.test(kl)) return; out.push(k);
+    });
+    return out;
+  }
+  const BAD = new Set(['aplicacion','all','diesel','nafta','entre','hybrid','nissan','toyota','hyundai','kia','motor','mark','toyo','pro','todos','todas','modelos','varios','new','nuevo','serie','series','turbo','van','auto']);
+  const vkey = k => low(k).replace(/[\s-]/g, '');
+  const VEH = new Map(); // marca -> Map(modelKeyLower -> {label, items: Map(hk -> Set(lines))})
+  D.forEach(it => {
+    const seen = new Set();
+    it.apps.forEach(([b, ms]) => ms.forEach(line => {
+      b.split(/\s*\/\s*/).forEach(b1 => {
+      const brand = low(b1).toUpperCase().trim(); if (!brand || seen.has(brand + '|' + line)) return; seen.add(brand + '|' + line);
+      modelKeys(line).forEach(k => {
+        if (!VEH.has(brand)) VEH.set(brand, new Map());
+        const mm = VEH.get(brand), kl = vkey(k);
+        if (!mm.has(kl)) mm.set(kl, { label: cap(k), items: new Map(), votes: new Map() });
+        const e = mm.get(kl); e.votes.set(k, (e.votes.get(k) || 0) + 1);
+        if (!e.items.has(it.hk)) e.items.set(it.hk, new Set()); e.items.get(it.hk).add(line);
+      });
+      });
+    }));
+  });
+  VEH.forEach(mm => mm.forEach(e => { const best = [...e.votes].sort((a, b) => b[1] - a[1])[0][0]; e.label = cap(best); }));
+  const TOPB = ['TOYOTA','NISSAN','HYUNDAI','KIA','MITSUBISHI','MAZDA','ISUZU','DAIHATSU','SUZUKI','HINO','CHEVROLET','FORD','VOLKSWAGEN','FIAT','RENAULT'];
+  const brandName = b => b.split(/([\s-])/).map(w => w.length > 1 ? w[0] + w.slice(1).toLowerCase() : w).join('');
+  const ENG = /^(?=.*\d)(?=.*[A-Z])[A-Z0-9][A-Z0-9-]{1,10}$/;
+  function engines(line){
+    const out = new Set(); const m = line.match(/\(([^)]*)\)/g) || [];
+    m.forEach(g => g.slice(1, -1).split(/[\/,;]| y /).forEach(t => { t = t.trim().replace(/\s+[A-Z]\d?$/, ''); if (ENG.test(t) && !/^\d{4}/.test(t) && !/_/.test(t) && !/^[A-Z]\d{2}$/.test(t)) out.add(t.split('-')[0]); }));
+    return [...out];
+  }
+  function vehEntry(){ const v = state.veh; return v && VEH.get(v.b) && VEH.get(v.b).get(v.k); }
+  function vehItems(){
+    const e = vehEntry(); const set = new Set(); if (!e) return set;
+    D.forEach(it => { it.vlines = null; });
+    e.items.forEach((lines, hk) => {
+      const it = D.find(d => d.hk === hk); if (!it) return;
+      let ls = [...lines]; if (state.mot && !['Cabina', 'Transmisión'].includes(it.fam)) ls = ls.filter(l => engines(l).includes(state.mot)); if (!ls.length) return; it.vlines = ls; set.add(hk);
+    });
+    return set;
+  }
+  function drawVeh(){
+    const p = $('#vehpanel'), e = vehEntry();
+    if (!e) { p.hidden = true; p.innerHTML = ''; return; }
+    const cnt = {}; results.forEach(([it]) => { cnt[it.fam] = (cnt[it.fam] || 0) + 1; });
+    p.innerHTML = `<div class="vt">Filtros HK para su vehículo</div><div class="vn">${esc(state.veh.label)}</div>
+      <div class="vfams">${FAMS.filter(f => cnt[f]).map(f => `<span>${f}: ${cnt[f]}</span>`).join('')}</div>
+      <p class="vhelp">En cada filtro figuran las versiones (motor y años) en las que se usa. Elija el que corresponde a su vehículo.</p>
+      <div class="vacts"><button type="button" class="vchg vehopen">Cambiar vehículo</button><button type="button" class="vclr" id="vclr">Quitar vehículo</button></div>`;
+    p.hidden = false;
+  }
+  $('#vehpanel').addEventListener('click', e => {
+    if (e.target.closest('#vclr')) { state.veh = null; state.mot = ''; state.shown = PAGE; run(); return; }
+  });
+
+  const vp = $('#vp'), vpb = $('#vpbody'); let vpOpener = null, vpBrand = '';
+  function vpBrands(){
+    vpBrand = ''; $('#vpback').hidden = true;
+    $('#vpT').innerHTML = 'Buscar por vehículo<span class="steps">Paso 1 de 2 · Elija la marca</span>';
+    const all = [...VEH.keys()].map(b => [b, VEH.get(b).size]).filter(x => x[1] > 0);
+    const top = TOPB.filter(b => VEH.has(b)).map(b => [b, VEH.get(b).size]);
+    const rest = all.filter(x => !TOPB.includes(x[0])).sort((a, b) => a[0].localeCompare(b[0]));
+    const btn = ([b, n]) => `<button type="button" class="vpb" data-b="${esc(b)}">${esc(brandName(b))}<small>${n} ${n === 1 ? 'modelo' : 'modelos'}</small></button>`;
+    vpb.innerHTML = `<div class="vpsec">Marcas principales</div><div class="vpgrid">${top.map(btn).join('')}</div>${rest.length ? `<div class="vpsec">Otras marcas</div><div class="vpgrid">${rest.map(btn).join('')}</div>` : ''}`;
+    vpb.scrollTop = 0;
+  }
+  function vpModels(b, filter){
+    vpBrand = b; $('#vpback').hidden = false;
+    $('#vpT').innerHTML = `${esc(brandName(b))}<span class="steps">Paso 2 de 2 · Elija el modelo</span>`;
+    const mm = VEH.get(b); const f = low(filter || '').trim();
+    const list = [...mm].map(([k, e]) => [k, e.label, e.items.size]).sort((a, c) => a[1].localeCompare(c[1], 'es', { numeric: true }));
+    const shown = f ? list.filter(x => low(x[1]).includes(f) || lev(f, low(x[1]).slice(0, f.length), f.length >= 5 ? 2 : 1) <= (f.length >= 5 ? 2 : 1)) : list;
+    if (filter === undefined) {
+      vpb.innerHTML = `<label class="vpfind"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="vpq" type="text" autocomplete="off" placeholder="Escriba el modelo, ej.: Hilux" aria-label="Buscar modelo"></label><div id="vplist"></div>`;
+      $('#vpq').addEventListener('input', ev => vpModels(vpBrand, ev.target.value));
+    }
+    $('#vplist').innerHTML = shown.length ? `<div class="vpgrid">${shown.map(([k, l, n]) => `<button type="button" class="vpb" data-k="${esc(k)}">${esc(l)}<small>${n} ${n === 1 ? 'filtro' : 'filtros'}</small></button>`).join('')}</div>` : '<div class="vpnone">No encontramos ese modelo. Pruebe con otra forma de escribirlo.</div>';
+    if (filter === undefined) vpb.scrollTop = 0;
+  }
+  function vpOpen(){ vpOpener = document.activeElement; if (!qm.hidden) toggleQM(false); vp.hidden = false; document.body.style.overflow = 'hidden'; if (state.veh && VEH.has(state.veh.b)) vpModels(state.veh.b); else vpBrands(); $('#vpx').focus(); }
+  function vpClose(){ vp.hidden = true; if (ov.hidden && cov.hidden) document.body.style.overflow = ''; if (vpOpener && vpOpener.focus) vpOpener.focus(); }
+  document.addEventListener('click', e => { if (e.target.closest('.vehopen')) { e.preventDefault(); vpOpen(); } });
+  $('#vpx').addEventListener('click', vpClose);
+  $('#vpback').addEventListener('click', vpBrands);
+  vp.addEventListener('click', e => { if (e.target === vp) vpClose(); });
+  document.addEventListener('keydown', e => { if (!vp.hidden && e.key === 'Escape') vpClose(); });
+  vpb.addEventListener('click', e => {
+    const b = e.target.closest('[data-b]'); if (b) { vpModels(b.dataset.b); return; }
+    const m = e.target.closest('[data-k]'); if (!m) return;
+    const ent = VEH.get(vpBrand).get(m.dataset.k);
+    state.veh = { b: vpBrand, k: m.dataset.k, label: brandName(vpBrand) + ' ' + ent.label }; state.mot = '';
+    state.q = ''; $('#q').value = ''; state.cat = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run();
+    vpClose(); const p = $('#vehpanel'), bar = document.querySelector('.bar'); if (p) window.scrollTo({ top: p.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 10, behavior: 'smooth' });
+  });
 
   $('#nTotal').textContent = D.length;
   run();
