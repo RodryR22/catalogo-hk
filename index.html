@@ -368,6 +368,32 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .vfor .lbl{margin-bottom:3px}
 .vfor div+div{margin-top:2px}
 .fixnote{display:block;font-size:12.5px;color:var(--fg);background:var(--mark);border-radius:4px;padding:4px 8px;margin-top:6px}
+
+/* Favoritos y vistos */
+.card{position:relative}
+.fav{position:absolute;top:8px;right:8px;width:40px;height:40px;border-radius:50%;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--muted)}
+.fav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.fav[aria-pressed="true"]{color:#E0A100}.fav[aria-pressed="true"] svg{fill:#F5C21B;stroke:#C98F00}
+.fav:hover{background:var(--soft)}
+.top{padding-right:46px}
+.sheet .hd .fav{position:static;flex:none;background:rgba(255,255,255,.55);color:var(--navy)}
+.mine{margin-bottom:14px}
+.mine[hidden]{display:none}
+.mrow{margin-bottom:10px}
+.mhd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.mhd h2{margin:0;font-size:15px;font-weight:800}
+.mhd button{font:inherit;font-size:12.5px;font-weight:700;background:none;border:0;color:var(--fg);text-decoration:underline;text-decoration-color:var(--yellow);text-decoration-thickness:2px;text-underline-offset:3px;cursor:pointer;padding:4px 0}
+.mstrip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.mini{flex:none;display:flex;align-items:center;gap:8px;font:inherit;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px 6px 6px;cursor:pointer;color:var(--fg)}
+.mini img,.mini .noi{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:4px}
+.mini .noi{display:grid;place-items:center;font-family:var(--f-code);font-weight:800;color:var(--muted);background:var(--soft)}
+.mini b{font-family:var(--f-code);font-size:17px;font-weight:800;white-space:nowrap}
+.mini small{display:block;font-size:11px;color:var(--muted);font-weight:500}
+/* ¿No lo encontró? */
+.ask{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font:inherit;font-weight:800;font-size:15px;background:var(--wa);color:#fff;border-radius:999px;padding:12px 20px;text-decoration:none}
+.ask svg{width:22px;height:22px}
+.vask{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--wa);text-decoration:none;margin:2px 0 10px}
+.vask svg{width:18px;height:18px}
 </style>
 </head>
 <body>
@@ -413,6 +439,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 
 <main><div class="wrap">
   <section class="vehpanel" id="vehpanel" hidden aria-live="polite"></section>
+  <section class="mine" id="mine" hidden aria-label="Mis filtros"></section>
   <div class="chips" style="margin-bottom:12px"><span class="status" id="status" aria-live="polite"></span></div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" hidden><b>No encontramos ese código</b>Revisá que el número esté completo o probá con otra OEM o equivalente. Podés escribirlo con o sin guiones y espacios.</div>
@@ -549,7 +576,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     return { words: fixed, changed: fixed.some((w, i) => w !== words[i] && !SYN[words[i]]) ? fixed.join(' ') : '' };
   }
 
-  let state = { q: '', fam: '', cat: '', shown: PAGE, veh: null, ver: '' };
+  let state = { q: '', fam: '', cat: '', shown: PAGE, veh: null, ver: '', favs: false };
   try { const s = JSON.parse(localStorage.getItem('hk-filtros') || '{}'); if (s.fam) state.fam = s.fam; if (s.cat) state.cat = s.cat; } catch (e) {}
 
   const sel = $('#marca');
@@ -610,12 +637,42 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     return IMG[it.hk] ? `<div class="ph ${cls||''}"><img src="${IMG[it.hk]}" alt="Filtro ${esc(it.hk)}" loading="lazy"></div>`
                       : `<div class="ph none ${cls||''}">HK<small>Sin foto</small></div>`;
   }
+  /* --- Favoritos y vistos recientemente (se guardan en este celular/computadora) --- */
+  const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"/></svg>';
+  const ls = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || d); } catch (e) { return JSON.parse(d); } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  let FAV = ls('hk-favoritos', '[]').filter(h => D.some(d => d.hk === h));
+  let SEEN = ls('hk-vistos', '[]').filter(h => D.some(d => d.hk === h));
+  const isFav = hk => FAV.includes(hk);
+  function favBtn(hk){ const on = isFav(hk); return `<button type="button" class="fav" data-fav="${esc(hk)}" aria-pressed="${on}" aria-label="${on ? 'Quitar de favoritos' : 'Agregar a favoritos'}" title="${on ? 'Quitar de favoritos' : 'Agregar a favoritos'}">${STAR}</button>`; }
+  function toggleFav(hk){
+    FAV = isFav(hk) ? FAV.filter(h => h !== hk) : [hk, ...FAV]; lsSet('hk-favoritos', FAV);
+    document.querySelectorAll(`[data-fav="${CSS.escape(hk)}"]`).forEach(b => { const on = isFav(hk); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', on ? 'Quitar de favoritos' : 'Agregar a favoritos'); b.title = b.getAttribute('aria-label'); });
+    if (state.favs) run(); else drawMine();
+  }
+  function addSeen(hk){ SEEN = [hk, ...SEEN.filter(h => h !== hk)].slice(0, 12); lsSet('hk-vistos', SEEN); }
+  function mini(hk){ const it = D.find(d => d.hk === hk); if (!it) return ''; return `<button type="button" class="mini" data-open="${esc(hk)}">${IMG[hk] ? `<img src="${IMG[hk]}" alt="" loading="lazy">` : '<span class="noi">HK</span>'}<span><b>${esc(hk)}</b><small>${esc(it.fam)}</small></span></button>`; }
+  function drawMine(){
+    const box = $('#mine'); if (!box) return;
+    const show = !state.q && !state.veh && !state.cat && !state.fam && !state.favs && (FAV.length || SEEN.length);
+    if (!show) { box.hidden = true; box.innerHTML = ''; return; }
+    box.innerHTML = (FAV.length ? `<div class="mrow"><div class="mhd"><h2>★ Mis favoritos</h2>${FAV.length > 1 ? `<button type="button" id="favall">Ver los ${FAV.length}</button>` : ''}</div><div class="mstrip">${FAV.map(mini).join('')}</div></div>` : '')
+      + (SEEN.length ? `<div class="mrow"><div class="mhd"><h2>Vistos recientemente</h2><button type="button" id="seenclr">Borrar</button></div><div class="mstrip">${SEEN.map(mini).join('')}</div></div>` : '');
+    box.hidden = false;
+  }
+  document.addEventListener('click', e => {
+    const f = e.target.closest('[data-fav]'); if (f) { e.preventDefault(); e.stopPropagation(); toggleFav(f.dataset.fav); return; }
+    const o = e.target.closest('[data-open]'); if (o) { openSheet(o.dataset.open); return; }
+    if (e.target.closest('#favall')) { state.favs = true; state.shown = PAGE; run(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (e.target.closest('#seenclr')) { SEEN = []; lsSet('hk-vistos', SEEN); drawMine(); }
+  });
+
   function eqCell(k, arr){ return `<div class="eq"><span>${k}</span><b class="${arr.length ? '' : 'na'}">${arr.length ? arr.map(esc).join(' / ') : '—'}</b></div>`; }
   function card(it, how){
     const pri = new Set(it.pri);
     const apps = it.apps.slice(0, 3).map(([b, ms]) => `<div><b>${esc(b)}:</b> ${esc(ms.slice(0, 3).join(', '))}${ms.length > 3 ? '…' : ''}</div>`).join('');
     const extra = it.apps.length > 3 ? `<div style="color:var(--muted)">+ ${it.apps.slice(3).map(a => a[0]).slice(0,6).join(', ')}</div>` : '';
-    return `<article class="card">
+    return `<article class="card">${favBtn(it.hk)}
       <div class="top">${photo(it, 'zoom')}<div style="min-width:0"><span class="code">${esc(it.hk)}</span>
         <div class="meta">${esc(it.tipo)} · ${esc(it.mont)}</div>${how ? `<span class="match">Coincide con ${esc(how)}</span>` : ''}</div></div>
       <div class="eqs">${eqCell('VIC', it.vic)}${eqCell('SAKURA', it.sak)}${eqCell('MANN', it.mann)}</div>
@@ -634,6 +691,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     results = [];
     const vset = state.veh ? vehItems() : null;
     for (const it of D) {
+      if (state.favs && !isFav(it.hk)) continue;
       if (state.fam && it.fam !== state.fam) continue;
       if (vset) { if (!vset.has(it.hk)) continue; }
       else if (state.cat && !it.cat.includes(state.cat)) continue;
@@ -642,7 +700,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     }
     if (q) results.sort((a, b) => b[1].score - a[1].score);
     else if (vset) results.sort((a, b) => FAMS.indexOf(a[0].fam) - FAMS.indexOf(b[0].fam));
+    if (state.favs) results.sort((a, b) => FAV.indexOf(a[0].hk) - FAV.indexOf(b[0].hk));
     drawVeh();
+    drawMine();
     draw();
   }
   function draw(){
@@ -655,13 +715,20 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     }).join('');
     const fix = TQ.changed && results.length ? `<span class="fixnote">Mostrando resultados para «${esc(TQ.changed)}»</span>` : '';
     $('#empty').hidden = results.length > 0;
+    if (!results.length) {
+      const what = [state.q.trim(), state.veh ? state.veh.label : '', state.fam ? 'filtro de ' + state.fam.toLowerCase() : ''].filter(Boolean).join(' · ');
+      const msg = `Hola Yhaguy, busco un filtro HK${what ? ' para: ' + what : ''}. No lo encontré en el catálogo.`;
+      $('#empty').innerHTML = state.favs ? '<b>Todavía no tiene favoritos</b>Toque la estrella ☆ de un filtro para guardarlo acá.'
+        : `<b>No encontramos ${state.q.trim() ? '«' + esc(state.q.trim()) + '»' : 'filtros con esa combinación'}</b>Pruebe con otro código, OEM o modelo, o consúltenos: lo buscamos por usted.<br><a class="ask" href="https://wa.me/595994895000?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${WA_ICON}¿No lo encontró? Pregúntenos</a>`;
+    }
     $('#more').hidden = results.length <= state.shown;
     $('#more').textContent = `Mostrar más filtros (${results.length - state.shown} restantes)`;
     const parts = [];
     if (state.fam) parts.push(state.fam);
     if (state.cat) parts.push(CATS.find(c => c[0] === state.cat)[1]);
     if (state.veh) parts.unshift(state.veh.label);
-    $('#status').innerHTML = `${results.length} ${results.length === 1 ? 'filtro' : 'filtros'}${parts.length ? ' · ' + parts.map(esc).join(' · ') : ''}${(state.cat || state.fam || state.q || state.veh) ? ' <button type="button" class="clearall" id="clearall">Limpiar filtros</button>' : ''}${fix}`;
+    if (state.favs) parts.unshift('Mis favoritos');
+    $('#status').innerHTML = `${results.length} ${results.length === 1 ? 'filtro' : 'filtros'}${parts.length ? ' · ' + parts.map(esc).join(' · ') : ''}${(state.cat || state.fam || state.q || state.veh || state.favs) ? ' <button type="button" class="clearall" id="clearall">Limpiar filtros</button>' : ''}${fix}`;
     $('#clear').hidden = !state.q;
     drawActive();
   }
@@ -677,7 +744,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; state.shown = PAGE; run(); }, 120); });
   $('#clear').addEventListener('click', () => { $('#q').value = ''; state.q = ''; state.shown = PAGE; run(); $('#q').focus(); });
   sel.addEventListener('change', () => { state.cat = sel.value; state.shown = PAGE; save(); run(); });
-  $('#status').addEventListener('click', e => { if (!e.target.closest('#clearall')) return; state.cat = ''; state.fam = ''; state.q = ''; state.veh = null; state.ver = ''; $('#q').value = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run(); });
+  $('#status').addEventListener('click', e => { if (!e.target.closest('#clearall')) return; state.cat = ''; state.fam = ''; state.q = ''; state.veh = null; state.ver = ''; state.favs = false; $('#q').value = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run(); });
   $('#cats').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; state.cat = state.cat === b.dataset.c ? '' : b.dataset.c; sel.value = state.cat; state.shown = PAGE; save(); drawFams(); run(); });
   famBox.addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; state.fam = b.dataset.f; state.shown = PAGE; save(); drawFams(); run(); });
   $('#more').addEventListener('click', () => { state.shown += PAGE; draw(); });
@@ -686,6 +753,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   const ov = $('#ov'), sheet = $('#sheet'); let lastFocus = null;
   function openSheet(hk){
     const it = D.find(d => d.hk === hk); if (!it) return;
+    addSeen(hk);
     lastFocus = document.activeElement;
     const eqRow = (k, a, x) => `<div class="row"><div class="k">${k}</div><div class="v mono">${a.length ? '<b>' + a.map(esc).join(' / ') + '</b>' : '<span style="color:var(--none)">—</span>'}${x.length ? `<div class="also">Alternativa: ${x.map(esc).join(', ')}</div>` : ''}</div></div>`;
     const aft = it.aft.length ? `<div class="sec"><h3>Otras referencias cruzadas <small>${it.aft.reduce((n, a) => n + a[1].length, 0)}</small></h3>${it.aft.map(([b, ns]) => `<div class="row"><div class="k">${esc(b)}</div><div class="v mono">${ns.map(esc).join(', ')}</div></div>`).join('')}</div>` : '';
@@ -696,7 +764,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
         ${full.map(([b, ms]) => brandBlock(b, ms)).join('')}</details>` : '';
     const pri = new Set(it.pri);
     sheet.innerHTML = `<div class="hd">${photo(it, 'zoom')}<div style="min-width:0"><span class="code" id="sheetTitle">${esc(it.hk)}</span><div class="t">${esc(it.tipo)} · ${esc(it.mont)}</div></div>
-        <button class="x" type="button" id="close" aria-label="Cerrar">×</button></div>
+        ${favBtn(it.hk)}<button class="x" type="button" id="close" aria-label="Cerrar">×</button></div>
       <div class="sec"><h3>Equivalencias <span class="info" tabindex="0" role="img" aria-label="Negrita: equivalencia principal, verificada en el catálogo oficial. Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante." title="Negrita: equivalencia principal, verificada en el catálogo oficial.&#10;Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante.">i</span></h3>${eqRow('VIC', it.vic, it.eqx.vic)}${eqRow('SAKURA', it.sak, it.eqx.sak)}${eqRow('MANN', it.mann, it.eqx.mann)}
 
         <span class="cartslot" data-hk="${esc(it.hk)}">${cartCtl(it.hk)}</span> ${waLink(it)} <button class="copy" type="button" id="copy">Copiar código y equivalencias</button> <span id="copied" class="meta" aria-live="polite"></span></div>${aft}
@@ -839,7 +907,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     e.preventDefault();
     if (!ov.hidden) closeSheet();
     if (!qm.hidden) toggleQM(false);
-    state.q = ''; state.cat = ''; state.fam = ''; state.veh = null; state.ver = ''; state.shown = PAGE;
+    state.q = ''; state.cat = ''; state.fam = ''; state.veh = null; state.ver = ''; state.favs = false; state.shown = PAGE;
     $('#q').value = ''; sel.value = ''; save(); drawFams(); run();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -1087,13 +1155,14 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       ${vs.length ? `<div class="vlbl">Armar kit: elija la versión (motor)</div><div class="vmot"><button type="button" class="chip" data-ver="" aria-pressed="${!state.ver}">Ver todos</button>${vs.map(o => `<button type="button" class="chip" data-ver="${esc(o.eng)}" aria-pressed="${state.ver === o.eng}">${esc(o.eng)}<small>${yrTxt(o).trim()}</small></button>`).join('')}</div>` : '<p class="vhelp">Para este modelo no hay datos de motor suficientes para armar un kit automático.</p>'}
       ${kitHtml}
       ${state.ver ? '' : `<div class="vfams">${FAMS.filter(f => cnt[f]).map(f => `<span>${f}: ${cnt[f]}</span>`).join('')}</div><p class="vhelp">En cada filtro figuran las versiones (motor y años) en las que se usa.</p>`}
+      <a class="vask" href="https://wa.me/595994895000?text=${encodeURIComponent('Hola Yhaguy, busco filtros HK para mi ' + state.veh.label + (state.ver ? ' motor ' + state.ver : '') + '. Año: ')}" target="_blank" rel="noopener">${WA_ICON}¿No encuentra su versión o falta un filtro? Pregúntenos</a>
       <div class="vacts"><button type="button" class="vchg vehopen">Cambiar vehículo</button><button type="button" class="vclr" id="vclr">Quitar vehículo</button></div>`;
     p.hidden = false;
   }
   $('#vehpanel').addEventListener('click', e => {
     const v = e.target.closest('[data-ver]');
     if (v) { state.ver = v.dataset.ver; state.shown = PAGE; run(); return; }
-    if (e.target.closest('#vclr')) { state.veh = null; state.ver = ''; state.shown = PAGE; run(); return; }
+    if (e.target.closest('#vclr')) { state.veh = null; state.ver = ''; state.favs = false; state.shown = PAGE; run(); return; }
     const kb = e.target.closest('#vkit');
     if (kb) { if (window.__cartAddMany) window.__cartAddMany(kb.dataset.hks.split(',')); kb.textContent = '✓ Kit agregado al presupuesto'; kb.disabled = true; setTimeout(() => drawVeh(), 2200); return; }
   });
