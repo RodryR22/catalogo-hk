@@ -300,16 +300,19 @@ button.ph.zoom::after{content:"";position:absolute;right:3px;bottom:3px;width:22
   background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='m20 20-5-5M10.5 8v5M8 10.5h5'/%3E%3C/svg%3E") center/14px no-repeat;
   box-shadow:0 1px 3px rgba(0,0,0,.25)}
 button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
-.zv{position:fixed;inset:0;z-index:90;background:#fff;touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none}
-.zv .zstage{position:absolute;inset:0;overflow:hidden;display:grid;place-items:center}
-.zv img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transform-origin:0 0;will-change:transform;-webkit-user-drag:none;pointer-events:none}
-.zv .zx{position:absolute;top:max(12px,env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));z-index:2;width:48px;height:48px;border-radius:50%;border:0;
-  background:var(--navy);color:#fff;font-size:30px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.zv .zhint{position:absolute;left:50%;bottom:max(18px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2;background:rgba(35,37,78,.88);color:#fff;
-  font-size:13px;padding:8px 14px;border-radius:20px;white-space:nowrap;transition:opacity .4s;pointer-events:none}
+.zv{position:fixed;inset:0;z-index:1000;background:rgba(16,19,44,.62);display:grid;place-items:center;padding:16px;overscroll-behavior:contain}
+.zbox{background:#fff;color:var(--navy);border-radius:14px;width:min(100%,760px);height:min(78vh,760px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.zhd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 10px 10px 14px;border-bottom:1px solid #E6E7EF;background:#fff}
+.zhd .zt{font-size:12px;color:#5C5F86;margin-left:8px}
+.zv .zx{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--navy);color:#fff;font-size:26px;line-height:1;cursor:pointer}
+.zv .zx:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.zv .zstage{position:relative;flex:1;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;background:#fff;cursor:zoom-in}
+.zv img{transform-origin:0 0;will-change:transform;-webkit-user-drag:none;pointer-events:none}
+.zv .zhint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:2;background:rgba(35,37,78,.88);color:#fff;
+  font-size:12.5px;padding:7px 12px;border-radius:20px;white-space:nowrap;transition:opacity .4s;pointer-events:none}
 .zv .zhint.off{opacity:0}
-.zv .zspin{position:absolute;top:max(22px,env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));z-index:2;width:26px;height:26px;border-radius:50%;
-  border:3px solid var(--line);border-top-color:var(--navy);animation:zspin .8s linear infinite}
+.zv .zspin{position:absolute;top:12px;left:12px;z-index:2;width:24px;height:24px;border-radius:50%;
+  border:3px solid #DCDEEA;border-top-color:var(--navy);animation:zspin .8s linear infinite}
 @keyframes zspin{to{transform:rotate(360deg)}}
 </style>
 </head>
@@ -419,8 +422,10 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 <li>Toque el botón <b>Compartir</b> <svg class="shr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg> abajo en Safari.</li>
 <li>Elija <b>Agregar a pantalla de inicio</b>.</li><li>Toque <b>Agregar</b>. Listo: el ícono de HK queda en su celular.</li></ol>
 <button type="button" id="iosok">Entendido</button></div></div>
-<div class="zv" id="zv" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada"><div class="zstage" id="zstage"><img id="zimg" alt=""></div>
-<button type="button" class="zx" id="zx" aria-label="Cerrar foto">×</button><div class="zspin" id="zspin" hidden></div><div class="zhint" id="zhint">Toque dos veces o use dos dedos para ampliar</div></div>
+<div class="zv" id="zv" hidden><div class="zbox" role="dialog" aria-modal="true" aria-labelledby="zcode">
+<div class="zhd"><div><span class="code sm" id="zcode"></span><span class="zt">Foto ampliada</span></div><button type="button" class="zx" id="zx" aria-label="Cerrar foto">×</button></div>
+<div class="zstage" id="zstage"><img id="zimg" alt=""><div class="zspin" id="zspin" hidden></div><div class="zhint" id="zhint">Toque dos veces o use dos dedos para ampliar</div></div>
+</div></div>
 <script src="data.js"></script>
 <script>
 (function(){
@@ -769,7 +774,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     const MAX = 5;
     function layout(){ // la foto ocupa la pantalla (con margen), sin importar el tamaño de la imagen
       const s = stage.getBoundingClientRect(), ar = (img.naturalWidth || 1) / (img.naturalHeight || 1);
-      const mw = s.width * 0.94, mh = s.height * 0.80;
+      const mw = s.width * 0.92, mh = s.height * 0.90;
       let w = mw, h = w / ar; if (h > mh) { h = mh; w = h * ar; }
       base = { x: (s.width - w) / 2, y: (s.height - h) / 2, w, h, sw: s.width, sh: s.height };
       Object.assign(img.style, { position: 'absolute', left: base.x + 'px', top: base.y + 'px', width: w + 'px', height: h + 'px', maxWidth: 'none', maxHeight: 'none' });
@@ -791,7 +796,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     function open(hk){
       if (!IMG[hk]) return;
       opener = document.activeElement; base = null; sc = 1; tx = ty = 0;
-      img.removeAttribute('style'); img.src = IMG[hk]; img.alt = 'Filtro ' + hk;
+      img.removeAttribute('style'); img.src = IMG[hk]; img.alt = 'Filtro ' + hk; $('#zcode').textContent = hk;
       zv.hidden = false; document.body.style.overflow = 'hidden';
       if (img.complete && img.naturalWidth) requestAnimationFrame(layout); else img.onload = () => { img.onload = null; layout(); };
       spin.hidden = false;
@@ -814,6 +819,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     window.addEventListener('resize', () => { if (!zv.hidden) { sc = 1; tx = ty = 0; img.removeAttribute('style'); layout(); } });
     document.addEventListener('click', e => { const b = e.target.closest('[data-zoom]'); if (!b) return; e.preventDefault(); e.stopPropagation(); open(b.dataset.zoom); }, true);
     $('#zx').addEventListener('click', () => close());
+    zv.addEventListener('click', e => { if (e.target === zv) close(); });
     document.addEventListener('keydown', e => { if (!zv.hidden && e.key === 'Escape') { e.stopImmediatePropagation(); close(); } }, true);
     stage.addEventListener('wheel', e => { e.preventDefault(); const p = rel(e); zoomAt(sc * (e.deltaY < 0 ? 1.25 : 0.8), p.x, p.y); }, { passive: false });
     stage.addEventListener('dblclick', e => { const p = rel(e); sc > 1.05 ? reset() : zoomAt(2.5, p.x, p.y); });
@@ -832,11 +838,11 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       if (pinch && pts.size >= 2) { const [a, b] = [...pts.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y); const cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
         zoomAt(pinch.sc * d / pinch.d, pinch.cx, pinch.cy); tx += cx - pinch.cx; ty += cy - pinch.cy; pinch.cx = cx; pinch.cy = cy; pinch.sc = sc; pinch.d = d; apply(); }
       else if (pan) { tx = pan.tx + (p.x - pan.x); ty = pan.ty + (p.y - pan.y); apply(); }
-      else if (swipe) { const dy = p.y - swipe.y; if (dy > 0) { img.style.transform = `translate(${tx}px,${ty + dy}px) scale(1)`; zv.style.background = `rgba(255,255,255,${Math.max(.4, 1 - dy / 400)})`; } }
+      else if (swipe) { const dy = p.y - swipe.y; if (dy > 0) { img.style.transform = `translate(${tx}px,${ty + dy}px) scale(1)`; } }
     });
     function up(e){
       if (!pts.has(e.pointerId)) return; const p = rel(e); pts.delete(e.pointerId);
-      if (swipe && pts.size === 0) { const dy = p.y - swipe.y; zv.style.background = ''; swipe = null; if (dy > 110) { close(); return; } apply(); }
+      if (swipe && pts.size === 0) { const dy = p.y - swipe.y; swipe = null; if (dy > 110) { close(); return; } apply(); }
       if (pts.size < 2) pinch = null;
       if (pts.size === 1 && sc > 1.01) { const q = [...pts.values()][0]; pan = { x: q.x, y: q.y, tx, ty }; } else if (pts.size === 0) pan = null;
       if (sc < 1.02) reset();
