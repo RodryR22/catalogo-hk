@@ -363,6 +363,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .kchk{font-size:11.5px;font-weight:700;background:#FDE7C8;color:#7A4A00;border-radius:4px;padding:1px 6px;text-transform:none;letter-spacing:0}
 .kit .vkit{margin-top:10px}
 .knote{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.vsame{font-size:13px;font-weight:600;color:var(--muted);margin:-4px 0 10px}
 .vfor{background:var(--chip);border-radius:6px;padding:8px 10px;font-size:12.5px;line-height:1.45}
 .vfor .lbl{margin-bottom:3px}
 .vfor div+div{margin-top:2px}
@@ -1004,9 +1005,11 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   };
   VEH.forEach((mm, brand) => (ALIAS[brand] || []).forEach(group => {
     const keys = group.map(vkey).filter(k => mm.has(k)); if (keys.length < 2) return;
-    const main = mm.get(keys[0]); const names = [main.label];
-    keys.slice(1).forEach(k => { const e = mm.get(k); names.push(e.label); e.items.forEach((ls, hk) => { if (!main.items.has(hk)) main.items.set(hk, new Set()); ls.forEach(l => main.items.get(hk).add(l)); }); mm.delete(k); });
-    main.label = names.join(' / ');
+    // cada modelo queda con su nombre, pero todos usan el mismo conjunto de filtros
+    const union = new Map();
+    keys.forEach(k => mm.get(k).items.forEach((ls, hk) => { if (!union.has(hk)) union.set(hk, new Set()); ls.forEach(l => union.get(hk).add(l)); }));
+    const labels = keys.map(k => mm.get(k).label);
+    keys.forEach(k => { const e = mm.get(k); e.items = new Map([...union].map(([hk, ls]) => [hk, new Set(ls)])); e.same = labels.filter(l => l !== e.label); });
   }));
   // en el buscador general: "vitz" también encuentra lo que dice "Yaris"
   const ALIASW = new Map();
@@ -1080,7 +1083,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
         ${tops.length ? `<button type="button" class="vkit" id="vkit" data-hks="${esc(tops.join(','))}">+ Agregar kit al presupuesto (${tops.length} ${tops.length === 1 ? 'filtro' : 'filtros'})</button>` : ''}
         <p class="knote">Kit armado automáticamente según las aplicaciones cargadas. Confirme el año y motor con su vendedor antes de pedir.</p></div>`;
     }
-    p.innerHTML = `<div class="vt">Filtros HK para su vehículo</div><div class="vn">${esc(state.veh.label)}</div>
+    p.innerHTML = `<div class="vt">Filtros HK para su vehículo</div><div class="vn">${esc(state.veh.label)}</div>${e.same && e.same.length ? `<div class="vsame">Usa los mismos filtros que: ${esc(e.same.join(', '))}</div>` : ''}
       ${vs.length ? `<div class="vlbl">Armar kit: elija la versión (motor)</div><div class="vmot"><button type="button" class="chip" data-ver="" aria-pressed="${!state.ver}">Ver todos</button>${vs.map(o => `<button type="button" class="chip" data-ver="${esc(o.eng)}" aria-pressed="${state.ver === o.eng}">${esc(o.eng)}<small>${yrTxt(o).trim()}</small></button>`).join('')}</div>` : '<p class="vhelp">Para este modelo no hay datos de motor suficientes para armar un kit automático.</p>'}
       ${kitHtml}
       ${state.ver ? '' : `<div class="vfams">${FAMS.filter(f => cnt[f]).map(f => `<span>${f}: ${cnt[f]}</span>`).join('')}</div><p class="vhelp">En cada filtro figuran las versiones (motor y años) en las que se usa.</p>`}
@@ -1120,7 +1123,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       vpb.innerHTML = `<label class="vpfind"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="vpq" type="text" autocomplete="off" placeholder="Escriba el modelo, ej.: Hilux" aria-label="Buscar modelo"></label><div id="vplist"></div>`;
       $('#vpq').addEventListener('input', ev => vpModels(vpBrand, ev.target.value));
     }
-    $('#vplist').innerHTML = shown.length ? `<div class="vpgrid">${shown.map(([k, l, n]) => `<button type="button" class="vpb" data-k="${esc(k)}">${esc(l)}<small>${n} ${n === 1 ? 'filtro' : 'filtros'}</small></button>`).join('')}</div>` : '<div class="vpnone">No encontramos ese modelo. Pruebe con otra forma de escribirlo.</div>';
+    $('#vplist').innerHTML = shown.length ? `<div class="vpgrid">${shown.map(([k, l, n]) => { const sm = mm.get(k).same; return `<button type="button" class="vpb" data-k="${esc(k)}">${esc(l)}<small>${n} ${n === 1 ? 'filtro' : 'filtros'}${sm && sm.length ? ' · igual a ' + esc(sm.join(', ')) : ''}</small></button>`; }).join('')}</div>` : '<div class="vpnone">No encontramos ese modelo. Pruebe con otra forma de escribirlo.</div>';
     if (filter === undefined) vpb.scrollTop = 0;
   }
   function vpOpen(){ vpOpener = document.activeElement; if (!qm.hidden) toggleQM(false); vp.hidden = false; document.body.style.overflow = 'hidden'; if (state.veh && VEH.has(state.veh.b)) vpModels(state.veh.b); else vpBrands(); $('#vpx').focus(); }
