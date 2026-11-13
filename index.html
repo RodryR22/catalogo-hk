@@ -636,7 +636,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     return out.slice(0, 4);
   }
   function photo(it, cls){
-    if (ILLU.has(it.hk)) return `<div class="ph illu ${(cls||'').replace('zoom','')}" title="Imagen ilustrativa: el filtro real puede ser distinto"><img src="${IMG[it.hk]}" alt="Imagen ilustrativa de filtro ${esc(it.mont)}" loading="lazy"><span class="itag">Ilustrativa</span></div>`;
+    if (ILLU.has(it.hk)) return `<div class="ph illu ${(cls||'').replace('zoom','')}"><img src="${IMG[it.hk]}" alt="Dibujo de filtro ${esc(it.mont)}" loading="lazy"></div>`;
     if (IMG[it.hk] && /\bzoom\b/.test(cls||'')) return `<button type="button" class="ph ${cls}" data-zoom="${esc(it.hk)}" aria-label="Ampliar foto de ${esc(it.hk)}"><img src="${IMG[it.hk]}" alt="Filtro ${esc(it.hk)}" loading="lazy"></button>`;
     return IMG[it.hk] ? `<div class="ph ${cls||''}"><img src="${IMG[it.hk]}" alt="Filtro ${esc(it.hk)}" loading="lazy"></div>`
                       : `<div class="ph none ${cls||''}">HK<small>Sin foto</small></div>`;
