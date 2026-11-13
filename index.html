@@ -519,6 +519,23 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 <script>
 (function(){
   const D = window.HK_DATA || [], IMG = window.HK_IMG || {}, ILLU = new Set(window.HK_ILLU || []);
+  /* --- Vendedor del cliente: llega por el link (?v=julio) y queda guardado en este celular --- */
+  const VEND = {"julio": {"n": "Julio Varela", "w": "595976975022"}, "ruben": {"n": "Ruben Diaz", "w": "595986180248"}, "marlene": {"n": "Marlene Lopez", "w": "595991254660"}, "daiana": {"n": "Daiana Lopez", "w": "595985932702"}};
+  const WA_GENERAL = '595994895000';
+  let SELLER = null;
+  try {
+    const v = (new URLSearchParams(location.search).get('v') || '').toLowerCase().trim();
+    if (v && VEND[v]) { localStorage.setItem('hk-vendedor', v); SELLER = v; }
+    else { const s = localStorage.getItem('hk-vendedor'); if (s && VEND[s]) SELLER = s; }
+  } catch (e) { const v = (new URLSearchParams(location.search).get('v') || '').toLowerCase(); if (VEND[v]) SELLER = v; }
+  const WAN = SELLER ? VEND[SELLER].w : WA_GENERAL;
+  const HOLA = SELLER ? 'Hola ' + VEND[SELLER].n.split(' ')[0] : 'Hola Yhaguy';
+  const fmtTel = w => '0' + w.slice(3).replace(/(\d{3})(\d{3})(\d+)/, '$1 $2 $3');
+  if (SELLER) {
+    // la app instalada abre con el mismo vendedor
+    const ml = document.querySelector('link[rel="manifest"]'); if (ml) ml.href = 'manifest-' + SELLER + '.webmanifest';
+    if (!new URLSearchParams(location.search).get('v')) try { history.replaceState(history.state, '', location.pathname + '?v=' + SELLER + location.hash); } catch (e) {}
+  }
   const FAMS = ['Aceite','Combustible','Aire','Cabina','Transmisión'];
   const CATS = [['TOYOTA','Toyota'],['NISSAN','Nissan'],['KIA - HYUNDAI','Kia · Hyundai'],['MITSUBISHI','Mitsubishi'],['MAZDA','Mazda'],['FIAT','Fiat'],['ISUZU','Isuzu'],['DAIHATSU','Daihatsu'],['SUZUKI','Suzuki'],['HINO','Hino'],['OTRAS MARCAS','Otras marcas']];
   const PAGE = 48;
@@ -623,11 +640,19 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   const WA_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8.9-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.5.5 0 0 0 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>';
   function waLink(it){
     const eq = [['VIC', it.vic], ['SAKURA', it.sak], ['MANN', it.mann]].filter(x => x[1].length).map(([k, v]) => k + ' ' + v.join('/')).join(', ');
-    const msg = `Hola Yhaguy, quiero consultar por el filtro HK ${it.hk}${eq ? ' (' + eq + ')' : ''}.`;
-    return `<a class="wa" href="https://wa.me/595994895000?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${WA_ICON}Pedir por WhatsApp</a>`;
+    const msg = `${HOLA}, quiero consultar por el filtro HK ${it.hk}${eq ? ' (' + eq + ')' : ''}.`;
+    return `<a class="wa" href="https://wa.me/${WAN}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${WA_ICON}Pedir por WhatsApp</a>`;
   }
   document.querySelector('footer.yh').innerHTML = document.querySelector('footer.yh').innerHTML.replace('${WA_ICON}', WA_ICON);
   document.querySelector('#wafab .wafab-ic').innerHTML = WA_ICON;
+  document.querySelectorAll('a[href*="wa.me/595994895000"]').forEach(a => { a.href = `https://wa.me/${WAN}?text=${encodeURIComponent(HOLA + ', quiero consultar por filtros HK.')}`; });
+  if (SELLER) {
+    const fh = document.querySelector('footer.yh h4'), fn = document.querySelector('footer.yh .num');
+    if (fh) fh.textContent = 'Su vendedor';
+    if (fn) fn.innerHTML = `${esc(VEND[SELLER].n)}<br>${fmtTel(VEND[SELLER].w)}`;
+    const cm = document.querySelector('.cartactions .meta');
+    if (cm) cm.innerHTML = `Se abre WhatsApp con la lista armada para enviar a su vendedor <b>${esc(VEND[SELLER].n)}</b> (${fmtTel(VEND[SELLER].w)}). Los precios y la disponibilidad se los confirma su vendedor.`;
+  }
   const cartCtl = hk => (window.__cartCtl ? window.__cartCtl(hk) : '');
   function oemShort(it){
     const pri = it.pri.length ? it.pri : [];
@@ -721,9 +746,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     $('#empty').hidden = results.length > 0;
     if (!results.length) {
       const what = [state.q.trim(), state.veh ? state.veh.label : '', state.fam ? 'filtro de ' + state.fam.toLowerCase() : ''].filter(Boolean).join(' · ');
-      const msg = `Hola Yhaguy, busco un filtro HK${what ? ' para: ' + what : ''}. No lo encontré en el catálogo.`;
+      const msg = `${HOLA}, busco un filtro HK${what ? ' para: ' + what : ''}. No lo encontré en el catálogo.`;
       $('#empty').innerHTML = state.favs ? '<b>Todavía no tiene favoritos</b>Toque la estrella ☆ de un filtro para guardarlo acá.'
-        : `<b>No encontramos ${state.q.trim() ? '«' + esc(state.q.trim()) + '»' : 'filtros con esa combinación'}</b>Pruebe con otro código, OEM o modelo, o consúltenos: lo buscamos por usted.<br><a class="ask" href="https://wa.me/595994895000?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${WA_ICON}¿No lo encontró? Pregúntenos</a>`;
+        : `<b>No encontramos ${state.q.trim() ? '«' + esc(state.q.trim()) + '»' : 'filtros con esa combinación'}</b>Pruebe con otro código, OEM o modelo, o consúltenos: lo buscamos por usted.<br><a class="ask" href="https://wa.me/${WAN}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${WA_ICON}¿No lo encontró? Pregúntenos</a>`;
     }
     $('#more').hidden = results.length <= state.shown;
     $('#more').textContent = `Mostrar más filtros (${results.length - state.shown} restantes)`;
@@ -870,9 +895,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     const f = {}; fields.forEach(k => f[k] = $('#cf-' + k).value.trim());
     try { localStorage.setItem('hk-presupuesto-datos', JSON.stringify(f)); } catch (e) {}
     const u = cart.reduce((s, x) => s + x.q, 0);
-    const msg = ['Hola Yhaguy, quisiera un presupuesto de filtros HK:', '', ...lines, '', `Total: ${u} ${u === 1 ? 'unidad' : 'unidades'} en ${n} ${n === 1 ? 'código' : 'códigos'}.`,
+    const msg = [HOLA + ', quisiera un presupuesto de filtros HK:', '', ...lines, '', `Total: ${u} ${u === 1 ? 'unidad' : 'unidades'} en ${n} ${n === 1 ? 'código' : 'códigos'}.`,
       ...[f.nombre && `Solicitante: ${f.nombre}`, f.empresa && `Razón social: ${f.empresa}`, f.ruc && `RUC: ${f.ruc}`, f.ciudad && `Ciudad: ${f.ciudad}`, f.nota && `Comentarios: ${f.nota}`].filter(Boolean)].join('\n');
-    a.href = `https://wa.me/595994895000?text=${encodeURIComponent(msg)}`;
+    a.href = `https://wa.me/${WAN}?text=${encodeURIComponent(msg)}`;
     a.innerHTML = WA_ICON + (n ? `Enviar presupuesto por WhatsApp (${n})` : 'Agregue filtros para enviar');
     a.classList.toggle('off', !n); a.setAttribute('aria-disabled', String(!n));
   }
@@ -1159,7 +1184,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       ${vs.length ? `<div class="vlbl">Armar kit: elija la versión (motor)</div><div class="vmot"><button type="button" class="chip" data-ver="" aria-pressed="${!state.ver}">Ver todos</button>${vs.map(o => `<button type="button" class="chip" data-ver="${esc(o.eng)}" aria-pressed="${state.ver === o.eng}">${esc(o.eng)}<small>${yrTxt(o).trim()}</small></button>`).join('')}</div>` : '<p class="vhelp">Para este modelo no hay datos de motor suficientes para armar un kit automático.</p>'}
       ${kitHtml}
       ${state.ver ? '' : `<div class="vfams">${FAMS.filter(f => cnt[f]).map(f => `<span>${f}: ${cnt[f]}</span>`).join('')}</div><p class="vhelp">En cada filtro figuran las versiones (motor y años) en las que se usa.</p>`}
-      <a class="vask" href="https://wa.me/595994895000?text=${encodeURIComponent('Hola Yhaguy, busco filtros HK para mi ' + state.veh.label + (state.ver ? ' motor ' + state.ver : '') + '. Año: ')}" target="_blank" rel="noopener">${WA_ICON}¿No encuentra su versión o falta un filtro? Pregúntenos</a>
+      <a class="vask" href="https://wa.me/${WAN}?text=${encodeURIComponent(HOLA + ', busco filtros HK para mi ' + state.veh.label + (state.ver ? ' motor ' + state.ver : '') + '. Año: ')}" target="_blank" rel="noopener">${WA_ICON}¿No encuentra su versión o falta un filtro? Pregúntenos</a>
       <div class="vacts"><button type="button" class="vchg vehopen">Cambiar vehículo</button><button type="button" class="vclr" id="vclr">Quitar vehículo</button></div>`;
     p.hidden = false;
   }
