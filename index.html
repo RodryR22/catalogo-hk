@@ -793,7 +793,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   let t;
   let tq = 0;
   $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; state.shown = PAGE; run(); }, 120);
-    clearTimeout(tq); tq = setTimeout(() => { const q = e.target.value.trim(); if (q.length < 2) return; track('search', { search_term: q.slice(0, 90), resultados: results.length }); if (!results.length) track('busqueda_sin_resultado', { search_term: q.slice(0, 90) }); }, 1500); });
+    clearTimeout(tq); tq = setTimeout(() => { const q = e.target.value.trim(); if (q.length < 2) return; track('busqueda', { termino: q.slice(0, 90), resultados: results.length }); if (!results.length) track('busqueda_sin_resultado', { termino: q.slice(0, 90) }); }, 1500); });
   $('#clear').addEventListener('click', () => { $('#q').value = ''; state.q = ''; state.shown = PAGE; run(); $('#q').focus(); });
   sel.addEventListener('change', () => { state.cat = sel.value; state.shown = PAGE; save(); run(); });
   $('#status').addEventListener('click', e => { if (!e.target.closest('#clearall')) return; state.cat = ''; state.fam = ''; state.q = ''; state.veh = null; state.ver = ''; state.favs = false; $('#q').value = ''; sel.value = ''; state.shown = PAGE; save(); drawFams(); run(); });
