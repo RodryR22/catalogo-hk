@@ -572,8 +572,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     }
     if (lq.length >= 2) {
       const words = TQ.words;
-      if (words.length && words.every(w => it.text.includes(w))) return { score: 20, how: 'aplicación' };
-      if (words.length && words.every(w => it.text.includes(w) || it.ftext.includes(w))) return { score: 10, how: 'aplicación (lista completa)' };
+      const has = (t, w) => t.includes(w) || (ALIASW.get(w) || []).some(a => t.includes(a));
+      if (words.length && words.every(w => has(it.text, w))) return { score: 20, how: 'aplicación' };
+      if (words.length && words.every(w => has(it.text, w) || has(it.ftext, w))) return { score: 10, how: 'aplicación (lista completa)' };
     }
     return null;
   }
@@ -976,6 +977,30 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     }));
   });
   VEH.forEach(mm => mm.forEach(e => { const best = [...e.votes].sort((a, b) => b[1] - a[1])[0][0]; e.label = cap(best); }));
+
+  /* Modelos que son el mismo vehículo con otro nombre según el mercado (se muestran juntos) */
+  const ALIAS = {
+    TOYOTA: [['Yaris','Vitz','Echo'],['Corolla','Fielder','Runx','Allex','Axio'],['Fortuner','SW4'],['Noah','Voxy','Esquire'],['Highlander','Kluger'],['Previa','Estima'],['Alphard','Vellfire'],['Hiace','Commuter'],['Dyna','Toyoace'],['Liteace','Townace'],['Probox','Succeed'],['4 Runner','4Runner'],['Rav 4','RAV4']],
+    NISSAN: [['Frontier','Navara','NP300','Pick Up','Hardbody','King','D21','D22'],['Pathfinder','Terrano'],['Patrol','Safari'],['March','Micra'],['Urvan','Caravan'],['Qashqai','Qashqai+2','Dualis'],['Cabstar','Atlas']],
+    HYUNDAI: [['Elantra','Avante','Lantra'],['H-1','Starex','H1 Starex','Grand Starex','H1 Pick-up'],['Santa Fe','Grand Santa'],['Porter','H100'],['Kona','Kauai'],['Accent','Verna'],['Tucson','Ix35'],['Grandeur','Azera']],
+    KIA: [['Carnival','Sedona','Grand Carnival'],['Picanto','Morning'],['Cerato','Forte','K3','Koup','FORTE5'],['Optima','K5','Magentis'],['Bongo','K2500','K2700','K2900'],["Cee'd",'Ceed'],['Rio','Pride','RIO5'],['Cadenza','K7'],['Sportage','New Sportage'],['Carens','Rondo'],['Mohave','Borrego'],['Spectra','SPECTRA5']],
+    MITSUBISHI: [['L200','Triton','Strada'],['Pajero','Montero'],['ASX','Rvr'],['Lancer','Mirage']],
+    MAZDA: [['Mazda 2','Demio','2 DY'],['Mazda 3','Axela'],['Mazda 6','Atenza'],['B2500','B2200','B-serie'],['Mazda 5','Premacy']],
+    ISUZU: [['Pickup','Faster','Rodeo','Campo','KB'],['Trooper','Bighorn'],['ELF','ELF150','ELF250'],['MU-X','MU-7']],
+    SUZUKI: [['Grand Vitara','Escudo'],['Swift','Cultus']],
+    DAIHATSU: [['Cuore','Mira']],
+    CHEVROLET: [['Aveo','Kalos','Sonic'],['S10','Colorado'],['D-Max','LUV']],
+    VOLKSWAGEN: [['SpaceFox','Space']]
+  };
+  VEH.forEach((mm, brand) => (ALIAS[brand] || []).forEach(group => {
+    const keys = group.map(vkey).filter(k => mm.has(k)); if (keys.length < 2) return;
+    const main = mm.get(keys[0]); const names = [main.label];
+    keys.slice(1).forEach(k => { const e = mm.get(k); names.push(e.label); e.items.forEach((ls, hk) => { if (!main.items.has(hk)) main.items.set(hk, new Set()); ls.forEach(l => main.items.get(hk).add(l)); }); mm.delete(k); });
+    main.label = names.join(' / ');
+  }));
+  // en el buscador general: "vitz" también encuentra lo que dice "Yaris"
+  const ALIASW = new Map();
+  Object.values(ALIAS).forEach(gs => gs.forEach(g => { const ws = g.map(x => low(x)).filter(x => !/\s/.test(x) && x.length >= 3); ws.forEach(w => ALIASW.set(w, ws)); }));
   const TOPB = ['TOYOTA','NISSAN','HYUNDAI','KIA','MITSUBISHI','MAZDA','ISUZU','DAIHATSU','SUZUKI','HINO','CHEVROLET','FORD','VOLKSWAGEN','FIAT','RENAULT'];
   const brandName = b => b.split(/([\s-])/).map(w => w.length > 1 ? w[0] + w.slice(1).toLowerCase() : w).join('');
   const ENG = /^(?=.*\d)(?=.*[A-Z])[A-Z0-9][A-Z0-9-]{1,10}$/;
