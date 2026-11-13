@@ -896,11 +896,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     const f = {}; fields.forEach(k => f[k] = $('#cf-' + k).value.trim());
     try { localStorage.setItem('hk-presupuesto-datos', JSON.stringify(f)); } catch (e) {}
     const u = cart.reduce((s, x) => s + x.q, 0);
-    const d = new Date(), p2 = x => String(x).padStart(2, '0');
-    const ref = `HK-${p2(d.getDate())}${p2(d.getMonth() + 1)}-${p2(d.getHours())}${p2(d.getMinutes())}`;
     const cli = [f.empresa && `> *${f.empresa}*`, f.ruc && `> RUC: ${f.ruc}`, f.ciudad && `> Ciudad: ${f.ciudad}`, f.nombre && `> Solicitante: ${f.nombre}`].filter(Boolean);
     const msg = [HOLA + ' 👋 Le envío un pedido de presupuesto.', '',
-      '🧾 *PRESUPUESTO · FILTROS HK*', `Ref. ${ref} · ${p2(d.getDate())}/${p2(d.getMonth() + 1)}/${d.getFullYear()}`,
+      '🧾 *PRESUPUESTO · FILTROS HK*',
       ...(cli.length ? ['', '👤 *CLIENTE*', ...cli] : []),
       '', '📦 *FILTROS SOLICITADOS*', ...lines,
       '', `*Total: ${u} ${u === 1 ? 'unidad' : 'unidades'} · ${n} ${n === 1 ? 'código' : 'códigos'}*`,
