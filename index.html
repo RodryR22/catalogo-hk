@@ -293,6 +293,24 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .iosbox h3{margin:0 0 10px;font-size:17px}.iosbox ol{margin:0 0 14px;padding-left:20px;line-height:1.6;font-size:15px}
 .iosbox .shr{display:inline-block;vertical-align:-3px;width:18px;height:18px}
 .iosbox button{width:100%;font:inherit;font-weight:800;background:var(--yellow);color:var(--navy);border:0;border-radius:8px;padding:11px;cursor:pointer}
+
+/* Zoom de foto a pantalla completa */
+button.ph.zoom{position:relative;padding:0;cursor:zoom-in;font:inherit}
+button.ph.zoom::after{content:"";position:absolute;right:3px;bottom:3px;width:22px;height:22px;border-radius:50%;
+  background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='m20 20-5-5M10.5 8v5M8 10.5h5'/%3E%3C/svg%3E") center/14px no-repeat;
+  box-shadow:0 1px 3px rgba(0,0,0,.25)}
+button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.zv{position:fixed;inset:0;z-index:90;background:#fff;touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none}
+.zv .zstage{position:absolute;inset:0;overflow:hidden;display:grid;place-items:center}
+.zv img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transform-origin:0 0;will-change:transform;-webkit-user-drag:none;pointer-events:none}
+.zv .zx{position:absolute;top:max(12px,env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));z-index:2;width:48px;height:48px;border-radius:50%;border:0;
+  background:var(--navy);color:#fff;font-size:30px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.zv .zhint{position:absolute;left:50%;bottom:max(18px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2;background:rgba(35,37,78,.88);color:#fff;
+  font-size:13px;padding:8px 14px;border-radius:20px;white-space:nowrap;transition:opacity .4s;pointer-events:none}
+.zv .zhint.off{opacity:0}
+.zv .zspin{position:absolute;top:max(22px,env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));z-index:2;width:26px;height:26px;border-radius:50%;
+  border:3px solid var(--line);border-top-color:var(--navy);animation:zspin .8s linear infinite}
+@keyframes zspin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -401,6 +419,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <li>Toque el botón <b>Compartir</b> <svg class="shr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg> abajo en Safari.</li>
 <li>Elija <b>Agregar a pantalla de inicio</b>.</li><li>Toque <b>Agregar</b>. Listo: el ícono de HK queda en su celular.</li></ol>
 <button type="button" id="iosok">Entendido</button></div></div>
+<div class="zv" id="zv" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada"><div class="zstage" id="zstage"><img id="zimg" alt=""></div>
+<button type="button" class="zx" id="zx" aria-label="Cerrar foto">×</button><div class="zspin" id="zspin" hidden></div><div class="zhint" id="zhint">Toque dos veces o use dos dedos para ampliar</div></div>
 <script src="data.js"></script>
 <script>
 (function(){
@@ -491,6 +511,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     return out.slice(0, 4);
   }
   function photo(it, cls){
+    if (IMG[it.hk] && /\bzoom\b/.test(cls||'')) return `<button type="button" class="ph ${cls}" data-zoom="${esc(it.hk)}" aria-label="Ampliar foto de ${esc(it.hk)}"><img src="${IMG[it.hk]}" alt="Filtro ${esc(it.hk)}" loading="lazy"></button>`;
     return IMG[it.hk] ? `<div class="ph ${cls||''}"><img src="${IMG[it.hk]}" alt="Filtro ${esc(it.hk)}" loading="lazy"></div>`
                       : `<div class="ph none ${cls||''}">HK<small>Sin foto</small></div>`;
   }
@@ -500,7 +521,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const apps = it.apps.slice(0, 3).map(([b, ms]) => `<div><b>${esc(b)}:</b> ${esc(ms.slice(0, 3).join(', '))}${ms.length > 3 ? '…' : ''}</div>`).join('');
     const extra = it.apps.length > 3 ? `<div style="color:var(--muted)">+ ${it.apps.slice(3).map(a => a[0]).slice(0,6).join(', ')}</div>` : '';
     return `<article class="card">
-      <div class="top">${photo(it)}<div style="min-width:0"><span class="code">${esc(it.hk)}</span>
+      <div class="top">${photo(it, 'zoom')}<div style="min-width:0"><span class="code">${esc(it.hk)}</span>
         <div class="meta">${esc(it.tipo)} · ${esc(it.mont)}</div>${how ? `<span class="match">Coincide con ${esc(how)}</span>` : ''}</div></div>
       <div class="eqs">${eqCell('VIC', it.vic)}${eqCell('SAKURA', it.sak)}${eqCell('MANN', it.mann)}</div>
       <div class="body">
@@ -566,7 +587,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const fullSec = nFull ? `<details class="sec full"${state.q && low(state.q).trim().length > 1 && !it.text.includes(low(state.q).trim()) && it.ftext.includes(low(state.q).trim()) ? ' open' : ''}><summary><h3>Todas las aplicaciones <small>${nFull} modelos · ${full.length} marcas</small></h3></summary>
         ${full.map(([b, ms]) => brandBlock(b, ms)).join('')}</details>` : '';
     const pri = new Set(it.pri);
-    sheet.innerHTML = `<div class="hd">${photo(it)}<div style="min-width:0"><span class="code" id="sheetTitle">${esc(it.hk)}</span><div class="t">${esc(it.tipo)} · ${esc(it.mont)}</div></div>
+    sheet.innerHTML = `<div class="hd">${photo(it, 'zoom')}<div style="min-width:0"><span class="code" id="sheetTitle">${esc(it.hk)}</span><div class="t">${esc(it.tipo)} · ${esc(it.mont)}</div></div>
         <button class="x" type="button" id="close" aria-label="Cerrar">×</button></div>
       <div class="sec"><h3>Equivalencias <span class="info" tabindex="0" role="img" aria-label="Negrita: equivalencia principal, verificada en el catálogo oficial. Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante." title="Negrita: equivalencia principal, verificada en el catálogo oficial.&#10;Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante.">i</span></h3>${eqRow('VIC', it.vic, it.eqx.vic)}${eqRow('SAKURA', it.sak, it.eqx.sak)}${eqRow('MANN', it.mann, it.eqx.mann)}
 
@@ -738,6 +759,89 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     $('#iosok').addEventListener('click', () => { iosov.hidden = true; });
     iosov.addEventListener('click', e => { if (e.target === iosov) iosov.hidden = true; });
     window.addEventListener('appinstalled', () => { bar.hidden = true; qi.hidden = true; });
+  })();
+
+  /* --- Zoom de foto: pantalla completa, pellizcar / doble toque / rueda; carga la foto HD al abrir --- */
+  (function(){
+    const zv = $('#zv'), stage = $('#zstage'), img = $('#zimg'), spin = $('#zspin'), hint = $('#zhint');
+    let sc = 1, tx = 0, ty = 0, base = null, opener = null, hintT = 0, pushed = false;
+    const pts = new Map(); let pinch = null, pan = null, lastTap = 0, swipe = null;
+    const MAX = 5;
+    function layout(){ // la foto ocupa la pantalla (con margen), sin importar el tamaño de la imagen
+      const s = stage.getBoundingClientRect(), ar = (img.naturalWidth || 1) / (img.naturalHeight || 1);
+      const mw = s.width * 0.94, mh = s.height * 0.80;
+      let w = mw, h = w / ar; if (h > mh) { h = mh; w = h * ar; }
+      base = { x: (s.width - w) / 2, y: (s.height - h) / 2, w, h, sw: s.width, sh: s.height };
+      Object.assign(img.style, { position: 'absolute', left: base.x + 'px', top: base.y + 'px', width: w + 'px', height: h + 'px', maxWidth: 'none', maxHeight: 'none' });
+      apply();
+    }
+    function clamp(){
+      const w = base.w * sc, h = base.h * sc;
+      tx = w <= base.sw ? (base.sw - w) / 2 - base.x : Math.min(-base.x, Math.max(base.sw - w - base.x, tx));
+      ty = h <= base.sh ? (base.sh - h) / 2 - base.y : Math.min(-base.y, Math.max(base.sh - h - base.y, ty));
+    }
+    function apply(){ if (!base) return; clamp(); img.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`; }
+    function zoomAt(nsc, cx, cy){ // cx,cy relativos al stage
+      nsc = Math.max(1, Math.min(MAX, nsc));
+      const ix = (cx - base.x - tx) / sc, iy = (cy - base.y - ty) / sc;
+      tx = cx - base.x - ix * nsc; ty = cy - base.y - iy * nsc; sc = nsc; apply();
+    }
+    function reset(){ sc = 1; tx = 0; ty = 0; apply(); }
+    function rel(e){ const s = stage.getBoundingClientRect(); return { x: e.clientX - s.left, y: e.clientY - s.top }; }
+    function open(hk){
+      if (!IMG[hk]) return;
+      opener = document.activeElement; base = null; sc = 1; tx = ty = 0;
+      img.removeAttribute('style'); img.src = IMG[hk]; img.alt = 'Filtro ' + hk;
+      zv.hidden = false; document.body.style.overflow = 'hidden';
+      if (img.complete && img.naturalWidth) requestAnimationFrame(layout); else img.onload = () => { img.onload = null; layout(); };
+      spin.hidden = false;
+      const hd = new Image();
+      hd.onload = () => { if (zv.hidden || img.alt !== 'Filtro ' + hk) return; img.src = hd.src; spin.hidden = true; };
+      hd.onerror = () => { spin.hidden = true; };
+      hd.src = 'hd/' + encodeURIComponent(hk) + '.webp';
+      hint.classList.remove('off'); clearTimeout(hintT); hintT = setTimeout(() => hint.classList.add('off'), 3500);
+      try { history.pushState({ hkzoom: 1 }, ''); pushed = true; } catch (e) { pushed = false; }
+      $('#zx').focus();
+    }
+    function close(fromPop){
+      if (zv.hidden) return;
+      zv.hidden = true; pts.clear(); pinch = pan = swipe = null;
+      if (ov.hidden && cov.hidden) document.body.style.overflow = '';
+      if (pushed && !fromPop) { pushed = false; history.back(); } else pushed = false;
+      if (opener && opener.focus) opener.focus();
+    }
+    window.addEventListener('popstate', () => { if (!zv.hidden) close(true); });
+    window.addEventListener('resize', () => { if (!zv.hidden) { sc = 1; tx = ty = 0; img.removeAttribute('style'); layout(); } });
+    document.addEventListener('click', e => { const b = e.target.closest('[data-zoom]'); if (!b) return; e.preventDefault(); e.stopPropagation(); open(b.dataset.zoom); }, true);
+    $('#zx').addEventListener('click', () => close());
+    document.addEventListener('keydown', e => { if (!zv.hidden && e.key === 'Escape') { e.stopImmediatePropagation(); close(); } }, true);
+    stage.addEventListener('wheel', e => { e.preventDefault(); const p = rel(e); zoomAt(sc * (e.deltaY < 0 ? 1.25 : 0.8), p.x, p.y); }, { passive: false });
+    stage.addEventListener('dblclick', e => { const p = rel(e); sc > 1.05 ? reset() : zoomAt(2.5, p.x, p.y); });
+    stage.addEventListener('pointerdown', e => {
+      stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, rel(e)); hint.classList.add('off');
+      if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), sc, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 }; pan = swipe = null; }
+      else if (pts.size === 1) {
+        const p = rel(e), now = Date.now();
+        if (e.pointerType !== 'mouse' && now - lastTap < 300) { sc > 1.05 ? reset() : zoomAt(2.5, p.x, p.y); lastTap = 0; return; }
+        lastTap = now;
+        if (sc > 1.01) pan = { x: p.x, y: p.y, tx, ty }; else swipe = { y: p.y, x: p.x };
+      }
+    });
+    stage.addEventListener('pointermove', e => {
+      if (!pts.has(e.pointerId)) return; const p = rel(e); pts.set(e.pointerId, p);
+      if (pinch && pts.size >= 2) { const [a, b] = [...pts.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y); const cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+        zoomAt(pinch.sc * d / pinch.d, pinch.cx, pinch.cy); tx += cx - pinch.cx; ty += cy - pinch.cy; pinch.cx = cx; pinch.cy = cy; pinch.sc = sc; pinch.d = d; apply(); }
+      else if (pan) { tx = pan.tx + (p.x - pan.x); ty = pan.ty + (p.y - pan.y); apply(); }
+      else if (swipe) { const dy = p.y - swipe.y; if (dy > 0) { img.style.transform = `translate(${tx}px,${ty + dy}px) scale(1)`; zv.style.background = `rgba(255,255,255,${Math.max(.4, 1 - dy / 400)})`; } }
+    });
+    function up(e){
+      if (!pts.has(e.pointerId)) return; const p = rel(e); pts.delete(e.pointerId);
+      if (swipe && pts.size === 0) { const dy = p.y - swipe.y; zv.style.background = ''; swipe = null; if (dy > 110) { close(); return; } apply(); }
+      if (pts.size < 2) pinch = null;
+      if (pts.size === 1 && sc > 1.01) { const q = [...pts.values()][0]; pan = { x: q.x, y: q.y, tx, ty }; } else if (pts.size === 0) pan = null;
+      if (sc < 1.02) reset();
+    }
+    stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
   })();
 
   $('#nTotal').textContent = D.length;
