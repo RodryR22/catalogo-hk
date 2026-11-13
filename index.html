@@ -394,6 +394,9 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .ask svg{width:22px;height:22px}
 .vask{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--wa);text-decoration:none;margin:2px 0 10px}
 .vask svg{width:18px;height:18px}
+.ph.illu{position:relative}
+.ph.illu .itag{position:absolute;left:0;right:0;bottom:0;background:rgba(35,37,78,.82);color:#fff;font-size:9.5px;font-weight:700;text-align:center;padding:2px 0;letter-spacing:.02em}
+.mini .illu{position:relative}
 </style>
 </head>
 <body>
@@ -515,7 +518,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 <script src="data.js"></script>
 <script>
 (function(){
-  const D = window.HK_DATA || [], IMG = window.HK_IMG || {};
+  const D = window.HK_DATA || [], IMG = window.HK_IMG || {}, ILLU = new Set(window.HK_ILLU || []);
   const FAMS = ['Aceite','Combustible','Aire','Cabina','Transmisión'];
   const CATS = [['TOYOTA','Toyota'],['NISSAN','Nissan'],['KIA - HYUNDAI','Kia · Hyundai'],['MITSUBISHI','Mitsubishi'],['MAZDA','Mazda'],['FIAT','Fiat'],['ISUZU','Isuzu'],['DAIHATSU','Daihatsu'],['SUZUKI','Suzuki'],['HINO','Hino'],['OTRAS MARCAS','Otras marcas']];
   const PAGE = 48;
@@ -633,6 +636,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     return out.slice(0, 4);
   }
   function photo(it, cls){
+    if (ILLU.has(it.hk)) return `<div class="ph illu ${(cls||'').replace('zoom','')}" title="Imagen ilustrativa: el filtro real puede ser distinto"><img src="${IMG[it.hk]}" alt="Imagen ilustrativa de filtro ${esc(it.mont)}" loading="lazy"><span class="itag">Ilustrativa</span></div>`;
     if (IMG[it.hk] && /\bzoom\b/.test(cls||'')) return `<button type="button" class="ph ${cls}" data-zoom="${esc(it.hk)}" aria-label="Ampliar foto de ${esc(it.hk)}"><img src="${IMG[it.hk]}" alt="Filtro ${esc(it.hk)}" loading="lazy"></button>`;
     return IMG[it.hk] ? `<div class="ph ${cls||''}"><img src="${IMG[it.hk]}" alt="Filtro ${esc(it.hk)}" loading="lazy"></div>`
                       : `<div class="ph none ${cls||''}">HK<small>Sin foto</small></div>`;
