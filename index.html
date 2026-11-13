@@ -525,7 +525,8 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   let SELLER = null;
   try {
     const v = (new URLSearchParams(location.search).get('v') || '').toLowerCase().trim();
-    if (v && VEND[v]) { localStorage.setItem('hk-vendedor', v); SELLER = v; }
+    if (v === 'general') { localStorage.removeItem('hk-vendedor'); try { history.replaceState(history.state, '', location.pathname + location.hash); } catch (e) {} }
+    else if (v && VEND[v]) { localStorage.setItem('hk-vendedor', v); SELLER = v; }
     else { const s = localStorage.getItem('hk-vendedor'); if (s && VEND[s]) SELLER = s; }
   } catch (e) { const v = (new URLSearchParams(location.search).get('v') || '').toLowerCase(); if (VEND[v]) SELLER = v; }
   const WAN = SELLER ? VEND[SELLER].w : WA_GENERAL;
