@@ -1,5 +1,5 @@
 // Funciona sin internet una vez instalado. VERSION cambia sola en cada actualización del catálogo.
-const VERSION = 'hk-9a19bcb6c7';
+const VERSION = 'hk-00e31b1b86';
 const FILES = ["./", "index.html", "data.js", "manifest.webmanifest", "img/excell-white.png", "img/giti.png", "img/gt-oil.png", "img/gt-radial.svg", "img/hk-logo.png", "img/hk-white.png", "img/mighty.png", "img/tecfil-white.png", "img/yhaguy-logo.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png"];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
