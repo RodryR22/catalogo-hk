@@ -426,12 +426,12 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
   .card button.ph.zoom{cursor:pointer}
   .card .top>div{width:100%;text-align:left}
   .card .code{font-size:13.5px;padding:3px 5px 2px;border-width:1.2px;letter-spacing:.1px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
-  .card .meta,.card .match,.card .eqs,.card .body>div:not(.actions),.card .actions .more{display:none}
+  .card .meta,.card .match,.card .eqs,.card .body>div:not(.actions):not(.lhead),.card .actions .more{display:none}
   .card .tmeta{display:block;font-size:11px;color:var(--muted);margin-top:4px;line-height:1.3}
   .card .disp{font-size:10.5px;margin-top:3px;gap:3px}
   .card .disp:before{width:5px;height:5px}
   .card .body{padding:6px;gap:0}
-  .card .body>div.tinfo{display:block;flex:1;border-top:1px solid var(--line);margin:0 -6px 6px;padding:5px 6px 0}
+  .card .body>div.tinfo.tinfo{display:block;flex:1;border-top:1px solid var(--line);margin:0 -6px 6px;padding:5px 6px 0}
   .card .tl{font-size:8.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-top:3px}
   .card .tl:first-child{margin-top:0}
   .card .toem{font-family:var(--f-mono);font-size:10.5px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
@@ -554,6 +554,93 @@ html{-webkit-tap-highlight-color:transparent}
 }
 .sheet .hero .ph.big img{transition:filter .2s}
 .sheet .hero .ph.big:not(.hdok) img{filter:blur(.4px)}
+
+/* ===== Mejoras 2026 (celular) ===== */
+.skel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:7px;min-height:180px}
+.skel i{display:block;aspect-ratio:1;border-radius:6px}
+.skel b{display:block;height:10px;border-radius:5px;width:80%}
+.skel b.s{width:50%}
+.skel i,.skel b{background:linear-gradient(90deg,var(--soft) 25%,var(--line) 50%,var(--soft) 75%);background-size:200% 100%;animation:shim 1.2s linear infinite}
+@keyframes shim{to{background-position:-200% 0}}
+@media (min-width:641px){.skel{min-height:300px}.skel i{aspect-ratio:3/1}}
+@media (prefers-reduced-motion:reduce){.skel i,.skel b{animation:none}}
+.qchips,.vsel,.tabbar{display:none}
+.sugg{position:fixed;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(10,12,35,.18);overflow:hidden}
+.sugg[hidden]{display:none}
+.sugg button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;font-size:14px;color:var(--fg);background:none;border:0;border-top:1px solid var(--line);padding:11px 14px;cursor:pointer}
+.sugg button:first-of-type{border-top:0}
+.sugg button:hover,.sugg button.on{background:var(--soft)}
+.sugg .k{flex:none;font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);width:62px}
+.sugg b{font-family:var(--f-code);font-size:16px}
+.sugg small{margin-left:auto;color:var(--muted);font-size:11.5px;text-align:right}
+.sugg .hd{font-size:10.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:9px 14px 4px}
+.news{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;border-radius:10px;background:var(--navy);color:#fff;font-size:13px;border-left:5px solid var(--yellow)}
+.news[hidden]{display:none}
+.news b{color:var(--yellow)}
+.news .go{margin-left:auto;flex:none;font:inherit;font-weight:700;font-size:12.5px;background:var(--yellow);color:var(--navy);border:0;border-radius:6px;padding:6px 10px;cursor:pointer}
+.news .x{flex:none;background:none;border:0;color:#fff;font-size:20px;line-height:1;cursor:pointer;opacity:.8}
+.fly{position:fixed;z-index:60;width:56px;height:56px;border-radius:10px;background:#fff center/contain no-repeat;box-shadow:0 6px 16px rgba(0,0,0,.25);pointer-events:none;transition:transform .55s cubic-bezier(.5,-.3,.7,1),opacity .55s}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+.bump{animation:bump .35s ease}
+.lhead{display:none;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.lhead .code{font-size:16px}
+.lhead .disp{margin:0}
+.lhead .lm{font-size:11px;color:var(--muted);width:100%}
+@media (max-width:640px){
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  .wafab,.qmfab{display:none!important}
+  .bar .cartbtn{display:none}
+  .afilter.veh{display:none}
+  .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:16;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(10,12,35,.08);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+  .tabbar button,.tabbar a{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;font:inherit;font-size:10.5px;font-weight:600;color:var(--muted);background:none;border:0;padding:4px 0;text-decoration:none;cursor:pointer}
+  .tabbar svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .tabbar .on{color:var(--fg)}
+  .tabbar .on:before{content:"";position:absolute;top:-6px;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--yellow)}
+  .tabbar .on svg{stroke-width:2.3}
+  .tabbar [data-tab="wa"]{color:var(--wa)}
+  .tabbar .n{position:absolute;top:0;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--yellow);color:var(--navy);font-style:normal;font-weight:800;font-size:11px;line-height:18px;padding:0 5px;text-align:center}
+  .tabbar .dot{position:absolute;top:2px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:#E53935;border:2px solid var(--card)}
+  .tabbar [hidden]{display:none}
+  .qchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:8px -16px 0;padding:0 16px 2px;-webkit-overflow-scrolling:touch}
+  .qchips::-webkit-scrollbar{display:none}
+  .qchips button{flex:none;font:inherit;font-size:12.5px;font-weight:700;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+  .qchips button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .qchips button.av:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#16a34a;margin-right:6px;vertical-align:1px}
+  .vsel{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-right:auto}
+  .vsel button{display:flex;align-items:center;justify-content:center;gap:2px;width:38px;height:30px;background:var(--card);border:0;border-left:1px solid var(--line);cursor:pointer;padding:0}
+  .vsel button:first-child{border-left:0}
+  .vsel i{display:block;width:5px;height:12px;border-radius:1.5px;background:var(--muted)}
+  .vsel [data-view="v2"] i{width:7px}
+  .vsel [data-view="vl"] i{width:16px;height:3px;box-shadow:0 -5px 0 var(--muted),0 5px 0 var(--muted)}
+  .vsel button[aria-pressed="true"]{background:var(--navy)}
+  .vsel button[aria-pressed="true"] i{background:#fff}
+  .vsel [data-view="vl"][aria-pressed="true"] i{box-shadow:0 -5px 0 #fff,0 5px 0 #fff}
+  body.v2 .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  body.v2 .card .code{font-size:17px}
+  body.v2 .card .tmeta{font-size:12px}
+  body.v2 .card .disp{font-size:11.5px}
+  body.v2 .card .toem,body.v2 .card .tapp{font-size:11.5px}
+  body.v2 .card .tl{font-size:9.5px}
+  body.v2 .card .addcart{font-size:13.5px;padding:8px 4px}
+  body.vl .grid{grid-template-columns:1fr;gap:8px}
+  body.vl .card{display:grid;grid-template-columns:104px 1fr;column-gap:0}
+  body.vl .card .top{padding:8px}
+  body.vl .card .top>div{display:none}
+  body.vl .card .body{padding:8px 10px 8px 4px}
+  body.vl .card .body>div.lhead{display:flex;padding-right:30px}
+  body.vl .card .body>div.tinfo{border-top:0;margin:0 0 6px;padding:0}
+  body.vl .card .fav{right:6px;top:6px}
+  body.vl .card .tapp{-webkit-line-clamp:3}
+  body.vl .card .cartslot{width:auto}
+  body.vl .card .addcart{width:auto;padding:6px 14px}
+  body.vl .card .qty{width:auto}
+  .ov{align-items:flex-end;justify-content:center}
+  .ov:not([hidden]) .sheet{animation:sheetup .28s cubic-bezier(.2,.8,.2,1)}
+  @keyframes sheetup{from{transform:translateY(100%)}to{transform:none}}
+  .sheet{height:calc(100% - 28px - env(safe-area-inset-top,0px));width:100%;border-radius:16px 16px 0 0;transition:transform .2s ease}
+  .sheet .hd{border-radius:16px 16px 0 0;padding-top:18px;touch-action:none}
+  .sheet .hd:before{content:"";position:absolute;top:7px;left:50%;width:42px;height:5px;margin-left:-21px;border-radius:3px;background:rgba(255,255,255,.45)}
+}
 </style>
 </head>
 <body>
@@ -595,13 +682,15 @@ html{-webkit-tap-highlight-color:transparent}
   <div class="frow"><span class="flbl">Marca</span><div class="chips" id="cats" role="group" aria-label="Marca"></div></div>
   <div class="frow"><span class="flbl">Familia</span><div class="chips" id="fams" role="group" aria-label="Familia"></div></div>
   <div class="activebar" id="activebar" aria-live="polite"></div>
+  <div class="qchips" id="qchips" role="toolbar" aria-label="Filtros rápidos"></div>
 </div></div>
 
 <main><div class="wrap">
   <section class="vehpanel" id="vehpanel" hidden aria-live="polite"></section>
   <section class="mine" id="mine" hidden aria-label="Mis filtros"></section>
-  <div class="chips" style="margin-bottom:12px"><span class="status" id="status" aria-live="polite"></span></div>
-  <div class="grid" id="grid"></div>
+  <div id="news" class="news" hidden></div>
+  <div class="chips" style="margin-bottom:12px"><div class="vsel" id="vsel" role="group" aria-label="Vista"><button type="button" data-view="v3" aria-label="3 por fila"><i></i><i></i><i></i></button><button type="button" data-view="v2" aria-label="2 por fila"><i></i><i></i></button><button type="button" data-view="vl" aria-label="Lista"><i></i></button></div><span class="status" id="status" aria-live="polite"></span></div>
+  <div class="grid" id="grid"><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div></div>
   <div class="empty" id="empty" hidden><b>No encontramos ese código</b>Revisá que el número esté completo o probá con otra OEM o equivalente. Podés escribirlo con o sin guiones y espacios.</div>
   <button class="loadmore" id="more" type="button" hidden>Mostrar más filtros</button>
 </div></main>
@@ -638,6 +727,14 @@ html{-webkit-tap-highlight-color:transparent}
   <button type="button" class="qminst" id="qmInst" hidden>📲 Instalar en el celular</button>
 </nav>
 
+<nav class="tabbar" id="tabbar" aria-label="Navegación">
+  <button type="button" data-tab="inicio" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span>Inicio</span></button>
+  <button type="button" data-tab="veh"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v3H3z"/><circle cx="7.5" cy="13" r="1"/><circle cx="16.5" cy="13" r="1"/></svg><span>Vehículo</span></button>
+  <button type="button" data-tab="fav"><svg viewBox="0 0 24 24"><path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"/></svg><span>Favoritos</span><em class="dot" id="tabdot" hidden></em></button>
+  <button type="button" data-tab="cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.4a1 1 0 0 0 1 .8h9.6a1 1 0 0 0 1-.8L21 7H6"/></svg><span>Presupuesto</span><em class="n" id="tabn" hidden>0</em></button>
+  <a data-tab="wa" id="tabwa" href="https://wa.me/595994895000?text=Hola%20Yhaguy%2C%20quiero%20consultar%20por%20filtros%20HK." target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-4A8 8 0 1 1 8.6 19z"/><path d="M9 9.5c.4 1.8 1.8 3.4 3.6 4.2l1.2-1 1.7.8c-.2 1-1 1.6-2 1.5C10.6 14.6 8.5 12.4 8 9.6c0-1 .6-1.7 1.5-1.8l.9 1.6z"/></svg><span>WhatsApp</span></a>
+</nav>
+<div class="sugg" id="sugg" hidden role="listbox" aria-label="Sugerencias"></div>
 <a class="wafab" id="wafab" href="https://wa.me/595994895000?text=Hola%20Yhaguy%2C%20quiero%20consultar%20por%20filtros%20HK." target="_blank" rel="noopener" aria-label="Escribir a Yhaguy por WhatsApp"><span class="wafab-ic"></span><span class="wafab-tx">¿Consultas? Escríbanos</span></a>
 
 <div class="ov" id="cartov" hidden><aside class="sheet cart" id="cart" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
@@ -775,7 +872,7 @@ html{-webkit-tap-highlight-color:transparent}
     return { words: fixed, changed: fixed.some((w, i) => w !== words[i] && !SYN[words[i]]) ? fixed.join(' ') : '' };
   }
 
-  let state = { q: '', fam: '', cat: '', shown: PAGE, veh: null, ver: '', favs: false };
+  let state = { q: '', fam: '', cat: '', shown: PAGE, veh: null, ver: '', favs: false, av: false };
   try { const s = JSON.parse(localStorage.getItem('hk-filtros') || '{}'); if (s.fam) state.fam = s.fam; if (s.cat) state.cat = s.cat; } catch (e) {}
 
   const sel = $('#marca');
@@ -887,6 +984,7 @@ html{-webkit-tap-highlight-color:transparent}
         <div class="meta">${esc(it.tipo)} · ${esc(it.mont)}</div><div class="tmeta">${esc(it.fam)}<br>${esc(MONT_S(it.mont))}</div>${disp(it.hk)}${how ? `<span class="match">Coincide con ${esc(how)}</span>` : ''}</div></div>
       <div class="eqs">${eqCell('VIC', it.vic)}${eqCell('SAKURA', it.sak)}${eqCell('MANN', it.mann)}</div>
       <div class="body">
+        <div class="lhead"><span class="code">${esc(it.hk)}</span>${disp(it.hk)}<span class="lm">${esc(it.fam)} · ${esc(MONT_S(it.mont))}</span></div>
         <div><div class="lbl">OEM principales</div><div class="oems">${oemShort(it).map(n => `<span class="${pri.has(n) ? 'p' : ''}">${esc(n)}</span>`).join('') || '<span style="color:var(--muted)">Sin OEM cargada</span>'}</div></div>
         ${state.veh && it.vlines ? `<div class="vfor"><div class="lbl">Para su ${esc(state.veh.label)}</div>${it.vlines.map(l => `<div>${esc(l)}</div>`).join('')}</div>`
           : `<div><div class="lbl">Aplicaciones</div><div class="apps">${apps || '<span style="color:var(--muted)">Sin aplicación cargada</span>'}${extra}</div></div>`}
@@ -905,6 +1003,7 @@ html{-webkit-tap-highlight-color:transparent}
     for (const it of D) {
       if (state.favs && !isFav(it.hk)) continue;
       if (state.fam && it.fam !== state.fam) continue;
+      if (state.av && !STK.has(it.hk)) continue;
       if (vset) { if (!vset.has(it.hk)) continue; }
       else if (state.cat && !it.cat.includes(state.cat)) continue;
       const m = match(it, q);
@@ -1440,6 +1539,116 @@ html{-webkit-tap-highlight-color:transparent}
 
   $('#nTotal').textContent = D.length;
   run();
+
+  /* ===== Mejoras 2026 (celular) ===== */
+  const MOB = window.matchMedia('(max-width:640px)');
+  // --- selector de vista (3 por fila · 2 por fila · lista), se recuerda en este celular ---
+  let VIEW = 'v3'; try { VIEW = localStorage.getItem('hk-vista') || 'v3'; } catch (e) {}
+  function setView(v){ VIEW = v; document.body.classList.remove('v2', 'vl'); if (v !== 'v3') document.body.classList.add(v);
+    document.querySelectorAll('#vsel [data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); try { localStorage.setItem('hk-vista', v); } catch (e) {} }
+  $('#vsel').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b) { setView(b.dataset.view); track('vista', { tipo: b.dataset.view }); } });
+  setView(VIEW);
+  // --- chips rápidos: solo disponibles + familias ---
+  function drawQChips(){
+    $('#qchips').innerHTML = `<button type="button" class="av" data-q="av" aria-pressed="${state.av}">Disponibles</button>` +
+      FAMS.map(f => `<button type="button" data-q="${f}" aria-pressed="${state.fam === f}">${f}</button>`).join('');
+  }
+  $('#qchips').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (!b) return;
+    if (b.dataset.q === 'av') state.av = !state.av; else state.fam = state.fam === b.dataset.q ? '' : b.dataset.q;
+    state.shown = PAGE; save(); drawFams(); run(); });
+  const _run = run; run = function(){ _run(); drawQChips(); drawTabs(); };
+  // --- barra inferior de pestañas ---
+  function drawTabs(){
+    const n = cart.reduce((a, x) => a + x.q, 0), tn = $('#tabn'); tn.hidden = !n; tn.textContent = n;
+    document.querySelectorAll('#tabbar [data-tab]').forEach(b => b.classList.toggle('on',
+      b.dataset.tab === 'fav' ? state.favs : b.dataset.tab === 'veh' ? !!state.veh && !state.favs : b.dataset.tab === 'inicio' ? !state.favs && !state.veh : false));
+  }
+  $('#tabbar').addEventListener('click', e => {
+    const b = e.target.closest('[data-tab]'); if (!b) return; const t = b.dataset.tab;
+    if (t === 'wa') return;
+    if (t === 'inicio') { state.q = ''; $('#q').value = ''; state.fam = ''; state.av = false; save(); drawFams(); state.veh = null; state.ver = ''; state.favs = false; state.shown = PAGE; run(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    else if (t === 'veh') vpOpen();
+    else if (t === 'fav') { state.favs = !state.favs; if (state.favs) { state.fam = ''; state.av = false; state.q = ''; $('#q').value = ''; drawFams(); } state.shown = PAGE; $('#tabdot').hidden = true; run(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    else if (t === 'cart') openCart();
+  });
+  document.addEventListener('click', e => { if (e.target.closest('[data-cart]')) setTimeout(drawTabs, 0); });
+  { const a = $('#tabwa'); a.href = 'https://wa.me/' + WAN + '?text=' + encodeURIComponent(HOLA + ', quiero consultar por filtros HK.'); }
+  // --- vibración suave y animación al agregar ---
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-cart="add"]'); if (!b) return;
+    try { if (navigator.vibrate) navigator.vibrate(15); } catch (er) {}
+    if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    const it = D.find(d => d.hk === b.dataset.hk); if (!it || !IMG[it.hk]) return;
+    const target = MOB.matches ? $('#tabbar [data-tab="cart"] svg') : $('#cartbtn'); if (!target) return;
+    const host = b.closest('.card, .sheet') || document.body, pimg = host.querySelector('.ph img');
+    const src = (pimg || b).getBoundingClientRect(), t = target.getBoundingClientRect();
+    const f = document.createElement('div'); f.className = 'fly'; f.style.backgroundImage = `url("${IMG[it.hk]}")`;
+    f.style.left = (src.left + src.width / 2 - 28) + 'px'; f.style.top = (src.top + src.height / 2 - 28) + 'px'; document.body.appendChild(f);
+    requestAnimationFrame(() => requestAnimationFrame(() => { f.style.transform = `translate(${t.left + t.width / 2 - src.left - src.width / 2}px,${t.top + t.height / 2 - src.top - src.height / 2}px) scale(.25)`; f.style.opacity = '.3'; }));
+    setTimeout(() => { f.remove(); target.classList.remove('bump'); void target.offsetWidth; target.classList.add('bump'); }, 580);
+  });
+  // --- ficha tipo hoja: se cierra deslizando hacia abajo desde la barra superior ---
+  (function(){
+    let y0 = null, dy = 0;
+    sheet.addEventListener('touchstart', e => { if (!MOB.matches || !e.target.closest('.hd') || e.target.closest('button')) return; y0 = e.touches[0].clientY; dy = 0; sheet.style.transition = 'none'; }, { passive: true });
+    sheet.addEventListener('touchmove', e => { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0); sheet.style.transform = `translateY(${dy}px)`; }, { passive: true });
+    sheet.addEventListener('touchend', () => { if (y0 === null) return; sheet.style.transition = ''; if (dy > 110) { sheet.style.transform = 'translateY(100%)'; setTimeout(() => { closeSheet(); sheet.style.transform = ''; }, 200); } else sheet.style.transform = ''; y0 = null; });
+  })();
+  // --- sugerencias mientras escribe (códigos, OEM, vehículos y búsquedas recientes) ---
+  const sg = $('#sugg'); let sgi = -1;
+  let RECENT = []; try { RECENT = JSON.parse(localStorage.getItem('hk-busquedas') || '[]'); } catch (e) {}
+  function sgPlace(){ const r = $('#q').closest('.search').getBoundingClientRect(); Object.assign(sg.style, { left: r.left + 'px', top: (r.bottom + 6) + 'px', width: r.width + 'px' }); }
+  function sgDraw(){
+    const q = $('#q').value.trim(), nq = norm(q), lq = low(q), last = lq.split(/\s+/).pop(); let h = '';
+    if (!q) { if (RECENT.length) h = '<div class="hd">Búsquedas recientes</div>' + RECENT.slice(0, 5).map(r => `<button type="button" data-s="q" data-v="${esc(r)}"><span class="k">Reciente</span>${esc(r)}</button>`).join(''); }
+    else if (q.length >= 2) {
+      const codes = nq.length >= 2 ? D.filter(d => norm(d.hk).startsWith(nq) || (nq.length >= 4 && d.oem.some(([b, l]) => l.some(o => norm(o).startsWith(nq))))).slice(0, 4) : [];
+      const mods = [];
+      if (last.length >= 2) VEH.forEach((mm, b) => mm.forEach((e, k) => { if (mods.length < 3 && low(e.label).startsWith(last) && (lq === last || lq.includes(low(b).split(' ')[0]) || true)) mods.push([b, k, e]); }));
+      h = codes.map(d => `<button type="button" data-s="hk" data-v="${esc(d.hk)}"><span class="k">${norm(d.hk).startsWith(nq) ? 'Código' : 'OEM'}</span><b>${esc(d.hk)}</b><small>${esc(d.fam)}${STK.has(d.hk) ? ' · Disponible' : ''}</small></button>`).join('')
+        + mods.map(([b, k, e]) => `<button type="button" data-s="veh" data-b="${esc(b)}" data-k="${esc(k)}"><span class="k">Vehículo</span>${esc(brandName(b))} ${esc(e.label)}<small>${e.items.size} filtros</small></button>`).join('');
+    }
+    sg.innerHTML = h; sg.hidden = !h; sgi = -1; if (h) sgPlace();
+  }
+  function sgSave(v){ v = String(v).trim(); if (v.length < 2) return; RECENT = [v, ...RECENT.filter(x => low(x) !== low(v))].slice(0, 8); try { localStorage.setItem('hk-busquedas', JSON.stringify(RECENT)); } catch (e) {} }
+  $('#q').addEventListener('focus', sgDraw);
+  $('#q').addEventListener('input', () => setTimeout(sgDraw, 0));
+  $('#q').addEventListener('keydown', e => {
+    const bs = [...sg.querySelectorAll('button')];
+    if (e.key === 'Enter') { if (!sg.hidden && sgi >= 0 && bs[sgi]) { e.preventDefault(); bs[sgi].click(); } else { sgSave($('#q').value); sg.hidden = true; $('#q').blur(); } return; }
+    if (e.key === 'Escape') { sg.hidden = true; return; }
+    if (sg.hidden || !bs.length) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sgi = (sgi + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length; bs.forEach((b, i) => b.classList.toggle('on', i === sgi)); }
+  });
+  sg.addEventListener('pointerdown', e => e.preventDefault());
+  sg.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return; sg.hidden = true;
+    if (b.dataset.s === 'veh') {
+      const ent = VEH.get(b.dataset.b).get(b.dataset.k); state.veh = { b: b.dataset.b, k: b.dataset.k, label: brandName(b.dataset.b) + ' ' + ent.label }; state.ver = '';
+      sgSave(state.veh.label); state.q = ''; $('#q').value = ''; state.cat = ''; state.shown = PAGE; run(); $('#q').blur();
+      const pnl = $('#vehpanel'); if (pnl) window.scrollTo({ top: pnl.getBoundingClientRect().top + scrollY - document.querySelector('.bar').offsetHeight - 10, behavior: 'smooth' }); return;
+    }
+    if (b.dataset.s === 'hk') { sgSave(b.dataset.v); $('#q').blur(); openSheet(b.dataset.v); return; }
+    $('#q').value = b.dataset.v; state.q = b.dataset.v; state.shown = PAGE; run(); $('#q').blur();
+  });
+  $('#q').addEventListener('blur', () => setTimeout(() => { sg.hidden = true; }, 150));
+  window.addEventListener('resize', () => { if (!sg.hidden) sgPlace(); });
+  window.addEventListener('scroll', () => { if (!sg.hidden) sgPlace(); }, { passive: true });
+  // --- novedades: favoritos que volvieron a tener stock y filtros nuevos (comparado con la última visita en este celular) ---
+  let prevStock = null, prevCodes = null; try { prevStock = JSON.parse(localStorage.getItem('hk-stock-ant') || 'null'); prevCodes = JSON.parse(localStorage.getItem('hk-codigos-ant') || 'null'); } catch (e) {}
+  const back = prevStock ? FAV.filter(h => STK.has(h) && !prevStock.includes(h)) : [];
+  const nuevos = prevCodes ? D.map(d => d.hk).filter(h => !prevCodes.includes(h)) : [];
+  function seenNews(){ try { localStorage.setItem('hk-stock-ant', JSON.stringify([...STK])); localStorage.setItem('hk-codigos-ant', JSON.stringify(D.map(d => d.hk))); } catch (e) {} }
+  if (back.length || nuevos.length) {
+    const nb = $('#news');
+    nb.innerHTML = (back.length ? `<span>★ <b>${back.length === 1 ? esc(back[0]) : back.length + ' favoritos'}</b> ${back.length === 1 ? 'volvió' : 'volvieron'} a tener stock</span>`
+                                : `<span><b>${nuevos.length} ${nuevos.length === 1 ? 'filtro nuevo' : 'filtros nuevos'}</b> en el catálogo</span>`)
+      + `<button type="button" class="go" id="newsgo">Ver</button><button type="button" class="x" id="newsx" aria-label="Cerrar">×</button>`;
+    nb.hidden = false; if (back.length) $('#tabdot').hidden = false;
+    $('#newsx').addEventListener('click', () => { nb.hidden = true; seenNews(); });
+    $('#newsgo').addEventListener('click', () => { nb.hidden = true; seenNews(); if (back.length) { if (back.length === 1) openSheet(back[0]); else { state.favs = true; state.shown = PAGE; run(); } } else openSheet(nuevos[0]); });
+  } else seenNews();
+  drawQChips(); drawTabs();
 })();
 </script>
 
