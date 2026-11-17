@@ -216,6 +216,17 @@ main .wrap{padding-block:18px 40px}
 .ph.none small{display:block;font-family:var(--f-body);font-size:9px;font-weight:500;margin-top:4px}
 .code{display:inline-block;background:var(--yellow);color:var(--on-yellow);border:1.5px solid var(--navy);font-family:var(--f-code);font-weight:800;font-size:26px;line-height:1;padding:4px 9px 3px;border-radius:4px;letter-spacing:.4px}
 .meta{font-size:12px;color:var(--muted);margin-top:6px}
+.disp{display:flex;align-items:center;gap:4px;margin-top:5px;font-size:11px;font-weight:600;color:#15803d;letter-spacing:.2px}
+.disp:before{content:"";width:6px;height:6px;border-radius:50%;background:#16a34a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .disp{color:#4ade80}}
+:root[data-theme="dark"] .disp{color:#4ade80}
+.disp.no{color:var(--muted)}
+:root .disp.no,:root:not([data-theme="light"]) .disp.no{color:var(--muted)}
+.disp.no:before{background:#9ca3af}
+.sheet .hd .disp{color:var(--navy)!important}
+.sheet .hd .disp.no{opacity:.75}
+.sheet .hd .disp.no:before{background:#6b7280}
+.sheet .hd .disp:before{background:#15803d}
 .match{display:inline-block;margin-top:6px;font-size:11.5px;background:var(--mark);color:var(--fg);padding:2px 7px;border-radius:3px;font-weight:600}
 .eqs{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .eq{padding:7px 10px;min-width:0}
@@ -518,7 +529,8 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 <script src="data.js"></script>
 <script>
 (function(){
-  const D = window.HK_DATA || [], IMG = window.HK_IMG || {}, ILLU = new Set(window.HK_ILLU || []);
+  const D = window.HK_DATA || [], IMG = window.HK_IMG || {}, ILLU = new Set(window.HK_ILLU || []), STK = new Set(window.HK_STOCK || []);
+  const disp = hk => !window.HK_STOCK ? '' : STK.has(hk) ? '<div class="disp">Disponible</div>' : '<div class="disp no">Sin stock</div>';
   /* --- Vendedor del cliente: llega por el link (?v=julio) y queda guardado en este celular --- */
   const VEND = {"julio": {"n": "Julio Varela", "w": "595976975022"}, "ruben": {"n": "Ruben Diaz", "w": "595986180248"}, "marlene": {"n": "Marlene Lopez", "w": "595991254660"}, "daiana": {"n": "Daiana Lopez", "w": "595985932702"}};
   const WA_GENERAL = '595994895000';
@@ -724,7 +736,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     const extra = it.apps.length > 3 ? `<div style="color:var(--muted)">+ ${it.apps.slice(3).map(a => a[0]).slice(0,6).join(', ')}</div>` : '';
     return `<article class="card">${favBtn(it.hk)}
       <div class="top">${photo(it, 'zoom')}<div style="min-width:0"><span class="code">${esc(it.hk)}</span>
-        <div class="meta">${esc(it.tipo)} · ${esc(it.mont)}</div>${how ? `<span class="match">Coincide con ${esc(how)}</span>` : ''}</div></div>
+        <div class="meta">${esc(it.tipo)} · ${esc(it.mont)}</div>${disp(it.hk)}${how ? `<span class="match">Coincide con ${esc(how)}</span>` : ''}</div></div>
       <div class="eqs">${eqCell('VIC', it.vic)}${eqCell('SAKURA', it.sak)}${eqCell('MANN', it.mann)}</div>
       <div class="body">
         <div><div class="lbl">OEM principales</div><div class="oems">${oemShort(it).map(n => `<span class="${pri.has(n) ? 'p' : ''}">${esc(n)}</span>`).join('') || '<span style="color:var(--muted)">Sin OEM cargada</span>'}</div></div>
@@ -815,7 +827,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     const fullSec = nFull ? `<details class="sec full"${state.q && low(state.q).trim().length > 1 && !it.text.includes(low(state.q).trim()) && it.ftext.includes(low(state.q).trim()) ? ' open' : ''}><summary><h3>Todas las aplicaciones <small>${nFull} modelos · ${full.length} marcas</small></h3></summary>
         ${full.map(([b, ms]) => brandBlock(b, ms)).join('')}</details>` : '';
     const pri = new Set(it.pri);
-    sheet.innerHTML = `<div class="hd">${photo(it, 'zoom')}<div style="min-width:0"><span class="code" id="sheetTitle">${esc(it.hk)}</span><div class="t">${esc(it.tipo)} · ${esc(it.mont)}</div></div>
+    sheet.innerHTML = `<div class="hd">${photo(it, 'zoom')}<div style="min-width:0"><span class="code" id="sheetTitle">${esc(it.hk)}</span><div class="t">${esc(it.tipo)} · ${esc(it.mont)}</div>${disp(it.hk)}</div>
         ${favBtn(it.hk)}<button class="x" type="button" id="close" aria-label="Cerrar">×</button></div>
       <div class="sec"><h3>Equivalencias <span class="info" tabindex="0" role="img" aria-label="Negrita: equivalencia principal, verificada en el catálogo oficial. Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante." title="Negrita: equivalencia principal, verificada en el catálogo oficial.&#10;Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante.">i</span></h3>${eqRow('VIC', it.vic, it.eqx.vic)}${eqRow('SAKURA', it.sak, it.eqx.sak)}${eqRow('MANN', it.mann, it.eqx.mann)}
 
