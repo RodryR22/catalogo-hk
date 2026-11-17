@@ -1565,7 +1565,7 @@ html{-webkit-tap-highlight-color:transparent}
   /* ===== Mejoras 2026 (celular) ===== */
   const MOB = window.matchMedia('(max-width:640px)');
   // --- selector de vista (3 por fila · 2 por fila · lista), se recuerda en este celular ---
-  let VIEW = 'v3'; try { VIEW = localStorage.getItem('hk-vista') || 'v3'; } catch (e) {}
+  let VIEW = 'vl'; // siempre abre en la vista lista; el cliente puede cambiarla mientras usa la app
   function setView(v){ VIEW = v; document.body.classList.remove('v2', 'vl'); if (v !== 'v3') document.body.classList.add(v);
     document.querySelectorAll('#vsel [data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); try { localStorage.setItem('hk-vista', v); } catch (e) {} }
   $('#vsel').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b) { setView(b.dataset.view); track('vista', { tipo: b.dataset.view }); } });
