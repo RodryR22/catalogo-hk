@@ -1199,7 +1199,7 @@ html{-webkit-tap-highlight-color:transparent}
       if (img.complete && img.naturalWidth) requestAnimationFrame(layout); else img.onload = () => { img.onload = null; layout(); };
       spin.hidden = false;
       const hd = new Image();
-      hd.onload = () => { if (zv.hidden || img.alt !== 'Filtro ' + hk) return; img.src = hd.src; spin.hidden = true; };
+      hd.onload = () => { if (zv.hidden || img.alt !== 'Filtro ' + hk) return; img.onload = () => { img.onload = null; sc = 1; tx = ty = 0; layout(); }; img.src = hd.src; spin.hidden = true; };
       hd.onerror = () => { spin.hidden = true; };
       hd.src = 'hd/' + encodeURIComponent(hk) + '.webp';
       hint.classList.remove('off'); clearTimeout(hintT); hintT = setTimeout(() => hint.classList.add('off'), 3500);
