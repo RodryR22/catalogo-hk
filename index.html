@@ -1019,7 +1019,7 @@ html{-webkit-tap-highlight-color:transparent}
       </div></article>`;
   }
 
-  let results = [], TQ = { words: [], changed: '' };
+  let results = [], TQ = { words: [], changed: '' }, RELAX = '';
   function run(){
     const q = state.q.trim();
     TQ = textQuery(q);
@@ -1033,6 +1033,12 @@ html{-webkit-tap-highlight-color:transparent}
       else if (state.cat && !it.cat.includes(state.cat)) continue;
       const m = match(it, q);
       if (m) results.push([it, m]);
+    }
+    // si la búsqueda no encuentra nada por culpa de un filtro de marca/familia/stock, buscar en todo el catálogo y avisar
+    RELAX = '';
+    if (q && !results.length && !state.favs && (state.cat || state.fam || state.av)) {
+      for (const it of D) { if (vset && !vset.has(it.hk)) continue; const m = match(it, q); if (m) results.push([it, m]); }
+      if (results.length) RELAX = [state.cat && !vset ? (CATS.find(c => c[0] === state.cat) || [0, state.cat])[1] : '', state.fam, state.av ? 'Disponibles' : ''].filter(Boolean).join(' · ');
     }
     if (q) results.sort((a, b) => b[1].score - a[1].score);
     else if (vset) results.sort((a, b) => FAMS.indexOf(a[0].fam) - FAMS.indexOf(b[0].fam));
@@ -1049,7 +1055,7 @@ html{-webkit-tap-highlight-color:transparent}
       if (state.veh && !state.q.trim() && it.fam !== lastFam) { lastFam = it.fam; const n = results.filter(r => r[0].fam === it.fam).length; h = `<h3 class="famhd">Filtros de ${it.fam.toLowerCase()} <small>${n}</small></h3>`; }
       return h + card(it, state.q.trim() && m.how && m.score < 100 ? m.how : '');
     }).join('');
-    const fix = TQ.changed && results.length ? `<span class="fixnote">Mostrando resultados para «${esc(TQ.changed)}»</span>` : '';
+    const fix = (TQ.changed && results.length ? `<span class="fixnote">Mostrando resultados para «${esc(TQ.changed)}»</span>` : '') + (RELAX ? `<span class="fixnote">No había resultados con el filtro «${esc(RELAX)}»: se muestran todos.</span>` : '');
     $('#empty').hidden = results.length > 0;
     if (!results.length) {
       const what = [state.q.trim(), state.veh ? state.veh.label : '', state.fam ? 'filtro de ' + state.fam.toLowerCase() : ''].filter(Boolean).join(' · ');
