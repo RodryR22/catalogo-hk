@@ -552,6 +552,8 @@ html{-webkit-tap-highlight-color:transparent}
   .card{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:transform .08s ease,box-shadow .08s ease}
   .card:active{transform:scale(.97);box-shadow:0 0 0 2px var(--yellow)}
 }
+.sheet .hero .ph.big img{transition:filter .2s}
+.sheet .hero .ph.big:not(.hdok) img{filter:blur(.4px)}
 </style>
 </head>
 <body>
@@ -986,6 +988,9 @@ html{-webkit-tap-highlight-color:transparent}
       <p class="note">Aparece en los catálogos: ${it.cat.length ? it.cat.map(c => (CATS.find(x => x[0] === c) || [c, c])[1]).join(', ') : 'ninguno por marca'}. Equivalencias VIC, Sakura y MANN verificadas en sus catálogos oficiales (noviembre 2026). Otras marcas de filtros y OEM adicionales según los catálogos Unifil y JS Filters.</p>
       <div class="sbar"><span class="cartslot" data-hk="${esc(it.hk)}">${cartCtl(it.hk)}</span>${waLink(it)}</div>`;
     ov.hidden = false; document.body.style.overflow = 'hidden';
+    // foto de la ficha en alta calidad (se ve la miniatura mientras carga)
+    const big = sheet.querySelector('.hero .ph.big img');
+    if (big && !ILLU.has(hk)) { const hdi = new Image(); hdi.onload = () => { if (sheet.contains(big)) { big.src = hdi.src; big.closest('.ph').classList.add('hdok'); } }; hdi.src = 'hd/' + encodeURIComponent(hk) + '.webp'; }
     $('#close').focus();
     $('#close').addEventListener('click', closeSheet);
     $('#copy').addEventListener('click', () => {
