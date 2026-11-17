@@ -663,6 +663,9 @@ html{-webkit-tap-highlight-color:transparent}
   body.vl .card .tl{font-size:9.5px}
   body.vl .card .tapp{-webkit-line-clamp:8}
 }
+.sugg .on2{font-family:var(--f-mono);font-size:14px}
+.sugg .on2 b{font-family:var(--f-mono);font-size:14px;color:var(--fg);background:var(--mark);border-radius:2px}
+.sugg .hkc{font-family:var(--f-code);font-size:14px;color:var(--fg)}
 </style>
 </head>
 <body>
@@ -1617,6 +1620,8 @@ html{-webkit-tap-highlight-color:transparent}
     sheet.addEventListener('touchend', () => { if (y0 === null) return; sheet.style.transition = ''; if (dy > 110) { sheet.style.transform = 'translateY(100%)'; setTimeout(() => { closeSheet(); sheet.style.transform = ''; }, 200); } else sheet.style.transform = ''; y0 = null; });
   })();
   // --- sugerencias mientras escribe (códigos, OEM, vehículos y búsquedas recientes) ---
+  const OEMX = (() => { const m = new Map(); D.forEach(d => { const pri = new Set(d.pri); d.oem.forEach(([b, l]) => { if (b === 'Otras marcas' || b === 'Marca no identificada') return; l.forEach(o => { const k = norm(o); if (k.length < 5) return; if (!m.has(k)) m.set(k, { raw: o, hks: [], p: 0 }); const e = m.get(k); if (!e.hks.includes(d.hk)) e.hks.push(d.hk); if (pri.has(o)) e.p = 1; }); }); });
+    return [...m].sort((a, b) => b[1].p - a[1].p || a[0].localeCompare(b[0])); })();
   const sg = $('#sugg'); let sgi = -1;
   let RECENT = []; try { RECENT = JSON.parse(localStorage.getItem('hk-busquedas') || '[]'); } catch (e) {}
   function sgPlace(){ const r = $('#q').closest('.search').getBoundingClientRect(); Object.assign(sg.style, { left: r.left + 'px', top: (r.bottom + 6) + 'px', width: r.width + 'px' }); }
@@ -1624,10 +1629,16 @@ html{-webkit-tap-highlight-color:transparent}
     const q = $('#q').value.trim(), nq = norm(q), lq = low(q), last = lq.split(/\s+/).pop(); let h = '';
     if (!q) { if (RECENT.length) h = '<div class="hd">Búsquedas recientes</div>' + RECENT.slice(0, 5).map(r => `<button type="button" data-s="q" data-v="${esc(r)}"><span class="k">Reciente</span>${esc(r)}</button>`).join(''); }
     else if (q.length >= 2) {
-      const codes = nq.length >= 2 ? D.filter(d => norm(d.hk).startsWith(nq) || (nq.length >= 4 && d.oem.some(([b, l]) => l.some(o => norm(o).startsWith(nq))))).slice(0, 4) : [];
+      const isNum = /\d/.test(nq) && nq.length >= 3;
+      const codes = nq.length >= 2 ? D.filter(d => norm(d.hk).startsWith(nq)).slice(0, 4) : [];
+      // OEM: se completa a medida que escribe (desde 3 caracteres con números)
+      const oems = [];
+      if (isNum) { for (const [k, o] of OEMX) { if (k.startsWith(nq)) { oems.push(o); if (oems.length >= 7) break; } } }
       const mods = [];
-      if (last.length >= 2) VEH.forEach((mm, b) => mm.forEach((e, k) => { if (mods.length < 3 && low(e.label).startsWith(last) && (lq === last || lq.includes(low(b).split(' ')[0]) || true)) mods.push([b, k, e]); }));
-      h = codes.map(d => `<button type="button" data-s="hk" data-v="${esc(d.hk)}"><span class="k">${norm(d.hk).startsWith(nq) ? 'Código' : 'OEM'}</span><b>${esc(d.hk)}</b><small>${esc(d.fam)}${STK.has(d.hk) ? ' · Disponible' : ''}</small></button>`).join('')
+      if (last.length >= 2 && !isNum) VEH.forEach((mm, b) => mm.forEach((e, k) => { if (mods.length < 3 && low(e.label).startsWith(last)) mods.push([b, k, e]); }));
+      const hl = t => { const r = norm(t); let i = 0, n = 0; for (; i < t.length && n < nq.length; i++) if (/[0-9A-Za-z]/.test(t[i])) n++; return `<b>${esc(t.slice(0, i))}</b>${esc(t.slice(i))}`; };
+      h = codes.map(d => `<button type="button" data-s="hk" data-v="${esc(d.hk)}"><span class="k">Código</span><b>${esc(d.hk)}</b><small>${esc(d.fam)}${STK.has(d.hk) ? ' · Disponible' : ''}</small></button>`).join('')
+        + (oems.length ? (codes.length ? '<div class="hd">Números OEM</div>' : '') + oems.map(o => `<button type="button" data-s="${o.hks.length === 1 ? 'hk' : 'q'}" data-v="${esc(o.hks.length === 1 ? o.hks[0] : o.raw)}" data-o="${esc(o.raw)}"><span class="k">OEM</span><span class="on2">${hl(o.raw)}</span><small>${o.hks.length === 1 ? '→ <b class="hkc">' + esc(o.hks[0]) + '</b>' : o.hks.length + ' filtros HK'}</small></button>`).join('') : '')
         + mods.map(([b, k, e]) => `<button type="button" data-s="veh" data-b="${esc(b)}" data-k="${esc(k)}"><span class="k">Vehículo</span>${esc(brandName(b))} ${esc(e.label)}<small>${e.items.size} filtros</small></button>`).join('');
     }
     sg.innerHTML = h; sg.hidden = !h; sgi = -1; if (h) sgPlace();
@@ -1650,7 +1661,7 @@ html{-webkit-tap-highlight-color:transparent}
       sgSave(state.veh.label); state.q = ''; $('#q').value = ''; state.cat = ''; state.shown = PAGE; run(); $('#q').blur();
       const pnl = $('#vehpanel'); if (pnl) window.scrollTo({ top: pnl.getBoundingClientRect().top + scrollY - document.querySelector('.bar').offsetHeight - 10, behavior: 'smooth' }); return;
     }
-    if (b.dataset.s === 'hk') { sgSave(b.dataset.v); $('#q').blur(); openSheet(b.dataset.v); return; }
+    if (b.dataset.s === 'hk') { if (b.dataset.o) { $('#q').value = b.dataset.o; state.q = b.dataset.o; state.shown = PAGE; run(); } sgSave(b.dataset.o || b.dataset.v); $('#q').blur(); openSheet(b.dataset.v); return; }
     $('#q').value = b.dataset.v; state.q = b.dataset.v; state.shown = PAGE; run(); $('#q').blur();
   });
   $('#q').addEventListener('blur', () => setTimeout(() => { sg.hidden = true; }, 150));
