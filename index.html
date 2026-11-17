@@ -641,6 +641,28 @@ html{-webkit-tap-highlight-color:transparent}
   .sheet .hd{border-radius:16px 16px 0 0;padding-top:18px;touch-action:none}
   .sheet .hd:before{content:"";position:absolute;top:7px;left:50%;width:42px;height:5px;margin-left:-21px;border-radius:3px;background:rgba(255,255,255,.45)}
 }
+
+/* Niveles de información por vista (celular) */
+.teq{display:none}
+@media (max-width:640px){
+  /* 3 por fila: solo foto, código, familia, stock y Agregar */
+  body:not(.v2):not(.vl) .card .body>div.tinfo.tinfo{display:none}
+  body:not(.v2):not(.vl) .card .tmeta .mo{display:none}
+  body:not(.v2):not(.vl) .card .top{padding-bottom:2px}
+  body:not(.v2):not(.vl) .card .body{padding-top:4px}
+  .card .toem span{display:block}
+  .card .toem span.x{display:none}
+  /* 2 por fila: + equivalencias, 2 OEM y aplicaciones */
+  body.v2 .card .teq,body.vl .card .teq{display:flex;flex-wrap:wrap;gap:3px 8px;font-family:var(--f-mono);font-size:11px;font-weight:600;margin-bottom:4px}
+  .card .teq i{font-style:normal;font-family:var(--f-body);font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--muted)}
+  body.v2 .card .tapp{-webkit-line-clamp:5}
+  /* lista: + 4 OEM y más aplicaciones */
+  body.vl .card .toem{display:flex;flex-wrap:wrap;gap:0 10px}
+  body.vl .card .toem span.x{display:block;font-weight:500}
+  body.vl .card .toem,body.vl .card .tapp{font-size:12px}
+  body.vl .card .tl{font-size:9.5px}
+  body.vl .card .tapp{-webkit-line-clamp:8}
+}
 </style>
 </head>
 <body>
@@ -981,15 +1003,15 @@ html{-webkit-tap-highlight-color:transparent}
     const extra = it.apps.length > 3 ? `<div style="color:var(--muted)">+ ${it.apps.slice(3).map(a => a[0]).slice(0,6).join(', ')}</div>` : '';
     return `<article class="card" data-hk="${esc(it.hk)}">${favBtn(it.hk)}
       <div class="top">${photo(it, 'zoom')}<div style="min-width:0"><span class="code">${esc(it.hk)}</span>
-        <div class="meta">${esc(it.tipo)} · ${esc(it.mont)}</div><div class="tmeta">${esc(it.fam)}<br>${esc(MONT_S(it.mont))}</div>${disp(it.hk)}${how ? `<span class="match">Coincide con ${esc(how)}</span>` : ''}</div></div>
+        <div class="meta">${esc(it.tipo)} · ${esc(it.mont)}</div><div class="tmeta">${esc(it.fam)}<span class="mo"><br>${esc(MONT_S(it.mont))}</span></div>${disp(it.hk)}${how ? `<span class="match">Coincide con ${esc(how)}</span>` : ''}</div></div>
       <div class="eqs">${eqCell('VIC', it.vic)}${eqCell('SAKURA', it.sak)}${eqCell('MANN', it.mann)}</div>
       <div class="body">
         <div class="lhead"><span class="code">${esc(it.hk)}</span>${disp(it.hk)}<span class="lm">${esc(it.fam)} · ${esc(MONT_S(it.mont))}</span></div>
         <div><div class="lbl">OEM principales</div><div class="oems">${oemShort(it).map(n => `<span class="${pri.has(n) ? 'p' : ''}">${esc(n)}</span>`).join('') || '<span style="color:var(--muted)">Sin OEM cargada</span>'}</div></div>
         ${state.veh && it.vlines ? `<div class="vfor"><div class="lbl">Para su ${esc(state.veh.label)}</div>${it.vlines.map(l => `<div>${esc(l)}</div>`).join('')}</div>`
           : `<div><div class="lbl">Aplicaciones</div><div class="apps">${apps || '<span style="color:var(--muted)">Sin aplicación cargada</span>'}${extra}</div></div>`}
-        <div class="tinfo"><div class="tl">OEM</div><div class="toem">${oemShort(it).slice(0, 2).map(esc).join('<br>') || '—'}</div>
-          <div class="tl">Aplicaciones</div><div class="tapp">${state.veh && it.vlines ? it.vlines.slice(0, 2).map(esc).join('<br>') : it.apps.slice(0, 2).map(([b, ms]) => `<b>${esc(b.split(' / ')[0].replace(/\B\w+/g, w => w.toLowerCase()))}:</b> ${esc(ms.slice(0, 2).map(m => m.split('(')[0].trim()).join(', '))}`).join('<br>') || '—'}</div></div>
+        <div class="tinfo"><div class="teq">${[['VIC', it.vic], ['SAK', it.sak], ['MANN', it.mann]].filter(x => x[1].length).map(([k, v]) => `<span><i>${k}</i> ${esc(v[0])}</span>`).join('') || '<span><i>Equiv.</i> —</span>'}</div><div class="tl">OEM</div><div class="toem">${oemShort(it).slice(0, 4).map((n, j) => `<span class="${j > 1 ? 'x' : ''}">${esc(n)}</span>`).join('') || '—'}</div>
+          <div class="tl">Aplicaciones</div><div class="tapp">${state.veh && it.vlines ? it.vlines.slice(0, 4).map(esc).join('<br>') : it.apps.slice(0, 4).map(([b, ms]) => `<b>${esc(b.split(' / ')[0].replace(/\B\w+/g, w => w.toLowerCase()))}:</b> ${esc(ms.slice(0, 4).map(m => m.split('(')[0].trim()).join(', '))}`).join('<br>') || '—'}</div></div>
         <div class="actions"><button type="button" class="more" data-hk="${esc(it.hk)}">Ver ficha completa</button><span class="cartslot" data-hk="${esc(it.hk)}">${cartCtl(it.hk)}</span></div>
       </div></article>`;
   }
