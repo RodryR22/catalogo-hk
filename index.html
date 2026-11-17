@@ -381,6 +381,39 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .fixnote{display:block;font-size:12.5px;color:var(--fg);background:var(--mark);border-radius:4px;padding:4px 8px;margin-top:6px}
 
 
+
+/* Ficha: foto grande, equivalencias en 3 recuadros, aplicaciones por marca, barra fija abajo */
+.sheet{display:flex;flex-direction:column}
+.sheet>*{flex-shrink:0}
+.sheet .hd{padding:10px 12px 10px 18px;gap:8px;z-index:3}
+.sheet .hd .code{font-size:26px}
+.sheet .hd .x{align-self:center}
+.sheet .hero{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 18px 14px;border-bottom:1px solid var(--line);background:var(--card)}
+.sheet .hero .ph.big{width:min(100%,300px);height:auto;aspect-ratio:4/3;border-radius:10px}
+.sheet .hero .ph.big img{object-fit:contain}
+.sheet .hero .hinfo{text-align:center}
+.sheet .hero .t{font-size:14px;font-weight:600;color:var(--fg)}
+.sheet .hero .disp{justify-content:center;font-size:12.5px;margin-top:4px}
+.eqg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.eqb{padding:9px 10px;min-width:0}
+.eqb + .eqb{border-left:1px solid var(--line)}
+.eqb span{display:block;font-size:10.5px;letter-spacing:1px;font-weight:700;color:var(--muted)}
+.eqb b{display:block;font-size:14.5px;margin-top:3px;overflow-wrap:anywhere;line-height:1.3}
+.eqb b i{font-style:normal;color:var(--none);font-weight:400}
+.eqb small{display:block;font-size:11px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+.sheet .brand summary{cursor:pointer;list-style:none;padding:4px 0}
+.sheet .brand summary::-webkit-details-marker{display:none}
+.sheet .brand .chev{margin-left:auto;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s}
+.sheet .brand[open] .chev{transform:rotate(-135deg)}
+.sheet .brand:not([open]){padding-bottom:6px}
+.sbar{position:sticky;bottom:0;margin-top:auto;display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(10,12,35,.08);z-index:3}
+.sbar .cartslot,.sbar .wa{flex:1 1 0;min-width:0}
+.sbar .addcart,.sbar .wa{width:100%;justify-content:center;font-size:14px;padding:11px 8px;border-radius:7px;white-space:nowrap}
+.sbar .qty{width:100%;height:100%;justify-content:space-between}
+.sbar .qty input{flex:1;min-width:0}
+.sheet{padding-bottom:0}
+@media (max-width:480px){.sbar .addcart .al{display:none}.sbar .addcart:after{content:" Agregar"}}
+
 /* Celular: 3 filtros por fila (tarjeta compacta; al tocar se abre la ficha) */
 .tmeta,.tinfo{display:none}
 @media (max-width:640px){
@@ -445,6 +478,74 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .ph.illu{position:relative}
 .ph.illu .itag{position:absolute;left:0;right:0;bottom:0;background:rgba(35,37,78,.82);color:#fff;font-size:9.5px;font-weight:700;text-align:center;padding:2px 0;letter-spacing:.02em}
 .mini .illu{position:relative}
+
+/* Tema: fondo blanco, azul HK con letra blanca y acentos en amarillo filtro HK */
+:root{--bg:#FFFFFF;--yellow:#F5E100;--mark:#FBF3A6}
+.code{background:var(--navy);color:#fff;border:0;border-left:5px solid var(--yellow);border-radius:4px}
+.addcart{background:var(--navy);color:#fff;border-color:var(--navy)}
+.addcart span[aria-hidden]{color:var(--yellow)}
+.qty{border-color:var(--navy)}
+.qty button{background:var(--navy);color:var(--yellow)}
+.cartbtn.has{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cartbtn.has .cartn{background:var(--yellow);color:var(--navy)}
+.vehbtn{color:#fff}
+.vehbtn svg{color:var(--yellow)}
+.afilter{color:#fff}
+.afilter .ham i{background:var(--yellow)}
+.afilter.veh{background:var(--navy);color:#fff;box-shadow:none}
+.afilter.veh svg{color:var(--yellow)}
+.chip.on,.chip[aria-pressed="true"]{color:#fff}
+.chip.on small,.chip[aria-pressed="true"] small{color:var(--yellow);opacity:1}
+:root[data-theme="dark"] .chip[aria-pressed="true"],:root[data-theme="dark"] .chip[aria-pressed="true"] small{color:var(--navy)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"],:root:not([data-theme="light"]) .chip[aria-pressed="true"] small{color:var(--navy)}}
+.sheet .hd{background:var(--navy);color:#fff;border-bottom:4px solid var(--yellow)}
+.sheet .hd .code{background:transparent;color:#fff;border:0;border-left:5px solid var(--yellow);padding-left:10px}
+.sheet .x{color:#fff}
+.sheet .hd .fav{background:rgba(255,255,255,.12);color:#fff}
+.sbar .addcart{background:var(--navy);color:#fff}
+.cart .hd{background:var(--navy);color:#fff;border-bottom:4px solid var(--yellow)}
+.cart .hd .code{background:transparent;color:#fff;border:0;border-left:5px solid var(--yellow);padding-left:10px}
+.cart .hd .t,.cart .hd .x{color:#fff}
+.cart .hd .t{opacity:.85}
+.card{box-shadow:0 1px 2px rgba(31,35,82,.06),0 3px 10px rgba(31,35,82,.06)}
+.card .fav[aria-pressed="true"]{color:#C9A800}
+.qmall,.vkit,.loadmore{background:var(--navy);color:#fff}
+.loadmore{border-color:var(--navy);box-shadow:0 4px 0 var(--yellow)}
+.vkit:before,.loadmore span{color:var(--yellow)}
+.kcode{background:var(--navy);color:#fff;border:0;border-left:4px solid var(--yellow);padding:1px 8px}
+/* Encabezado: banda azul HK, título blanco, HK en amarillo, foto de productos */
+body::before{background:var(--navy)}
+header.band{background:radial-gradient(120% 140% at 100% 0%,#33367A 0%,var(--navy) 55%,#1A1C3C 100%);color:#fff;border-bottom:5px solid var(--yellow)}
+header.band::before{content:"";position:absolute;inset:-40% -10% auto auto;width:min(50%,620px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(245,225,0,.13),rgba(245,225,0,0) 62%);-webkit-mask-image:none;mask-image:none;opacity:1;pointer-events:none}
+header.band::after{display:none}
+header.band .wrap{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:center;padding-block:18px 22px;z-index:1}
+header.band .side{align-items:flex-end;align-self:center}
+.sep{background:rgba(255,255,255,.25)}
+.yhbox span{color:#C7CAE8}
+h1{color:#fff;margin-top:16px;font-size:clamp(28px,3.6vw,44px)}
+h1 em{color:var(--yellow);text-decoration:none}
+.lede{color:#C7CAE8;margin-top:8px}
+.lede b{color:#fff}
+.counts{gap:10px}
+.counts div{border:1px solid rgba(255,255,255,.14)!important;background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px!important;min-width:96px}
+.counts strong{color:var(--yellow);font-size:38px}
+.counts span{color:#C7CAE8}
+@media (max-width:820px){
+  header.band .wrap{grid-template-columns:1fr;padding-block:14px 16px}
+  header.band .side{align-items:stretch}
+  .counts{gap:8px}
+  .counts div{flex:1;min-width:0;padding:8px 10px!important;border-radius:8px}
+  .counts strong{font-size:26px}
+}
+@media (max-width:480px){h1{font-size:28px;margin-top:12px}.lede{font-size:13px}.counts span{font-size:9px;letter-spacing:.6px;white-space:nowrap}}
+/* Modo oscuro: azul más claro para que botones y códigos se distingan del fondo */
+:root[data-theme="dark"] .addcart,:root[data-theme="dark"] .qty button,:root[data-theme="dark"] .vkit,:root[data-theme="dark"] .qmall,:root[data-theme="dark"] .loadmore,:root[data-theme="dark"] .sbar .addcart,:root[data-theme="dark"] .cartbtn.has,:root[data-theme="dark"] .afilter,:root[data-theme="dark"] .afilter.veh,:root[data-theme="dark"] .vehbtn{background:#3B4199;border-color:#3B4199}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .addcart,:root:not([data-theme="light"]) .qty button,:root:not([data-theme="light"]) .vkit,:root:not([data-theme="light"]) .qmall,:root:not([data-theme="light"]) .loadmore,:root:not([data-theme="light"]) .sbar .addcart,:root:not([data-theme="light"]) .cartbtn.has,:root:not([data-theme="light"]) .afilter,:root:not([data-theme="light"]) .afilter.veh,:root:not([data-theme="light"]) .vehbtn{background:#3B4199;border-color:#3B4199}}
+:root[data-theme="dark"] .sheet .hd .code,:root[data-theme="dark"] .cart .hd .code{background:transparent}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sheet .hd .code,:root:not([data-theme="light"]) .cart .hd .code{background:transparent}}
+.code,.kcode{--codebg:var(--navy)}
+:root[data-theme="dark"] .code:not(.sheet .hd .code):not(.cart .hd .code),:root[data-theme="dark"] .kcode{background:#3B4199}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .code,:root:not([data-theme="light"]) .kcode{background:#3B4199}}
 </style>
 </head>
 <body>
@@ -454,7 +555,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 <header class="band"><div class="wrap">
   <div class="hero">
     <div class="logos">
-      <a class="homelink" id="home" href="#" aria-label="Volver al inicio del catálogo" title="Volver al inicio"><img class="hklogo" src="img/hk-logo.png" alt="HK by Universe Filter"></a>
+      <a class="homelink" id="home" href="#" aria-label="Volver al inicio del catálogo" title="Volver al inicio"><img class="hklogo" src="img/hk-logo-light.png" alt="HK by Universe Filter"></a>
       <span class="sep" aria-hidden="true"></span>
       <div class="yhbox"><img class="yhlogo" src="img/yhaguy-logo.png" alt="Yhaguy Autopartes"><span>Importador y distribuidor en Paraguay</span></div>
     </div>
@@ -779,7 +880,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       <div class="eqs">${eqCell('VIC', it.vic)}${eqCell('SAKURA', it.sak)}${eqCell('MANN', it.mann)}</div>
       <div class="body">
         <div><div class="lbl">OEM principales</div><div class="oems">${oemShort(it).map(n => `<span class="${pri.has(n) ? 'p' : ''}">${esc(n)}</span>`).join('') || '<span style="color:var(--muted)">Sin OEM cargada</span>'}</div></div>
-        ${state.veh && it.vlines ? `<div class="vfor"><div class="lbl">Para su ${esc(state.veh.label)}${it.vchk ? ' · <span class="kchk">verificar año</span>' : ''}</div>${it.vlines.map(l => `<div>${esc(l)}</div>`).join('')}</div>`
+        ${state.veh && it.vlines ? `<div class="vfor"><div class="lbl">Para su ${esc(state.veh.label)}</div>${it.vlines.map(l => `<div>${esc(l)}</div>`).join('')}</div>`
           : `<div><div class="lbl">Aplicaciones</div><div class="apps">${apps || '<span style="color:var(--muted)">Sin aplicación cargada</span>'}${extra}</div></div>`}
         <div class="tinfo"><div class="tl">OEM</div><div class="toem">${oemShort(it).slice(0, 2).map(esc).join('<br>') || '—'}</div>
           <div class="tl">Aplicaciones</div><div class="tapp">${state.veh && it.vlines ? it.vlines.slice(0, 2).map(esc).join('<br>') : it.apps.slice(0, 2).map(([b, ms]) => `<b>${esc(b.split(' / ')[0].replace(/\B\w+/g, w => w.toLowerCase()))}:</b> ${esc(ms.slice(0, 2).map(m => m.split('(')[0].trim()).join(', '))}`).join('<br>') || '—'}</div></div>
@@ -860,24 +961,24 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     const it = D.find(d => d.hk === hk); if (!it) return;
     addSeen(hk); track('ver_filtro', { codigo: hk, familia: it.fam });
     lastFocus = document.activeElement;
-    const eqRow = (k, a, x) => `<div class="row"><div class="k">${k}</div><div class="v mono">${a.length ? '<b>' + a.map(esc).join(' / ') + '</b>' : '<span style="color:var(--none)">—</span>'}${x.length ? `<div class="also">Alternativa: ${x.map(esc).join(', ')}</div>` : ''}</div></div>`;
+    const eqRow = (k, a, x) => `<div class="eqb"><span>${k}</span><b class="mono">${a.length ? a.map(esc).join('<br>') : '<i>—</i>'}</b>${x.length ? `<small>Alt.: ${x.map(esc).join(', ')}</small>` : ''}</div>`;
     const aft = it.aft.length ? `<div class="sec"><h3>Otras referencias cruzadas <small>${it.aft.reduce((n, a) => n + a[1].length, 0)}</small></h3>${it.aft.map(([b, ns]) => `<div class="row"><div class="k">${esc(b)}</div><div class="v mono">${ns.map(esc).join(', ')}</div></div>`).join('')}</div>` : '';
     const nOem = it.oem.reduce((n, a) => n + a[1].length, 0);
     const nApp = it.apps.reduce((n, a) => n + a[1].length, 0);
     const full = it.full || [], nFull = full.reduce((n, a) => n + a[1].length, 0);
     const fullSec = nFull ? `<details class="sec full"${state.q && low(state.q).trim().length > 1 && !it.text.includes(low(state.q).trim()) && it.ftext.includes(low(state.q).trim()) ? ' open' : ''}><summary><h3>Todas las aplicaciones <small>${nFull} modelos · ${full.length} marcas</small></h3></summary>
-        ${full.map(([b, ms]) => brandBlock(b, ms)).join('')}</details>` : '';
+        ${full.map(([b, ms], i) => brandBlock(b, ms, i === 0)).join('')}</details>` : '';
     const pri = new Set(it.pri);
-    sheet.innerHTML = `<div class="hd">${photo(it, 'zoom')}<div style="min-width:0"><span class="code" id="sheetTitle">${esc(it.hk)}</span><div class="t">${esc(it.tipo)} · ${esc(it.mont)}</div>${disp(it.hk)}</div>
-        ${favBtn(it.hk)}<button class="x" type="button" id="close" aria-label="Cerrar">×</button></div>
-      <div class="sec"><h3>Equivalencias <span class="info" tabindex="0" role="img" aria-label="Negrita: equivalencia principal, verificada en el catálogo oficial. Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante." title="Negrita: equivalencia principal, verificada en el catálogo oficial.&#10;Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante.">i</span></h3>${eqRow('VIC', it.vic, it.eqx.vic)}${eqRow('SAKURA', it.sak, it.eqx.sak)}${eqRow('MANN', it.mann, it.eqx.mann)}
-
-        <span class="cartslot" data-hk="${esc(it.hk)}">${cartCtl(it.hk)}</span> ${waLink(it)} <button class="copy" type="button" id="copy">Copiar código y equivalencias</button> <span id="copied" class="meta" aria-live="polite"></span></div>${aft}
+    sheet.innerHTML = `<div class="hd"><span class="code" id="sheetTitle">${esc(it.hk)}</span>${favBtn(it.hk)}<button class="x" type="button" id="close" aria-label="Cerrar">×</button></div>
+      <div class="hero">${photo(it, 'zoom big')}<div class="hinfo"><div class="t">${esc(it.tipo)} · ${esc(it.mont)}</div>${disp(it.hk)}</div></div>
+      <div class="sec"><h3>Equivalencias <span class="info" tabindex="0" role="img" aria-label="Negrita: equivalencia principal, verificada en el catálogo oficial. Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante." title="Negrita: equivalencia principal, verificada en el catálogo oficial.&#10;Alternativa: otro código que el catálogo relaciona con las mismas OEM; suele ser una variante.">i</span></h3><div class="eqg">${eqRow('VIC', it.vic, it.eqx.vic)}${eqRow('SAKURA', it.sak, it.eqx.sak)}${eqRow('MANN', it.mann, it.eqx.mann)}</div>
+        <button class="copy" type="button" id="copy">Copiar código y equivalencias</button> <span id="copied" class="meta" aria-live="polite"></span></div>${aft}
       <div class="sec"><h3>Números OEM <small>${nOem}</small></h3>${it.oem.map(([b, ns]) => `<div class="row"><div class="k">${esc(b)}</div><div class="v mono">${ns.map(n => pri.has(n) ? `<b>${esc(n)}</b>` : esc(n)).join(', ')}</div></div>`).join('') || '<p class="meta">Sin OEM cargada.</p>'}
         ${it.pri.length ? '<p class="meta">En negrita: OEM principales.</p>' : ''}</div>
-      <div class="sec"><h3>Aplicaciones principales <small>${nApp} modelos · ${it.apps.length} marcas</small></h3>${it.apps.map(([b, ms]) => brandBlock(b, ms)).join('') || '<p class="meta">Sin aplicación cargada.</p>'}</div>
+      <div class="sec"><h3>Aplicaciones principales <small>${nApp} modelos · ${it.apps.length} marcas</small></h3>${it.apps.map(([b, ms], i) => brandBlock(b, ms, i === 0 || it.apps.length <= 2)).join('') || '<p class="meta">Sin aplicación cargada.</p>'}</div>
       ${fullSec}
-      <p class="note">Aparece en los catálogos: ${it.cat.length ? it.cat.map(c => (CATS.find(x => x[0] === c) || [c, c])[1]).join(', ') : 'ninguno por marca'}. Equivalencias VIC, Sakura y MANN verificadas en sus catálogos oficiales (noviembre 2026). Otras marcas de filtros y OEM adicionales según los catálogos Unifil y JS Filters.</p>`;
+      <p class="note">Aparece en los catálogos: ${it.cat.length ? it.cat.map(c => (CATS.find(x => x[0] === c) || [c, c])[1]).join(', ') : 'ninguno por marca'}. Equivalencias VIC, Sakura y MANN verificadas en sus catálogos oficiales (noviembre 2026). Otras marcas de filtros y OEM adicionales según los catálogos Unifil y JS Filters.</p>
+      <div class="sbar"><span class="cartslot" data-hk="${esc(it.hk)}">${cartCtl(it.hk)}</span>${waLink(it)}</div>`;
     ov.hidden = false; document.body.style.overflow = 'hidden';
     $('#close').focus();
     $('#close').addEventListener('click', closeSheet);
@@ -895,8 +996,8 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
     name = name.replace(/\s+(\d\.\d(?:\/\d\.\d)*)\b/g, (_, g) => { spec.unshift(g + ' L'); return ''; }).replace(/\s+/g, ' ').trim();
     return `<li class="m"><span class="mn">${esc(name || m)}</span>${spec.length ? `<span class="mx">${esc(spec.join(' · '))}</span>` : ''}${yrs ? `<span class="my">${esc(yrs)}</span>` : ''}</li>`;
   }
-  function brandBlock(b, ms){
-    return `<div class="brand"><div class="bh"><b>${esc(b)}</b><span>${ms.length}</span></div><ul class="ml">${ms.map(modelHTML).join('')}</ul></div>`;
+  function brandBlock(b, ms, open){
+    return `<details class="brand"${open ? ' open' : ''}><summary class="bh"><b>${esc(b)}</b><span>${ms.length}</span><i class="chev" aria-hidden="true"></i></summary><ul class="ml">${ms.map(modelHTML).join('')}</ul></details>`;
   }
   function closeSheet(){ ov.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
   $('#grid').addEventListener('click', e => { const b = e.target.closest('.more'); if (b) { openSheet(b.dataset.hk); return; }
@@ -1258,7 +1359,7 @@ button.ph.zoom:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
       const k = kit(e, state.ver), o = vs.find(x => x.eng === state.ver) || {};
       const rows = FAMS.filter(f => k[f]).map(f => {
         const [first, ...alts] = k[f];
-        return `<div class="krow"><span class="kfam">${f}</span><span class="kcode">${esc(first.it.hk)}</span>${first.score === 1 ? '<span class="kchk">verificar año</span>' : ''}${alts.length ? `<span class="kalt">o ${alts.map(a => esc(a.it.hk)).join(', ')}</span>` : ''}</div>`;
+        return `<div class="krow"><span class="kfam">${f}</span><span class="kcode">${esc(first.it.hk)}</span>${alts.length ? `<span class="kalt">o ${alts.map(a => esc(a.it.hk)).join(', ')}</span>` : ''}</div>`;
       }).join('');
       const tops = FAMS.filter(f => k[f]).map(f => k[f][0].it.hk);
       kitHtml = `<div class="kit"><div class="kt">Kit sugerido · motor ${esc(state.ver)}${yrTxt(o)}</div>${rows || '<div class="kalt">No hay filtros para esta versión.</div>'}
