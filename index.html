@@ -546,6 +546,12 @@ h1 em{color:var(--yellow);text-decoration:none}
 .code,.kcode{--codebg:var(--navy)}
 :root[data-theme="dark"] .code:not(.sheet .hd .code):not(.cart .hd .code),:root[data-theme="dark"] .kcode{background:#3B4199}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .code,:root:not([data-theme="light"]) .kcode{background:#3B4199}}
+/* Celular: sin el resaltado azul del navegador al tocar; leve efecto al presionar */
+html{-webkit-tap-highlight-color:transparent}
+@media (max-width:640px){
+  .card{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:transform .08s ease,box-shadow .08s ease}
+  .card:active{transform:scale(.97);box-shadow:0 0 0 2px var(--yellow)}
+}
 </style>
 </head>
 <body>
