@@ -1845,6 +1845,9 @@ html{-webkit-tap-highlight-color:transparent}
   window.addEventListener('scroll', () => requestAnimationFrame(dockPos), { passive: true });
   window.addEventListener('resize', () => requestAnimationFrame(dockPos));
   DOCK.addEventListener && DOCK.addEventListener('change', dockSet);
+  try { new ResizeObserver(() => requestAnimationFrame(dockPos)).observe(document.body); } catch (e) {}
+  window.addEventListener('load', dockPos); setTimeout(dockPos, 800);
+  document.addEventListener('click', () => setTimeout(dockPos, 50));
   dockSet();
   // vista previa al pasar el mouse por una foto (solo con mouse)
   if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
