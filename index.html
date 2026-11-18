@@ -1868,7 +1868,7 @@ html{-webkit-tap-highlight-color:transparent}
   // panel deslizable: no oscurece ni bloquea la página
   { const _oc = openCart; openCart = function(){ _oc(); if (PC()) { document.body.style.overflow = ''; document.body.classList.add('cslide'); } }; }
   { const _cc = closeCart; closeCart = function(){ _cc(); document.body.classList.remove('cslide'); }; }
-  new MutationObserver(() => { if (cov.hidden) document.body.classList.remove('cslide'); }).observe(cov, { attributes: true, attributeFilter: ['hidden'] });
+  new MutationObserver(() => { if (cov.hidden) document.body.classList.remove('cslide'); else if (PC()) { document.body.classList.add('cslide'); document.body.style.overflow = ''; } }).observe(cov, { attributes: true, attributeFilter: ['hidden'] });
   // aviso corto al agregar
   const at = document.createElement('div'); at.className = 'addtoast'; at.setAttribute('role', 'status'); document.body.appendChild(at);
   document.addEventListener('click', e => {
@@ -1879,7 +1879,14 @@ html{-webkit-tap-highlight-color:transparent}
   at.addEventListener('click', e => { if (e.target.closest('button')) { at.classList.remove('on'); openCart(); } });
   // encabezado compacto al bajar
   const bar = document.querySelector('.bar'), band = document.querySelector('header.band');
-  function compact(){ if (!PC()) { document.body.classList.remove('scrolled'); return; } document.body.classList.toggle('scrolled', band.getBoundingClientRect().bottom < 0); }
+  // al achicar la barra se agrega un espacio del mismo alto para que la página no salte al desplazar
+  const bspace = document.createElement('div'); bspace.className = 'barspace'; bar.after(bspace);
+  function compact(){
+    const on = PC() && band.getBoundingClientRect().bottom < 0;
+    if (on === document.body.classList.contains('scrolled')) return;
+    if (on) { const h0 = bar.offsetHeight; document.body.classList.add('scrolled'); bspace.style.height = Math.max(0, h0 - bar.offsetHeight) + 'px'; }
+    else { document.body.classList.remove('scrolled'); bspace.style.height = '0px'; }
+  }
   window.addEventListener('scroll', () => requestAnimationFrame(compact), { passive: true }); compact();
   // imprimir / PDF del presupuesto
   { const _rc2 = refreshCart; refreshCart = function(){ _rc2(); $('#cartprint').hidden = !cart.length; }; refreshCart(); }
@@ -1943,6 +1950,7 @@ html{-webkit-tap-highlight-color:transparent}
   /* ===== Botón "atrás" del celular: cierra ventanas y vuelve a la búsqueda anterior en vez de salir de la app ===== */
   (function(){
     const H = window.history; if (!H || !H.pushState) return;
+    try { H.scrollRestoration = 'manual'; } catch (e) {} // que el navegador no mueva la página al cerrar ventanas
     const snap = () => ({ q: state.q, fam: state.fam, cat: state.cat, veh: state.veh, ver: state.ver, favs: state.favs, av: state.av });
     const key = s => JSON.stringify([s.q.trim(), s.fam, s.cat, s.veh && s.veh.b + '|' + s.veh.k, s.ver, s.favs, s.av]);
     const LAYERS = {
