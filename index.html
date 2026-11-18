@@ -1604,6 +1604,8 @@ html{-webkit-tap-highlight-color:transparent}
     else if (t === 'cart') openCart();
   });
   document.addEventListener('click', e => { if (e.target.closest('[data-cart]')) setTimeout(drawTabs, 0); });
+  { const _rc = refreshCart; refreshCart = function(){ _rc(); drawTabs(); }; } // el número de la barra inferior sigue siempre al presupuesto (vaciar, quitar, cambiar cantidad)
+  window.addEventListener('storage', e => { if (e.key && e.key.indexOf('hk-presupuesto') === 0) drawTabs(); });
   { const a = $('#tabwa'); a.href = 'https://wa.me/' + WAN + '?text=' + encodeURIComponent(HOLA + ', quiero consultar por filtros HK.'); }
   // --- vibración suave y animación al agregar ---
   document.addEventListener('click', e => {
