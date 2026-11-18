@@ -668,6 +668,36 @@ html{-webkit-tap-highlight-color:transparent}
 .sugg .hkc{font-family:var(--f-code);font-size:14px;color:var(--fg)}
 .backtoast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--navy);color:#fff;font-size:13.5px;font-weight:600;padding:10px 16px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:70;border-bottom:3px solid var(--yellow)}
 .backtoast.on{opacity:1;transform:translate(-50%,0)}
+
+/* Celular: pantalla de búsqueda completa */
+.sback,.spanel{display:none}
+.sugg .hd:has(.rclr){display:flex;align-items:center;justify-content:space-between;white-space:nowrap;gap:12px}
+.sugg .rclr{font:inherit;font-size:11px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--fg);background:none;border:0;padding:0;text-decoration:underline;text-decoration-color:var(--yellow);text-underline-offset:3px;cursor:pointer}
+.sugg .rx{margin-left:auto;font-size:20px;line-height:1;color:var(--muted);padding:0 4px}
+@media (max-width:640px){
+  body.smode{overflow:hidden}
+  body.smode header.band,body.smode .tabbar,body.smode .instbar,body.smode .qchips,body.smode .activebar,body.smode main,body.smode footer,body.smode .wafab{display:none!important}
+  body.smode .bar{position:fixed;top:0;left:0;right:0;border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+  body.smode .sback{display:flex;align-items:center;justify-content:center;flex:none;width:40px;height:46px;font-size:24px;line-height:1;background:none;border:0;color:var(--fg);cursor:pointer;margin-right:2px}
+  .spanel{display:block;position:fixed;left:0;right:0;bottom:0;top:72px;z-index:6;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+  .spanel[hidden]{display:none}
+  .spanel .sugg{position:static;border:0;border-radius:0;box-shadow:none;border-bottom:1px solid var(--line)}
+  .spanel .sugg[hidden]{display:none}
+  .spanel .sugg button{padding:12px 16px}
+  .spanel .sugg .hd{padding:12px 16px 4px}
+  #slive .hd{font-size:10.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:12px 16px 6px}
+  .lrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--card);border:0;border-bottom:1px solid var(--line);padding:9px 16px;cursor:pointer}
+  .lrow .ph{width:54px;height:54px;flex:none;border-radius:6px}
+  .lrow .lt{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .lrow .code{font-size:15px;align-self:flex-start}
+  .lrow .lm{font-size:12px;color:var(--muted)}
+  .lrow .lm i{font-style:normal}
+  .lrow .lm i.ok{color:#15803d;font-weight:600}
+  .lrow .lw{font-size:11.5px;color:var(--fg);background:var(--mark);border-radius:3px;padding:1px 5px;align-self:flex-start;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lall{display:block;width:calc(100% - 32px);margin:14px 16px;font:inherit;font-weight:700;font-size:15px;color:#fff;background:var(--navy);border:0;border-radius:8px;padding:13px;cursor:pointer;box-shadow:0 3px 0 var(--yellow)}
+  .lnone{padding:8px 16px;color:var(--muted);font-size:14px}
+  .lnone a{color:var(--wa);font-weight:700}
+}
 </style>
 </head>
 <body>
@@ -695,6 +725,7 @@ html{-webkit-tap-highlight-color:transparent}
 
 <div class="bar"><div class="wrap">
   <div class="searchrow">
+    <button type="button" class="sback" id="sback" aria-label="Volver">←</button>
     <label class="search" for="q">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="Ej.: UJ-1671B, 90915-10001, C-110, W 68/3, Hilux…" aria-label="Buscar filtro">
@@ -762,6 +793,7 @@ html{-webkit-tap-highlight-color:transparent}
   <a data-tab="wa" id="tabwa" href="https://wa.me/595994895000?text=Hola%20Yhaguy%2C%20quiero%20consultar%20por%20filtros%20HK." target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-4A8 8 0 1 1 8.6 19z"/><path d="M9 9.5c.4 1.8 1.8 3.4 3.6 4.2l1.2-1 1.7.8c-.2 1-1 1.6-2 1.5C10.6 14.6 8.5 12.4 8 9.6c0-1 .6-1.7 1.5-1.8l.9 1.6z"/></svg><span>WhatsApp</span></a>
 </nav>
 <div class="sugg" id="sugg" hidden role="listbox" aria-label="Sugerencias"></div>
+<div class="spanel" id="spanel" hidden><div id="slive"></div></div>
 <a class="wafab" id="wafab" href="https://wa.me/595994895000?text=Hola%20Yhaguy%2C%20quiero%20consultar%20por%20filtros%20HK." target="_blank" rel="noopener" aria-label="Escribir a Yhaguy por WhatsApp"><span class="wafab-ic"></span><span class="wafab-tx">¿Consultas? Escríbanos</span></a>
 
 <div class="ov" id="cartov" hidden><aside class="sheet cart" id="cart" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
@@ -1633,10 +1665,10 @@ html{-webkit-tap-highlight-color:transparent}
     return [...m].sort((a, b) => b[1].p - a[1].p || a[0].localeCompare(b[0])); })();
   const sg = $('#sugg'); let sgi = -1;
   let RECENT = []; try { RECENT = JSON.parse(localStorage.getItem('hk-busquedas') || '[]'); } catch (e) {}
-  function sgPlace(){ const r = $('#q').closest('.search').getBoundingClientRect(); Object.assign(sg.style, { left: r.left + 'px', top: (r.bottom + 6) + 'px', width: r.width + 'px' }); }
+  function sgPlace(){ if (SMODE) return; const r = $('#q').closest('.search').getBoundingClientRect(); Object.assign(sg.style, { left: r.left + 'px', top: (r.bottom + 6) + 'px', width: r.width + 'px' }); }
   function sgDraw(){
     const q = $('#q').value.trim(), nq = norm(q), lq = low(q), last = lq.split(/\s+/).pop(); let h = '';
-    if (!q) { if (RECENT.length) h = '<div class="hd">Búsquedas recientes</div>' + RECENT.slice(0, 5).map(r => `<button type="button" data-s="q" data-v="${esc(r)}"><span class="k">Reciente</span>${esc(r)}</button>`).join(''); }
+    if (!q) { if (RECENT.length) h = '<div class="hd">Búsquedas recientes <button type="button" class="rclr" data-s="clr">Borrar</button></div>' + RECENT.slice(0, 8).map(r => `<button type="button" data-s="q" data-v="${esc(r)}"><span class="k">Reciente</span>${esc(r)}<small class="rx" data-x="${esc(r)}" role="button" aria-label="Quitar">×</small></button>`).join(''); }
     else if (q.length >= 2) {
       const isNum = /\d/.test(nq) && nq.length >= 3;
       const codes = nq.length >= 2 ? D.filter(d => norm(d.hk).startsWith(nq)).slice(0, 4) : [];
@@ -1664,7 +1696,12 @@ html{-webkit-tap-highlight-color:transparent}
   });
   sg.addEventListener('pointerdown', e => e.preventDefault());
   sg.addEventListener('click', e => {
-    const b = e.target.closest('button'); if (!b) return; sg.hidden = true;
+    const x = e.target.closest('[data-x]'); if (x) { RECENT = RECENT.filter(r => r !== x.dataset.x); try { localStorage.setItem('hk-busquedas', JSON.stringify(RECENT)); } catch (er) {} sgDraw(); return; }
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.s === 'clr') { RECENT = []; try { localStorage.setItem('hk-busquedas', '[]'); } catch (er) {} sgDraw(); return; }
+    if (SMODE && b.dataset.s === 'q') { $('#q').value = b.dataset.v; state.q = b.dataset.v; state.shown = PAGE; run(); sgDraw(); return; }
+    if (SMODE && b.dataset.s === 'veh') exitSearch(false);
+    sg.hidden = true;
     if (b.dataset.s === 'veh') {
       const ent = VEH.get(b.dataset.b).get(b.dataset.k); state.veh = { b: b.dataset.b, k: b.dataset.k, label: brandName(b.dataset.b) + ' ' + ent.label }; state.ver = '';
       sgSave(state.veh.label); state.q = ''; $('#q').value = ''; state.cat = ''; state.shown = PAGE; run(); $('#q').blur();
@@ -1673,7 +1710,7 @@ html{-webkit-tap-highlight-color:transparent}
     if (b.dataset.s === 'hk') { if (b.dataset.o) { $('#q').value = b.dataset.o; state.q = b.dataset.o; state.shown = PAGE; run(); } sgSave(b.dataset.o || b.dataset.v); $('#q').blur(); openSheet(b.dataset.v); return; }
     $('#q').value = b.dataset.v; state.q = b.dataset.v; state.shown = PAGE; run(); $('#q').blur();
   });
-  $('#q').addEventListener('blur', () => setTimeout(() => { sg.hidden = true; }, 150));
+  $('#q').addEventListener('blur', () => setTimeout(() => { if (!SMODE) sg.hidden = true; }, 150));
   window.addEventListener('resize', () => { if (!sg.hidden) sgPlace(); });
   window.addEventListener('scroll', () => { if (!sg.hidden) sgPlace(); }, { passive: true });
   // --- novedades: favoritos que volvieron a tener stock y filtros nuevos (comparado con la última visita en este celular) ---
@@ -1692,6 +1729,44 @@ html{-webkit-tap-highlight-color:transparent}
   } else seenNews();
   drawQChips(); drawTabs();
 
+
+  /* ===== Celular: pantalla de búsqueda completa al tocar el buscador ===== */
+  const spanel = $('#spanel'), slive = $('#slive');
+  let SMODE = false;
+  function enterSearch(){
+    if (SMODE || !MOB.matches) return;
+    SMODE = true; document.body.classList.add('smode'); spanel.hidden = false;
+    spanel.insertBefore(sg, slive); sg.removeAttribute('style');
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => { spanel.style.top = Math.round(document.querySelector('.bar').getBoundingClientRect().bottom) + 'px'; });
+    sgDraw(); drawLive();
+  }
+  function exitSearch(commit){
+    if (!SMODE) return;
+    SMODE = false; document.body.classList.remove('smode'); spanel.hidden = true;
+    document.body.appendChild(sg); sg.hidden = true; $('#q').blur();
+    if (commit) sgSave($('#q').value);
+    if (state.q) setTimeout(() => { const g = $('#grid'); window.scrollTo({ top: Math.max(0, g.getBoundingClientRect().top + scrollY - document.querySelector('.bar').offsetHeight - 60) }); }, 350);
+  }
+  function drawLive(){
+    if (!SMODE) return;
+    const q = $('#q').value.trim();
+    if (!q || q.length < 2) { slive.innerHTML = ''; return; }
+    const rs = results.slice(0, 20);
+    slive.innerHTML = `<div class="hd">${results.length ? results.length + (results.length === 1 ? ' filtro' : ' filtros') : 'Sin resultados'}</div>`
+      + rs.map(([it, m]) => `<button type="button" class="lrow" data-hk="${esc(it.hk)}">${photo(it)}<span class="lt"><span class="code">${esc(it.hk)}</span><span class="lm">${esc(it.fam)} · ${esc(MONT_S(it.mont))}${STK.has(it.hk) ? ' · <i class="ok">Disponible</i>' : ' · <i>Sin stock</i>'}</span>${m.how && m.score >= 40 ? `<span class="lw">Coincide con ${esc(m.how)}</span>` : ''}</span></button>`).join('')
+      + (results.length ? `<button type="button" class="lall" id="lall">Ver ${results.length === 1 ? 'el resultado' : 'los ' + results.length + ' resultados'}</button>` : `<p class="lnone">Pruebe con otro código, OEM o modelo, o <a href="https://wa.me/${WAN}?text=${encodeURIComponent(HOLA + ', busco un filtro: ' + q)}" target="_blank" rel="noopener">consúltenos por WhatsApp</a>.</p>`);
+  }
+  { const _r3 = run; run = function(){ _r3(); drawLive(); }; }
+  $('#q').addEventListener('focus', enterSearch);
+  $('#sback').addEventListener('click', () => exitSearch(false));
+  $('#q').addEventListener('keydown', e => { if (e.key === 'Enter' && SMODE && (sgi < 0 || sg.hidden)) { state.q = $('#q').value; state.shown = PAGE; run(); exitSearch(true); } }, true);
+  slive.addEventListener('click', e => {
+    if (e.target.closest('#lall')) { exitSearch(true); return; }
+    const r = e.target.closest('.lrow'); if (r) { sgSave($('#q').value); $('#q').blur(); openSheet(r.dataset.hk); }
+  });
+  spanel.addEventListener('touchstart', () => { if (document.activeElement === $('#q')) $('#q').blur(); }, { passive: true });
+  MOB.addEventListener && MOB.addEventListener('change', () => { if (!MOB.matches) exitSearch(false); });
   /* ===== Botón "atrás" del celular: cierra ventanas y vuelve a la búsqueda anterior en vez de salir de la app ===== */
   (function(){
     const H = window.history; if (!H || !H.pushState) return;
@@ -1703,6 +1778,7 @@ html{-webkit-tap-highlight-color:transparent}
       cart: { el: cov, close: () => closeCart() },
       sheet: { el: ov, close: () => closeSheet() },
       qm: { el: qm, close: () => toggleQM(false) },
+      search: { el: spanel, close: () => exitSearch(false) },
     };
     const stack = [];            // capas abiertas, en orden
     let skipPops = 0;            // retrocesos que hicimos nosotros (no del usuario)
