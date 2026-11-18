@@ -666,6 +666,8 @@ html{-webkit-tap-highlight-color:transparent}
 .sugg .on2{font-family:var(--f-mono);font-size:14px}
 .sugg .on2 b{font-family:var(--f-mono);font-size:14px;color:var(--fg);background:var(--mark);border-radius:2px}
 .sugg .hkc{font-family:var(--f-code);font-size:14px;color:var(--fg)}
+.backtoast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--navy);color:#fff;font-size:13.5px;font-weight:600;padding:10px 16px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:70;border-bottom:3px solid var(--yellow)}
+.backtoast.on{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
@@ -1333,7 +1335,7 @@ html{-webkit-tap-highlight-color:transparent}
       hd.onerror = () => { spin.hidden = true; };
       hd.src = 'hd/' + encodeURIComponent(hk) + '.webp';
       hint.classList.remove('off'); clearTimeout(hintT); hintT = setTimeout(() => hint.classList.add('off'), 3500);
-      try { history.pushState({ hkzoom: 1 }, ''); pushed = true; } catch (e) { pushed = false; }
+      pushed = false; // el botón atrás lo maneja el gestor general
       $('#zx').focus();
     }
     function close(fromPop){
@@ -1343,7 +1345,6 @@ html{-webkit-tap-highlight-color:transparent}
       if (pushed && !fromPop) { pushed = false; history.back(); } else pushed = false;
       if (opener && opener.focus) opener.focus();
     }
-    window.addEventListener('popstate', () => { if (!zv.hidden) close(true); });
     window.addEventListener('resize', () => { if (!zv.hidden) { sc = 1; tx = ty = 0; img.removeAttribute('style'); layout(); } });
     document.addEventListener('click', e => { const b = e.target.closest('[data-zoom]'); if (!b || (TILE.matches && b.closest('#grid'))) return; e.preventDefault(); e.stopPropagation(); open(b.dataset.zoom); }, true);
     $('#zx').addEventListener('click', () => close());
@@ -1688,6 +1689,77 @@ html{-webkit-tap-highlight-color:transparent}
     $('#newsgo').addEventListener('click', () => { nb.hidden = true; seenNews(); if (back.length) { if (back.length === 1) openSheet(back[0]); else { state.favs = true; state.shown = PAGE; run(); } } else openSheet(nuevos[0]); });
   } else seenNews();
   drawQChips(); drawTabs();
+
+  /* ===== Botón "atrás" del celular: cierra ventanas y vuelve a la búsqueda anterior en vez de salir de la app ===== */
+  (function(){
+    const H = window.history; if (!H || !H.pushState) return;
+    const snap = () => ({ q: state.q, fam: state.fam, cat: state.cat, veh: state.veh, ver: state.ver, favs: state.favs, av: state.av });
+    const key = s => JSON.stringify([s.q.trim(), s.fam, s.cat, s.veh && s.veh.b + '|' + s.veh.k, s.ver, s.favs, s.av]);
+    const LAYERS = {
+      zoom: { el: $('#zv'), close: () => $('#zx').click() },
+      vp: { el: vp, close: () => vpClose() },
+      cart: { el: cov, close: () => closeCart() },
+      sheet: { el: ov, close: () => closeSheet() },
+      qm: { el: qm, close: () => toggleQM(false) },
+    };
+    const stack = [];            // capas abiertas, en orden
+    let skipPops = 0;            // retrocesos que hicimos nosotros (no del usuario)
+    let queue = [], pendingView = null; // pasos pendientes mientras se cierra una ventana
+    let restoring = false, lastKey = key(snap()), exitArmed = 0;
+    const doPush = st => { if (skipPops) queue.push(st); else H.pushState(st, ''); };
+    const pushView = st => { if (stack.length || skipPops) pendingView = st; else H.pushState(st, ''); };
+    function flush(){ if (skipPops) return; queue.forEach(st => H.pushState(st, '')); queue = []; if (!stack.length && pendingView) { H.pushState(pendingView, ''); pendingView = null; } }
+    const goBack = n => { if (n <= 0) return; skipPops++; H.go(-n); };
+    // entrada "raíz" + entrada "inicio": el primer atrás en el inicio no sale de la app
+    H.replaceState({ hk: 'root', v: snap() }, '');
+    H.pushState({ hk: 'view', v: snap() }, '');
+    // capas: detectar cuando se abren/cierran
+    const mo = new MutationObserver(() => {
+      for (const [name, L] of Object.entries(LAYERS)) {
+        const open = !L.el.hidden, i = stack.findIndex(x => x.n === name);
+        if (open && i < 0) { stack.push({ n: name }); doPush({ hk: 'layer', n: name, v: snap() }); }
+        else if (!open && i >= 0) {
+          const subs = stack.length - i; const fromPop = stack[i].pop; stack.splice(i);
+          if (!fromPop) goBack(subs);
+        }
+      }
+      flush();
+    });
+    Object.values(LAYERS).forEach(L => mo.observe(L.el, { attributes: true, attributeFilter: ['hidden'] }));
+    // dentro de "Buscar por vehículo": de modelos vuelve a marcas
+    const _vpModels = vpModels;
+    vpModels = function(b, filter){ const wasBrands = !vp.querySelector('#vpq'); _vpModels(b, filter);
+      if (!vp.hidden && wasBrands && filter === undefined && !stack.some(x => x.n === 'vpm')) { stack.push({ n: 'vpm' }); doPush({ hk: 'layer', n: 'vpm', v: snap() }); } };
+    const _vpBrands = vpBrands;
+    vpBrands = function(){ _vpBrands(); const i = stack.findIndex(x => x.n === 'vpm'); if (i >= 0 && !stack[i].pop) { stack.splice(i, 1); goBack(1); } };
+    // vistas: cada búsqueda, vehículo, favoritos o filtro nuevo es un paso al que se puede volver
+    const _run2 = run;
+    run = function(){ _run2(); if (restoring) return; const k = key(snap()); if (k === lastKey) return;
+      const prev = JSON.parse(lastKey), now = JSON.parse(k); lastKey = k;
+      const typing = prev[0] && now[0] && prev.slice(1).join() === now.slice(1).join();
+      if (typing) { if (pendingView) pendingView = { hk: 'view', v: snap() }; else if (!skipPops && !stack.length) H.replaceState({ hk: 'view', v: snap() }, ''); } else pushView({ hk: 'view', v: snap() }); };
+    function restore(v){ restoring = true; Object.assign(state, { q: v.q || '', fam: v.fam || '', cat: v.cat || '', veh: v.veh || null, ver: v.ver || '', favs: !!v.favs, av: !!v.av, shown: PAGE });
+      $('#q').value = state.q; try { sel.value = state.cat; } catch (e) {} save(); drawFams(); run(); restoring = false; lastKey = key(snap()); }
+    // aviso "toque atrás de nuevo para salir"
+    const toast = document.createElement('div'); toast.className = 'backtoast'; toast.setAttribute('role', 'status'); document.body.appendChild(toast);
+    function showToast(t){ toast.textContent = t; toast.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => toast.classList.remove('on'), 2000); }
+    window.addEventListener('popstate', e => {
+      if (skipPops) { skipPops--; flush(); return; }
+      const st = e.state || {};
+      if (stack.length) {          // cerrar la ventana de arriba
+        const top = stack.pop();
+        if (top.n === 'vpm') { stack.push({ n: 'vpm', pop: 1 }); _vpBrands(); stack.pop(); return; }
+        top.pop = 1; stack.push(top); LAYERS[top.n].close(); setTimeout(flush, 0); return;
+      }
+      if (st.hk === 'root') {      // en el inicio: avisar antes de salir
+        const home = key(snap()) === key({ q: '', fam: '', cat: '', veh: null, ver: '', favs: false, av: false });
+        if (!home) { restore({}); H.pushState({ hk: 'view', v: snap() }, ''); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (Date.now() - exitArmed < 2200) { H.back(); return; }
+        exitArmed = Date.now(); showToast('Toque «atrás» otra vez para salir'); H.pushState({ hk: 'view', v: snap() }, ''); return;
+      }
+      if (st.v) { restore(st.v); window.scrollTo({ top: 0 }); }
+    });
+  })();
 })();
 </script>
 
