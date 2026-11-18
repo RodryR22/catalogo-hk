@@ -698,6 +698,69 @@ html{-webkit-tap-highlight-color:transparent}
   .lnone{padding:8px 16px;color:var(--muted);font-size:14px}
   .lnone a{color:var(--wa);font-weight:700}
 }
+
+/* ===== Computadora ===== */
+.pconly{display:none!important}
+.hov{position:fixed;z-index:40;width:300px;height:260px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 40px rgba(10,12,35,.25);padding:12px 12px 30px;pointer-events:none;opacity:0;transform:scale(.96);transition:opacity .15s,transform .15s}
+.hov.on{opacity:1;transform:none}
+.hov img{width:100%;height:100%;object-fit:contain}
+.hov span{position:absolute;left:12px;bottom:8px;font-family:var(--f-code);font-weight:700;font-size:14px;color:#23254E}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(245,225,0,.9)}100%{box-shadow:0 0 0 14px rgba(245,225,0,0)}}
+#cart.flash{animation:flash .6s ease}
+@media (min-width:641px){
+  .mobonly{display:none!important}
+  .pconly{display:flex!important}
+  .vsel{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-right:auto}
+  .vsel button{display:flex;align-items:center;justify-content:center;gap:2px;width:40px;height:32px;background:var(--card);border:0;border-left:1px solid var(--line);cursor:pointer;padding:0}
+  .vsel button:first-child{border-left:0}
+  .vsel i{display:block;width:5px;height:12px;border-radius:1.5px;background:var(--muted)}
+  .vsel [data-view="v4"] i{width:4px}
+  .vsel [data-view="vl"] i{width:16px;height:3px;box-shadow:0 -5px 0 var(--muted),0 5px 0 var(--muted)}
+  .vsel button[aria-pressed="true"]{background:var(--navy)}
+  .vsel button[aria-pressed="true"] i{background:#fff}
+  .vsel [data-view="vl"][aria-pressed="true"] i{box-shadow:0 -5px 0 #fff,0 5px 0 #fff}
+  /* compacta: 4-5 por fila */
+  body.v4 .grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+  body.v4 .card .top{grid-template-columns:1fr;padding-right:12px}
+  body.v4 .card .ph{width:100%;height:auto;aspect-ratio:4/3}
+  body.v4 .card .meta,body.v4 .card .match,body.v4 .card .eqs,body.v4 .card .body>div:not(.actions),body.v4 .card .actions .more{display:none}
+  body.v4 .card .tmeta{display:block;font-size:12.5px;color:var(--muted);margin-top:4px}
+  body.v4 .card .tmeta br{display:none}
+  body.v4 .card .tmeta .mo:before{content:" · "}
+  body.v4 .card .body{padding-top:4px}
+  body.v4 .card .cartslot,body.v4 .card .addcart,body.v4 .card .qty{width:100%}
+  body.v4 .card .addcart{justify-content:center}
+  body.v4 .card .fav{z-index:2;background:rgba(255,255,255,.85)}
+  /* lista ancha */
+  body.vl .grid{grid-template-columns:1fr;gap:10px}
+  body.vl .card{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);grid-template-rows:auto 1fr}
+  body.vl .card .top{grid-column:1;grid-row:1}
+  body.vl .card .eqs{grid-column:1;grid-row:2;align-self:start;border-bottom:0}
+  body.vl .card .body{grid-column:2;grid-row:1/3;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:10px 22px;border-left:1px solid var(--line);padding:12px 56px 12px 18px}
+  body.vl .card .body>.actions{grid-column:1/-1;margin-top:0}
+  body.vl .card .apps div{margin-bottom:2px}
+  /* resultados dentro del desplegable del buscador */
+  .sugg .lrow{display:flex;align-items:center;gap:12px;padding:8px 14px}
+  .sugg .lrow .ph{width:48px;height:48px;flex:none;border-radius:6px}
+  .sugg .lt{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .sugg .lt .code{font-size:14px;align-self:flex-start}
+  .sugg .lm{font-size:12px;color:var(--muted)}
+  .sugg .lm i{font-style:normal}
+  .sugg .lm i.ok{color:#15803d;font-weight:600}
+  .sugg .lw{font-size:11.5px;background:var(--mark);color:var(--fg);border-radius:3px;padding:1px 5px;align-self:flex-start}
+  .sugg .lall{justify-content:center;font-weight:700;color:#fff;background:var(--navy);border-radius:0}
+  .sugg .lall:hover{background:var(--navy);opacity:.92}
+  .sugg{overflow-y:auto}
+}
+/* presupuesto fijo al costado (pantallas anchas) */
+@media (min-width:1280px){
+  body.cdock main,body.cdock .bar{padding-right:380px}
+  body.cdock #cartov,body.cdock #cartov[hidden]{display:block!important;position:fixed;left:auto;right:0;width:372px;background:none;z-index:4;padding:0}
+  body.cdock #cart{width:100%;height:100%;border-left:1px solid var(--line);box-shadow:-6px 0 18px rgba(10,12,35,.06);border-radius:0;animation:none}
+  body.cdock #cartclose{display:none}
+  body.cdock .wafab,body.cdock .qmfab{right:396px}
+  body.cdock .sheet.cart .hd{position:sticky;top:0}
+}
 </style>
 </head>
 <body>
@@ -747,7 +810,7 @@ html{-webkit-tap-highlight-color:transparent}
   <section class="vehpanel" id="vehpanel" hidden aria-live="polite"></section>
   <section class="mine" id="mine" hidden aria-label="Mis filtros"></section>
   <div id="news" class="news" hidden></div>
-  <div class="chips" style="margin-bottom:12px"><div class="vsel" id="vsel" role="group" aria-label="Vista"><button type="button" data-view="v3" aria-label="3 por fila"><i></i><i></i><i></i></button><button type="button" data-view="v2" aria-label="2 por fila"><i></i><i></i></button><button type="button" data-view="vl" aria-label="Lista"><i></i></button></div><span class="status" id="status" aria-live="polite"></span></div>
+  <div class="chips" style="margin-bottom:12px"><div class="vsel" id="vsel" role="group" aria-label="Vista"><button type="button" data-view="v4" class="pconly" aria-label="Compacta"><i></i><i></i><i></i><i></i></button><button type="button" data-view="v3" aria-label="3 por fila"><i></i><i></i><i></i></button><button type="button" data-view="v2" class="mobonly" aria-label="2 por fila"><i></i><i></i></button><button type="button" data-view="vl" aria-label="Lista"><i></i></button></div><span class="status" id="status" aria-live="polite"></span></div>
   <div class="grid" id="grid"><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div><div class="skel"><i></i><b></b><b></b><b class="s"></b></div></div>
   <div class="empty" id="empty" hidden><b>No encontramos ese código</b>Revisá que el número esté completo o probá con otra OEM o equivalente. Podés escribirlo con o sin guiones y espacios.</div>
   <button class="loadmore" id="more" type="button" hidden>Mostrar más filtros</button>
@@ -1607,9 +1670,10 @@ html{-webkit-tap-highlight-color:transparent}
   /* ===== Mejoras 2026 (celular) ===== */
   const MOB = window.matchMedia('(max-width:640px)');
   // --- selector de vista (3 por fila · 2 por fila · lista), se recuerda en este celular ---
-  let VIEW = 'vl'; // siempre abre en la vista lista; el cliente puede cambiarla mientras usa la app
-  function setView(v){ VIEW = v; document.body.classList.remove('v2', 'vl'); if (v !== 'v3') document.body.classList.add(v);
-    document.querySelectorAll('#vsel [data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); try { localStorage.setItem('hk-vista', v); } catch (e) {} }
+  let VIEW = 'vl'; // celular: siempre abre en la vista lista; el cliente puede cambiarla mientras usa la app
+  if (!MOB.matches) { try { VIEW = localStorage.getItem('hk-vista-pc') || 'v3'; } catch (e) { VIEW = 'v3'; } }
+  function setView(v){ if (MOB.matches && v === 'v4') v = 'v3'; if (!MOB.matches && v === 'v2') v = 'v3'; VIEW = v; document.body.classList.remove('v2', 'vl', 'v4'); if (v !== 'v3') document.body.classList.add(v);
+    document.querySelectorAll('#vsel [data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); try { if (!MOB.matches) localStorage.setItem('hk-vista-pc', v); } catch (e) {} }
   $('#vsel').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b) { setView(b.dataset.view); track('vista', { tipo: b.dataset.view }); } });
   setView(VIEW);
   // --- chips rápidos: solo disponibles + familias ---
@@ -1665,7 +1729,7 @@ html{-webkit-tap-highlight-color:transparent}
     return [...m].sort((a, b) => b[1].p - a[1].p || a[0].localeCompare(b[0])); })();
   const sg = $('#sugg'); let sgi = -1;
   let RECENT = []; try { RECENT = JSON.parse(localStorage.getItem('hk-busquedas') || '[]'); } catch (e) {}
-  function sgPlace(){ if (SMODE) return; const r = $('#q').closest('.search').getBoundingClientRect(); Object.assign(sg.style, { left: r.left + 'px', top: (r.bottom + 6) + 'px', width: r.width + 'px' }); }
+  function sgPlace(){ if (SMODE) return; const r = $('#q').closest('.search').getBoundingClientRect(); Object.assign(sg.style, { left: r.left + 'px', top: (r.bottom + 6) + 'px', width: r.width + 'px', maxHeight: Math.max(220, innerHeight - r.bottom - 16) + 'px' }); }
   function sgDraw(){
     const q = $('#q').value.trim(), nq = norm(q), lq = low(q), last = lq.split(/\s+/).pop(); let h = '';
     if (!q) { if (RECENT.length) h = '<div class="hd">Búsquedas recientes <button type="button" class="rclr" data-s="clr">Borrar</button></div>' + RECENT.slice(0, 8).map(r => `<button type="button" data-s="q" data-v="${esc(r)}"><span class="k">Reciente</span>${esc(r)}<small class="rx" data-x="${esc(r)}" role="button" aria-label="Quitar">×</small></button>`).join(''); }
@@ -1767,6 +1831,48 @@ html{-webkit-tap-highlight-color:transparent}
   });
   spanel.addEventListener('touchstart', () => { if (document.activeElement === $('#q')) $('#q').blur(); }, { passive: true });
   MOB.addEventListener && MOB.addEventListener('change', () => { if (!MOB.matches) exitSearch(false); });
+
+  /* ===== Computadora: presupuesto fijo al costado, vista previa de fotos y resultados en vivo en el buscador ===== */
+  const DOCK = window.matchMedia('(min-width:1280px)');
+  function dockPos(){
+    if (!document.body.classList.contains('cdock')) return;
+    const bar = document.querySelector('.bar').getBoundingClientRect(), ft = document.querySelector('footer').getBoundingClientRect();
+    cov.style.top = Math.max(0, bar.bottom) + 'px'; cov.style.bottom = Math.max(0, innerHeight - ft.top) + 'px';
+  }
+  function dockSet(){ const on = DOCK.matches; document.body.classList.toggle('cdock', on); if (on) { refreshCart(); dockPos(); } else { cov.style.top = cov.style.bottom = ''; } }
+  { const _oc = openCart; openCart = function(){ if (document.body.classList.contains('cdock')) { refreshCart(); const c = $('#cart'); c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash'); return; } _oc(); }; }
+  $('#cartbtn').addEventListener('click', e => { if (document.body.classList.contains('cdock')) { e.stopImmediatePropagation(); openCart(); } }, true);
+  window.addEventListener('scroll', () => requestAnimationFrame(dockPos), { passive: true });
+  window.addEventListener('resize', () => requestAnimationFrame(dockPos));
+  DOCK.addEventListener && DOCK.addEventListener('change', dockSet);
+  dockSet();
+  // vista previa al pasar el mouse por una foto (solo con mouse)
+  if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    const hv = document.createElement('div'); hv.className = 'hov'; hv.innerHTML = '<img alt=""><span></span>'; document.body.appendChild(hv);
+    let ht = null, cur = null;
+    document.addEventListener('mouseover', e => {
+      const ph = e.target.closest('#grid .ph, .mine .ph'); if (!ph || ph === cur) return; cur = ph;
+      const card = ph.closest('[data-hk]'), hk = card && card.dataset.hk; if (!hk || ILLU.has(hk) || !IMG[hk]) return;
+      clearTimeout(ht); ht = setTimeout(() => {
+        const im = hv.querySelector('img'); im.src = IMG[hk]; const hd = new Image(); hd.onload = () => { if (cur === ph) im.src = hd.src; }; hd.src = 'hd/' + encodeURIComponent(hk) + '.webp';
+        hv.querySelector('span').textContent = hk;
+        const r = ph.getBoundingClientRect(), W = 300, H = 260; let x = r.right + 12, y = r.top + r.height / 2 - H / 2;
+        if (x + W > innerWidth - 8) x = r.left - W - 12; y = Math.max(8, Math.min(innerHeight - H - 8, y));
+        hv.style.left = x + 'px'; hv.style.top = y + 'px'; hv.classList.add('on');
+      }, 260);
+    });
+    document.addEventListener('mouseout', e => { const ph = e.target.closest('#grid .ph, .mine .ph'); if (ph && !ph.contains(e.relatedTarget)) { clearTimeout(ht); hv.classList.remove('on'); cur = null; } });
+    window.addEventListener('scroll', () => { hv.classList.remove('on'); cur = null; }, { passive: true });
+  }
+  // buscador de computadora: filtros con foto y stock dentro del desplegable
+  { const _sd = sgDraw; sgDraw = function(){ _sd(); if (MOB.matches) return; const q = $('#q').value.trim(); if (q.length < 2) return;
+      const rs = []; for (const it of D) { const m = match(it, q); if (m) rs.push([it, m]); } rs.sort((a, b) => b[1].score - a[1].score);
+      if (!rs.length) return;
+      sg.insertAdjacentHTML('beforeend', `<div class="hd">Filtros</div>` + rs.slice(0, 5).map(([it, m]) => `<button type="button" class="lrow" data-s="hk" data-v="${esc(it.hk)}">${photo(it)}<span class="lt"><span class="code">${esc(it.hk)}</span><span class="lm">${esc(it.tipo)}${STK.has(it.hk) ? ' · <i class="ok">Disponible</i>' : ' · <i>Sin stock</i>'}</span>${m.how && m.score >= 40 ? `<span class="lw">Coincide con ${esc(m.how)}</span>` : ''}</span></button>`).join('')
+        + `<button type="button" class="lall" data-s="all">Ver ${rs.length === 1 ? 'el resultado' : 'los ' + rs.length + ' resultados'}</button>`);
+      sg.hidden = false; sgPlace(); } }
+  sg.addEventListener('click', e => { const b = e.target.closest('[data-s="all"]'); if (!b) return; e.stopImmediatePropagation(); sg.hidden = true; sgSave($('#q').value); state.q = $('#q').value; state.shown = PAGE; run(); $('#q').blur();
+    const g = $('#grid'); window.scrollTo({ top: Math.max(0, g.getBoundingClientRect().top + scrollY - document.querySelector('.bar').offsetHeight - 50), behavior: 'smooth' }); }, true);
   /* ===== Botón "atrás" del celular: cierra ventanas y vuelve a la búsqueda anterior en vez de salir de la app ===== */
   (function(){
     const H = window.history; if (!H || !H.pushState) return;
