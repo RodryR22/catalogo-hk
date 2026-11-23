@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Stock HK · Administración</title>
+<link rel="icon" type="image/png" href="icons/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--navy:#23254E;--yellow:#F5E100;--bg:#F4F5FA;--card:#fff;--fg:#1d1f3a;--muted:#6b6f8a;--line:#E3E5EE;--ok:#15803d;--bad:#B42318;--warn:#B45309;--f-code:"Barlow Condensed",Arial,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#10122a;--card:#1a1d3d;--fg:#eef0ff;--muted:#a4a8cc;--line:#2c3060;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 Inter,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+header{background:var(--navy);color:#fff;border-bottom:5px solid var(--yellow)}
+header .w{display:flex;align-items:center;gap:14px;padding:14px 16px}
+header img{height:34px}
+header h1{margin:0;font-size:19px;font-weight:800}
+header h1 em{font-style:normal;color:var(--yellow)}
+header .sp{margin-left:auto;font-size:13px;opacity:.85}
+.w{max-width:980px;margin:0 auto}
+main.w{padding:18px 16px 60px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+h2{margin:0 0 10px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
+h2 .n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px}
+p{margin:6px 0}
+.muted{color:var(--muted);font-size:13.5px}
+.drop{display:block;border:2px dashed var(--line);border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--navy);background:rgba(35,37,78,.04)}
+.drop b{font-size:16px}
+.files{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.file{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.file .k{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+.file .v{font-weight:700;margin-top:2px;overflow-wrap:anywhere}
+.file .d{font-size:13px;margin-top:2px}
+.file.miss{border-style:dashed}
+.ok{color:var(--ok)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat strong{display:block;font-family:var(--f-code);font-size:30px;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+.chg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.chg h3{margin:0 0 6px;font-size:13px;letter-spacing:.4px;text-transform:uppercase}
+.codes{display:flex;flex-wrap:wrap;gap:5px}
+.codes span{font-family:var(--f-code);font-size:15px;background:var(--navy);color:#fff;border-left:4px solid var(--yellow);border-radius:3px;padding:0 7px}
+.codes.no span{background:transparent;color:var(--fg);border:1px solid var(--line);border-left:4px solid var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:700;font-size:15px;border-radius:9px;padding:11px 18px;border:0;cursor:pointer;background:var(--navy);color:#fff;box-shadow:0 3px 0 var(--yellow)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.btn.sec{background:transparent;color:var(--fg);border:1.5px solid var(--line);box-shadow:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input[type=password],input[type=text]{font:inherit;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
+.msg{border-radius:10px;padding:10px 12px;font-size:14px;margin-top:10px}
+.msg.e{background:rgba(180,35,24,.1);color:var(--bad)}
+.msg.s{background:rgba(21,128,61,.1);color:var(--ok)}
+.msg.w{background:rgba(180,83,9,.1);color:var(--warn)}
+ol.steps{margin:8px 0 0 18px;padding:0;font-size:14px}
+ol.steps li{margin:4px 0}
+code{font-size:13px;background:rgba(35,37,78,.08);padding:1px 5px;border-radius:4px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding:6px}
+td{border-bottom:1px solid var(--line);padding:7px 6px;vertical-align:top}
+td small{color:var(--muted)}
+[hidden]{display:none!important}
+@media (max-width:700px){.files,.chg{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}header .sp{display:none}}
+</style>
+</head>
+<body>
+<header><div class="w"><img src="img/hk-logo-light.png" alt="HK"><h1>Actualizar <em>stock</em> del catálogo</h1><span class="sp" id="who"></span></div></header>
+<main class="w">
+
+  <section class="card" id="setup" hidden>
+    <h2>Acceso de administración</h2>
+    <p>Para publicar, esta página necesita una <b>clave de GitHub</b> con permiso solo sobre el catálogo. Se pide una vez y queda guardada en este navegador.</p>
+    <ol class="steps">
+      <li>Entrá a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Settings → Fine-grained tokens → Generate new token</a> con la cuenta <b>RodryR22</b>.</li>
+      <li>Nombre: <code>Stock catálogo HK</code>. Vencimiento: el que prefieras (por ejemplo 1 año).</li>
+      <li>Repository access: <b>Only select repositories</b> → <code>catalogo-hk</code>.</li>
+      <li>Permissions → Repository permissions → <b>Contents: Read and write</b>. Nada más.</li>
+      <li>Generá la clave, copiala y pegala acá.</li>
+    </ol>
+    <div class="row" style="margin-top:12px"><input type="password" id="tok" placeholder="github_pat_…" autocomplete="off" style="flex:1;min-width:240px"><button class="btn" id="tokok">Guardar clave</button></div>
+    <div id="tokmsg"></div>
+  </section>
+
+  <section class="card" id="step1">
+    <h2><span class="n">1</span> Cargar los archivos de stock</h2>
+    <p class="muted">Los dos archivos de Gestión: <b>STOCK_REPRE.xls</b> y <b>STOCK_AUTOCENTRO.xls</b> (carpeta «STOCK GENERAL REPRESENTACIONES»). Se leen en esta computadora; las cantidades no se publican.</p>
+    <label class="drop" id="drop"><input type="file" id="fin" accept=".xls,.xlsx" multiple hidden><b>Arrastre los archivos acá</b><br><span class="muted">o haga clic para elegirlos</span></label>
+    <div class="files">
+      <div class="file miss" id="f-REPRE"><div class="k">STOCK_REPRE</div><div class="v">Falta cargar</div></div>
+      <div class="file miss" id="f-AUTOCENTRO"><div class="k">STOCK_AUTOCENTRO</div><div class="v">Falta cargar</div></div>
+    </div>
+    <div id="fmsg"></div>
+  </section>
+
+  <section class="card" id="step2" hidden>
+    <h2><span class="n">2</span> Revisar los cambios</h2>
+    <div class="stats">
+      <div class="stat"><strong id="sAv">–</strong><span>Disponibles</span></div>
+      <div class="stat"><strong id="sNo">–</strong><span>Sin stock</span></div>
+      <div class="stat"><strong id="sUp" class="ok">–</strong><span>Pasan a Disponible</span></div>
+      <div class="stat"><strong id="sDn" class="bad">–</strong><span>Pasan a Sin stock</span></div>
+    </div>
+    <p class="muted" id="prevtxt" style="margin-top:10px"></p>
+    <div class="chg">
+      <div><h3 class="ok">Pasan a Disponible</h3><div class="codes" id="lUp"></div></div>
+      <div><h3 class="bad">Pasan a Sin stock</h3><div class="codes no" id="lDn"></div></div>
+    </div>
+    <div id="cmsg"></div>
+  </section>
+
+  <section class="card" id="step3" hidden>
+    <h2><span class="n">3</span> Publicar</h2>
+    <p>Al publicar, el catálogo (link general, links de vendedores y la app instalada) muestra el stock nuevo en 1 o 2 minutos.</p>
+    <div class="row"><button class="btn" id="pub">Publicar stock</button><span class="muted" id="pubst"></span></div>
+    <div id="pmsg"></div>
+  </section>
+
+  <section class="card">
+    <h2>Historial de cargas</h2>
+    <div id="hist"><p class="muted">Cargando…</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn sec" id="logout" hidden>Borrar la clave de este navegador</button></div>
+  </section>
+</main>
+<script>
+(function(){
+  const OWNER = 'RodryR22', REPO = 'catalogo-hk', BR = 'main', API = 'https://api.github.com/repos/' + OWNER + '/' + REPO;
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmtD = d => d.toLocaleString('es-PY', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  let TOKEN = ''; try { TOKEN = localStorage.getItem('hk-admin-token') || ''; } catch (e) {}
+  const FILES = {}; let CODES = null, PREV = null, HIST = [], RESULT = null;
+
+  async function gh(path, opt = {}){
+    const r = await fetch(API + path, { ...opt, headers: { Authorization: 'Bearer ' + TOKEN, Accept: opt.raw ? 'application/vnd.github.raw' : 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(opt.body ? { 'Content-Type': 'application/json' } : {}) } });
+    if (!r.ok) { const t = await r.text().catch(() => ''); const e = new Error(r.status + ' ' + t.slice(0, 200)); e.status = r.status; throw e; }
+    return opt.raw ? r.text() : r.json();
+  }
+  // Lee el archivo publicado: con clave, directo de GitHub (lo más nuevo); sin clave, del sitio.
+  async function readFile(name){
+    if (TOKEN) { try { return await gh('/contents/' + name + '?ref=' + BR + '&t=' + Date.now(), { raw: true }); } catch (e) { if (e.status === 404) return null; if (e.status === 401) throw e; } }
+    const r = await fetch(name + '?t=' + Date.now(), { cache: 'no-store' }); return r.ok ? r.text() : null;
+  }
+  function parseStock(js){ const m = /window\.HK_STOCK=(\[.*?\]);/s.exec(js || ''); const f = /HK_STOCK_FECHA="([^"]*)"/.exec(js || ''); return { list: m ? JSON.parse(m[1]) : [], fecha: f ? f[1] : '' }; }
+
+  function setupUI(){ $('#setup').hidden = !!TOKEN; $('#logout').hidden = !TOKEN; $('#who').textContent = TOKEN ? 'Acceso configurado en este navegador' : ''; check(); }
+  $('#tokok').addEventListener('click', async () => {
+    const t = $('#tok').value.trim(); if (!t) return; TOKEN = t; $('#tokmsg').innerHTML = '<p class="muted">Verificando…</p>';
+    try { const r = await gh(''); if (!r.permissions || !r.permissions.push) throw new Error('sin permiso de escritura');
+      try { localStorage.setItem('hk-admin-token', t); } catch (e) {} $('#tok').value = ''; $('#tokmsg').innerHTML = '<div class="msg s">Clave guardada. Ya puede publicar.</div>'; setupUI(); loadRemote();
+    } catch (e) { TOKEN = ''; $('#tokmsg').innerHTML = `<div class="msg e">La clave no funciona (${esc(e.message)}). Revise que tenga acceso a <b>catalogo-hk</b> con <b>Contents: Read and write</b>.</div>`; }
+  });
+  $('#logout').addEventListener('click', () => { try { localStorage.removeItem('hk-admin-token'); } catch (e) {} TOKEN = ''; setupUI(); });
+
+  async function loadRemote(){
+    try {
+      const [st, hi] = await Promise.all([readFile('stock.js'), readFile('stock-historial.json')]);
+      PREV = parseStock(st); try { HIST = JSON.parse(hi || '[]'); } catch (e) { HIST = []; }
+      drawHist(); compute();
+    } catch (e) { if (e.status === 401) { TOKEN = ''; try { localStorage.removeItem('hk-admin-token'); } catch (er) {} setupUI(); $('#tokmsg').innerHTML = '<div class="msg e">La clave guardada venció o fue borrada. Cargue una nueva.</div>'; } }
+  }
+  function loadCodes(){ return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'data.js?t=' + Date.now(); s.onload = () => { CODES = (window.HK_DATA || []).map(d => d.hk); ok(); }; s.onerror = ko; document.head.appendChild(s); }); }
+
+  // --- archivos ---
+  const num = v => { if (typeof v === 'number') return v; const s = String(v == null ? '' : v).trim().replace(/\./g, '').replace(',', '.'); const n = parseFloat(s); return isNaN(n) ? 0 : n; };
+  function kindOf(name){ const n = name.toUpperCase(); return n.includes('AUTOCENTRO') ? 'AUTOCENTRO' : n.includes('REPRE') ? 'REPRE' : ''; }
+  async function readXls(file){
+    const wb = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: true, defval: '' });
+    let hi = rows.findIndex(r => r.some(c => String(c).trim() === 'Código')); if (hi < 0) throw new Error('no se encontró la columna «Código»');
+    const hdr = rows[hi].map(c => String(c).trim()), ci = hdr.indexOf('Código'), cols = hdr.map((h, i) => /^Stock/i.test(h) ? i : -1).filter(i => i >= 0);
+    if (!cols.length) throw new Error('no se encontraron columnas «Stock»');
+    const st = {}; for (const r of rows.slice(hi + 1)) { const c = String(r[ci] || '').trim().toUpperCase(); if (!c || c === 'CÓDIGO') continue; st[c] = (st[c] || 0) + cols.reduce((a, j) => a + num(r[j]), 0); }
+    return st;
+  }
+  async function addFiles(list){
+    $('#fmsg').innerHTML = '';
+    for (const f of list) {
+      let k = kindOf(f.name); if (!k) k = !FILES.REPRE ? 'REPRE' : 'AUTOCENTRO';
+      try { FILES[k] = { name: f.name, date: new Date(f.lastModified), st: await readXls(f) }; }
+      catch (e) { $('#fmsg').innerHTML += `<div class="msg e">No se pudo leer <b>${esc(f.name)}</b>: ${esc(e.message)}.</div>`; }
+    }
+    drawFiles(); compute();
+  }
+  function drawFiles(){
+    for (const k of ['REPRE', 'AUTOCENTRO']) { const el = $('#f-' + k), f = FILES[k];
+      if (!f) continue; const days = (Date.now() - f.date) / 864e5, today = f.date.toDateString() === new Date().toDateString();
+      el.classList.remove('miss');
+      el.innerHTML = `<div class="k">STOCK_${k}</div><div class="v">${esc(f.name)}</div><div class="d ${today ? 'ok' : days > 3 ? 'bad' : 'warn'}">${today ? '✓ De hoy' : days > 3 ? '⚠ Archivo viejo' : '⚠ No es de hoy'} · ${fmtD(f.date)}</div>`; }
+  }
+  $('#fin').addEventListener('change', e => addFiles([...e.target.files]));
+  const dz = $('#drop');
+  ['dragenter', 'dragover'].forEach(t => dz.addEventListener(t, e => { e.preventDefault(); dz.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(t => dz.addEventListener(t, e => { e.preventDefault(); dz.classList.remove('over'); }));
+  dz.addEventListener('drop', e => addFiles([...e.dataTransfer.files]));
+
+  // --- cálculo ---
+  function compute(){
+    RESULT = null; $('#step2').hidden = $('#step3').hidden = true;
+    if (!CODES || !PREV || !FILES.REPRE || !FILES.AUTOCENTRO) return;
+    const ST = {}; for (const k of ['REPRE', 'AUTOCENTRO']) for (const [c, q] of Object.entries(FILES[k].st)) ST[c] = (ST[c] || 0) + q;
+    const miss = CODES.filter(c => !(c.toUpperCase() in ST));
+    const av = CODES.filter(c => (ST[c.toUpperCase()] || 0) > 0), prev = new Set(PREV.list), now = new Set(av);
+    const up = av.filter(c => !prev.has(c)), dn = PREV.list.filter(c => !now.has(c) && CODES.includes(c));
+    $('#sAv').textContent = av.length; $('#sNo').textContent = CODES.length - av.length; $('#sUp').textContent = up.length; $('#sDn').textContent = dn.length;
+    $('#prevtxt').textContent = PREV.fecha ? `Comparado con el stock publicado el ${PREV.fecha.split('-').reverse().join('/')} (${PREV.list.length} disponibles).` : '';
+    $('#lUp').innerHTML = up.map(c => `<span>${esc(c)}</span>`).join('') || '<p class="muted">Ninguno</p>';
+    $('#lDn').innerHTML = dn.map(c => `<span>${esc(c)}</span>`).join('') || '<p class="muted">Ninguno</p>';
+    let w = '';
+    if (miss.length > CODES.length * 0.2) w = `<div class="msg e">⚠ ${miss.length} códigos del catálogo no aparecen en los archivos. Puede que haya cargado otro informe. No se puede publicar.</div>`;
+    else if (miss.length) w = `<div class="msg w">${miss.length} ${miss.length === 1 ? 'código no figura' : 'códigos no figuran'} en los archivos y ${miss.length === 1 ? 'queda' : 'quedan'} como Sin stock: ${miss.slice(0, 12).map(esc).join(', ')}${miss.length > 12 ? '…' : ''}</div>`;
+    const old = ['REPRE', 'AUTOCENTRO'].filter(k => (Date.now() - FILES[k].date) / 864e5 > 3);
+    if (old.length) w += `<div class="msg w">⚠ ${old.map(k => 'STOCK_' + k).join(' y ')} ${old.length > 1 ? 'tienen' : 'tiene'} más de 3 días. Revise que sea la última versión.</div>`;
+    $('#cmsg').innerHTML = w; $('#step2').hidden = false;
+    RESULT = { av, up, dn, blocked: miss.length > CODES.length * 0.2 };
+    $('#step3').hidden = false; $('#pub').disabled = RESULT.blocked || !TOKEN;
+    $('#pubst').textContent = !TOKEN ? 'Configure el acceso arriba para publicar.' : (!up.length && !dn.length ? 'No hay cambios de estado; se publica igual para registrar la fecha.' : '');
+  }
+  function check(){ compute(); }
+
+  // --- publicar (un solo cambio en GitHub con stock.js + historial) ---
+  $('#pub').addEventListener('click', async () => {
+    if (!RESULT || RESULT.blocked) return;
+    const b = $('#pub'); b.disabled = true; $('#pmsg').innerHTML = '<p class="muted">Publicando…</p>';
+    try {
+      const now = new Date(), iso = new Date(now.getTime() - now.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+      const stockJs = '// Stock HK: solo la lista de códigos disponibles (nunca cantidades). Se actualiza desde admin.html o herramientas/actualizar_stock.py\nwindow.HK_STOCK=' + JSON.stringify(RESULT.av) + ';\nwindow.HK_STOCK_FECHA=' + JSON.stringify(iso) + ';\n';
+      const hist = [{ fecha: now.toISOString(), origen: 'manual', archivos: { STOCK_REPRE: FILES.REPRE.date.toISOString(), STOCK_AUTOCENTRO: FILES.AUTOCENTRO.date.toISOString() }, disponibles: RESULT.av.length, sin_stock: CODES.length - RESULT.av.length, a_disponible: RESULT.up, a_sin_stock: RESULT.dn }, ...HIST].slice(0, 200);
+      const ref = await gh('/git/ref/heads/' + BR); const head = ref.object.sha;
+      const cm = await gh('/git/commits/' + head);
+      const tree = await gh('/git/trees', { method: 'POST', body: JSON.stringify({ base_tree: cm.tree.sha, tree: [
+        { path: 'stock.js', mode: '100644', type: 'blob', content: stockJs },
+        { path: 'stock-historial.json', mode: '100644', type: 'blob', content: JSON.stringify(hist, null, 1) + '\n' } ] }) });
+      const nc = await gh('/git/commits', { method: 'POST', body: JSON.stringify({ message: `Stock al ${iso} (carga manual): ${RESULT.av.length} disponibles, +${RESULT.up.length} / -${RESULT.dn.length}`, tree: tree.sha, parents: [head] }) });
+      await gh('/git/refs/heads/' + BR, { method: 'PATCH', body: JSON.stringify({ sha: nc.sha }) });
+      PREV = { list: RESULT.av, fecha: iso }; HIST = hist; drawHist();
+      $('#pmsg').innerHTML = `<div class="msg s">✓ Publicado. En 1 o 2 minutos el catálogo muestra ${RESULT.av.length} filtros disponibles.</div>`;
+      $('#pubst').textContent = '';
+    } catch (e) {
+      $('#pmsg').innerHTML = `<div class="msg e">No se pudo publicar: ${esc(e.message)}${e.status === 401 || e.status === 403 ? '. Revise que la clave siga vigente y tenga Contents: Read and write.' : e.status === 422 || e.status === 409 ? '. Hubo otra publicación al mismo tiempo; vuelva a intentar.' : ''}</div>`;
+      b.disabled = false;
+    }
+  });
+
+  function drawHist(){
+    if (!HIST.length) { $('#hist').innerHTML = '<p class="muted">Todavía no hay cargas registradas.</p>'; return; }
+    $('#hist').innerHTML = '<table><thead><tr><th>Fecha</th><th>Origen</th><th>Disponibles</th><th>Cambios</th></tr></thead><tbody>' + HIST.slice(0, 15).map(h => {
+      const ch = [h.a_disponible && h.a_disponible.length ? `<span class="ok">+${h.a_disponible.length}</span> <small>${h.a_disponible.slice(0, 6).map(esc).join(', ')}${h.a_disponible.length > 6 ? '…' : ''}</small>` : '', h.a_sin_stock && h.a_sin_stock.length ? `<span class="bad">−${h.a_sin_stock.length}</span> <small>${h.a_sin_stock.slice(0, 6).map(esc).join(', ')}${h.a_sin_stock.length > 6 ? '…' : ''}</small>` : ''].filter(Boolean).join('<br>') || '<small>Sin cambios</small>';
+      return `<tr><td>${fmtD(new Date(h.fecha))}</td><td>${h.origen === 'manual' ? 'Carga manual' : 'Automática'}</td><td>${h.disponibles ?? '–'}</td><td>${ch}</td></tr>`; }).join('') + '</tbody></table>';
+  }
+
+  setupUI();
+  loadCodes().then(() => { loadRemote(); }).catch(() => { $('#fmsg').innerHTML = '<div class="msg e">No se pudo cargar el catálogo (data.js).</div>'; });
+})();
+</script>
+</body>
+</html>
