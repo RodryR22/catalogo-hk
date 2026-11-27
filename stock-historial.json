@@ -1,5 +1,20 @@
 [
  {
+  "fecha": "2026-11-27T10:48:16.870Z",
+  "origen": "manual",
+  "archivos": {
+   "STOCK_REPRE": "2026-11-27T10:47:29.118Z",
+   "STOCK_AUTOCENTRO": "2026-11-27T10:46:45.094Z"
+  },
+  "disponibles": 368,
+  "sin_stock": 16,
+  "a_disponible": [],
+  "a_sin_stock": [
+   "UK-7068",
+   "UK-7178"
+  ]
+ },
+ {
   "fecha": "2026-11-23T12:59:25.323Z",
   "origen": "manual",
   "archivos": {
